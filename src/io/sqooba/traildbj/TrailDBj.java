@@ -4,6 +4,12 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 
+/**
+ * This class is used to perform native call to the TrailDB C library.
+ * 
+ * @author Vilya
+ *
+ */
 public enum TrailDBj {
 
     INSTANCE;
@@ -34,14 +40,30 @@ public enum TrailDBj {
     /** tdb_error tdb_cons_finalize(tdb_cons *cons) */
     private native int tdbConsFinalize(ByteBuffer cons);
 
+    /**
+     * Class allowing to easily construct a new TrailDB.
+     * 
+     * @author Vilya
+     */
     public static class TrailDBConstructor implements Closeable {
 
         private TrailDBj trailDBj = TrailDBj.INSTANCE;
 
+        /** New TrailDB output path, without .tdb. */
         private String path;
+
+        /** Names of fields in the new TrailDB. */
         private String[] ofields;
+
+        /** Handle to the TrailDB, returned by init method. */
         private ByteBuffer cons;
 
+        /**
+         * Construct a new TrailDB.
+         * 
+         * @param path TrailDB output path.
+         * @param ofields Names of fields.
+         */
         public TrailDBConstructor(String path, String[] ofields) {
             if (path == null) {
                 throw new NullPointerException("Path must not be null.");
@@ -57,6 +79,13 @@ public enum TrailDBj {
             this.ofields = ofields;
         }
 
+        /**
+         * Add an event to the TrailDB.
+         * 
+         * @param uuid UUID of the event to be added.
+         * @param timestamp Event timestamp.
+         * @param values Value of each field.
+         */
         public void add(String uuid, long timestamp, String[] values) {
             int n = values.length;
             long[] value_lenghts = new long[n];
@@ -73,7 +102,11 @@ public enum TrailDBj {
             throw new UnsupportedOperationException("Not done yet because need existing db.");
         }
 
-        public void finalize() {
+        /**
+         * Finalize TrailDB construction. Finalization takes care of compacting the events and creating a valid TrailDB
+         * file. Events can not be added after this has been called.
+         */
+        public void finalise() {
             if (trailDBj.tdbConsFinalize(this.cons) != 0) {
                 throw new RuntimeException("Failed to finalize.");
             }

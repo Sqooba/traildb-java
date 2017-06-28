@@ -12,7 +12,7 @@ public class Main {
         String cookie = "12345678123456781234567812345678";
         cons.add(cookie, 123, new String[] { "a" });
         cons.add(cookie, 124, new String[] { "b", "c" });
-        cons.finalize();
+        cons.finalise();
         cons.close();
     }
 }
