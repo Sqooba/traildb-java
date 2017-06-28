@@ -3,6 +3,8 @@ package io.sqooba.traildbj;
 import java.io.Closeable;
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * This class is used to perform native call to the TrailDB C library.
@@ -13,6 +15,8 @@ import java.nio.ByteBuffer;
 public enum TrailDBj {
 
     INSTANCE;
+
+    private static final Logger LOGGER = Logger.getLogger(TrailDBj.class.getName());
 
     static {
         System.load("/home/osboxes/TrailDBj/src/io/sqooba/traildbj/libtest.so");
@@ -72,7 +76,7 @@ public enum TrailDBj {
             // Initialisation.
             this.cons = trailDBj.tdbConsInit();
             if (trailDBj.tdbConsOpen(this.cons, path, ofields, ofields.length) != 0) {
-                throw new RuntimeException("Can not open constructor."); // TODO
+                throw new TrailDBError("Can not open constructor.");
             }
 
             this.path = path;
@@ -94,7 +98,7 @@ public enum TrailDBj {
             }
 
             if (trailDBj.tdbConsAdd(cons, uuid.getBytes(), timestamp, values, value_lenghts) != 0) {
-                throw new RuntimeException("Failed to add.");
+                throw new TrailDBError("Failed to add.");
             }
         }
 
@@ -108,16 +112,31 @@ public enum TrailDBj {
          */
         public void finalise() {
             if (trailDBj.tdbConsFinalize(this.cons) != 0) {
-                throw new RuntimeException("Failed to finalize.");
+                LOGGER.log(Level.INFO, "Finalisation done.");
+                throw new TrailDBError("Failed to finalize.");
             }
         }
 
         @Override
         public void close() throws IOException {
             if (this.cons != null) {
-                System.out.println("Closing cons.");
+                LOGGER.log(Level.INFO, "Closing TrailDB.");
                 trailDBj.tdbConsClose(this.cons);
             }
+        }
+    }
+
+    /**
+     * Exception thrown when something bad happens while performing action on the TrailDB.
+     * 
+     * @author Vilya
+     */
+    private static class TrailDBError extends RuntimeException {
+
+        private static final long serialVersionUID = -6086129664942253809L;
+
+        public TrailDBError(String message) {
+            super(message);
         }
     }
 }
