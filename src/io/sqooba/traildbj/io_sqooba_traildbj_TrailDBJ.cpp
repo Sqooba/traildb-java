@@ -1,9 +1,11 @@
 #include "io_sqooba_traildbj_TrailDBj.h"
 #include <jni.h>
 #include <stdio.h>
-#include <traildb.h>
 
-extern "C"
+extern "C" {
+	#include <traildb.h>
+}
+
 JNIEXPORT jobject JNICALL Java_io_sqooba_traildbj_TrailDBj_tdbConsInit
   (JNIEnv *env, jobject thisObject) 
 {
