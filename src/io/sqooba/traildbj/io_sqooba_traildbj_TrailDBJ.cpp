@@ -60,10 +60,10 @@ JNIEXPORT void JNICALL Java_io_sqooba_traildbj_TrailDBj_tdbConsClose
 /*
  * Class:     io_sqooba_traildbj_TrailDBj
  * Method:    tdbConsAdd
- * Signature: (Ljava/lang/Object;[BJ[Ljava/lang/String;J)I
+ * Signature: (Ljava/nio/ByteBuffer;[BJ[Ljava/lang/String;[J)I
  */
 JNIEXPORT jint JNICALL Java_io_sqooba_traildbj_TrailDBj_tdbConsAdd
-	(JNIEnv *env, jobject thisObject, jobject consj, jbyteArray uuidj, jlong timestampj, jobjectArray valuesj, jobject valuesLengths) 
+	(JNIEnv *env, jobject thisObject, jobject consj, jbyteArray uuidj, jlong timestampj, jobjectArray valuesj, jlongArray valuesLengths) 
 {
 
 
@@ -82,7 +82,8 @@ JNIEXPORT jint JNICALL Java_io_sqooba_traildbj_TrailDBj_tdbConsAdd
 		values[i] = field;
     }
 
-	const uint64_t *values_lengths = (const uint64_t*) env->GetDirectBufferAddress(valuesLengths);
+	jlong *ptr = env->GetLongArrayElements(valuesLengths, NULL);
+	const uint64_t *values_lengths = (const uint64_t*)ptr;
 	
 	// Call lib.
 	return tdb_cons_add(cons, uuid, (long) timestampj, values, values_lengths);

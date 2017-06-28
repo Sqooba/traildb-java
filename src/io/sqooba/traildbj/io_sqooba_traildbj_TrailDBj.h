@@ -34,10 +34,10 @@ JNIEXPORT void JNICALL Java_io_sqooba_traildbj_TrailDBj_tdbConsClose
 /*
  * Class:     io_sqooba_traildbj_TrailDBj
  * Method:    tdbConsAdd
- * Signature: (Ljava/nio/ByteBuffer;[BJ[Ljava/lang/String;Ljava/nio/ByteBuffer;)I
+ * Signature: (Ljava/nio/ByteBuffer;[BJ[Ljava/lang/String;[J)I
  */
 JNIEXPORT jint JNICALL Java_io_sqooba_traildbj_TrailDBj_tdbConsAdd
-  (JNIEnv *, jobject, jobject, jbyteArray, jlong, jobjectArray, jobject);
+  (JNIEnv *, jobject, jobject, jbyteArray, jlong, jobjectArray, jlongArray);
 
 /*
  * Class:     io_sqooba_traildbj_TrailDBj
