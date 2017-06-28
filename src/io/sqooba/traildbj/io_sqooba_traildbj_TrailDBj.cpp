@@ -14,11 +14,6 @@ JNIEXPORT jobject JNICALL Java_io_sqooba_traildbj_TrailDBj_tdbConsInit
     return bb;
 }
 
-/*
- * Class:     io_sqooba_traildbj_TrailDBj
- * Method:    tdbConsOpen
- * Signature: (Ljava/nio/ByteBuffer;Ljava/lang/String;[Ljava/lang/String;J)I
- */
 JNIEXPORT jint JNICALL Java_io_sqooba_traildbj_TrailDBj_tdbConsOpen
   (JNIEnv *env, jobject thisObject, jobject consj, jstring rootj, jobjectArray fieldNamesj, jlong numOfieldsj)
 {
@@ -41,11 +36,6 @@ JNIEXPORT jint JNICALL Java_io_sqooba_traildbj_TrailDBj_tdbConsOpen
 	return tdb_cons_open(cons, root, ofield_names, num_ofields);
 }
 
-/*
- * Class:     io_sqooba_traildbj_TrailDBj
- * Method:    tdbConsClose
- * Signature: (Ljava/lang/Object;)V
- */
 JNIEXPORT void JNICALL Java_io_sqooba_traildbj_TrailDBj_tdbConsClose
   (JNIEnv *env, jobject thisObject, jobject consj) 
 {
@@ -57,11 +47,6 @@ JNIEXPORT void JNICALL Java_io_sqooba_traildbj_TrailDBj_tdbConsClose
 	tdb_cons_close(cons);
 }
 
-/*
- * Class:     io_sqooba_traildbj_TrailDBj
- * Method:    tdbConsAdd
- * Signature: (Ljava/nio/ByteBuffer;[BJ[Ljava/lang/String;[J)I
- */
 JNIEXPORT jint JNICALL Java_io_sqooba_traildbj_TrailDBj_tdbConsAdd
 	(JNIEnv *env, jobject thisObject, jobject consj, jbyteArray uuidj, jlong timestampj, jobjectArray valuesj, jlongArray valuesLengths) 
 {
@@ -92,11 +77,6 @@ JNIEXPORT jint JNICALL Java_io_sqooba_traildbj_TrailDBj_tdbConsAdd
 	env->ReleaseByteArrayElements(uuidj, dataPtr, JNI_ABORT);
 }
 
-/*
- * Class:     io_sqooba_traildbj_TrailDBj
- * Method:    tdbConsAppend
- * Signature: (Ljava/lang/Object;Ljava/lang/Object;)I
- */
 JNIEXPORT jint JNICALL Java_io_sqooba_traildbj_TrailDBj_tdbConsAppend
   (JNIEnv *env, jobject thisObject, jobject consj, jobject tdbj) 
 {
@@ -110,11 +90,6 @@ JNIEXPORT jint JNICALL Java_io_sqooba_traildbj_TrailDBj_tdbConsAppend
 
 }
 
-/*
- * Class:     io_sqooba_traildbj_TrailDBj
- * Method:    tdbConsFinalize
- * Signature: (Ljava/lang/Object;)I
- */
 JNIEXPORT jint JNICALL Java_io_sqooba_traildbj_TrailDBj_tdbConsFinalize
   (JNIEnv *env, jobject thisObject, jobject consj) 
 {
