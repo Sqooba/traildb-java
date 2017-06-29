@@ -4,7 +4,6 @@ import java.io.IOException;
 
 import io.sqooba.traildbj.TrailDBj.TrailDB;
 import io.sqooba.traildbj.TrailDBj.TrailDBConstructor;
-
 public class Main {
 
     public static void main(String[] args) throws IOException {
