@@ -101,3 +101,129 @@ JNIEXPORT jint JNICALL Java_io_sqooba_traildbj_TrailDBj_tdbConsFinalize
 	return tdb_cons_finalize(cons);
 
 }
+
+JNIEXPORT jobject JNICALL Java_io_sqooba_traildbj_TrailDBj_tdbInit
+  (JNIEnv *env, jobject thisObject) 
+{
+
+	void *tdb = tdb_init();
+	jobject byteBuffer = env->NewDirectByteBuffer((void*) tdb, sizeof(&tdb));
+    return byteBuffer; 
+
+}
+
+JNIEXPORT jint JNICALL Java_io_sqooba_traildbj_TrailDBj_tdbOpen
+  (JNIEnv *env, jobject thisObject, jobject jtdb, jstring jroot) 
+{
+
+	// Convert arguments.
+    tdb *db = (tdb*) env->GetDirectBufferAddress(jtdb);
+    const char *root = env->GetStringUTFChars(jroot, 0);
+
+	// Call lib.
+	return tdb_open(db, root);
+
+}
+
+JNIEXPORT void JNICALL Java_io_sqooba_traildbj_TrailDBj_tdbClose
+  (JNIEnv *env, jobject thisObject, jobject jdb) 
+{
+
+	// Convert arguments.
+	tdb *db = (tdb*) env->GetDirectBufferAddress(jdb);
+
+	// Call lib.
+	tdb_close(db);
+
+}
+
+JNIEXPORT jlong JNICALL Java_io_sqooba_traildbj_TrailDBj_tdbNumTrails
+  (JNIEnv *env, jobject thisObject, jobject jdb) 
+{
+
+	// Convert arguments.
+	const tdb *db = (tdb*) env->GetDirectBufferAddress(jdb);
+	
+	// Call lib.
+	return (jlong)tdb_num_trails(db);
+
+}
+
+JNIEXPORT jlong JNICALL Java_io_sqooba_traildbj_TrailDBj_tdbNumEvents
+  (JNIEnv *env, jobject thisObject, jobject jdb) 
+{
+
+	// Convert arguments.
+	const tdb *db = (tdb*) env->GetDirectBufferAddress(jdb);
+	
+	// Call lib.
+	return (jlong)tdb_num_events(db);
+}
+
+
+
+JNIEXPORT jlong JNICALL Java_io_sqooba_traildbj_TrailDBj_tdbNumFields
+  (JNIEnv *env, jobject thisObject, jobject jdb) 
+{
+
+	// Convert arguments.
+	const tdb *db = (tdb*) env->GetDirectBufferAddress(jdb);
+	
+	// Call lib.
+	return (jlong)tdb_num_fields(db);
+
+}
+
+
+JNIEXPORT jlong JNICALL Java_io_sqooba_traildbj_TrailDBj_tdbMinTimestamp
+  (JNIEnv *env, jobject thisObject, jobject jdb) 
+{
+
+	// Convert arguments.
+	const tdb *db = (tdb*) env->GetDirectBufferAddress(jdb);
+	
+	// Call lib.
+	return (jlong)tdb_min_timestamp(db);
+
+}
+
+
+JNIEXPORT jlong JNICALL Java_io_sqooba_traildbj_TrailDBj_tdbMaxTimestamp
+  (JNIEnv *env, jobject thisObject, jobject jdb) 
+{
+
+	// Convert arguments.
+	const tdb *db = (tdb*) env->GetDirectBufferAddress(jdb);
+	
+	// Call lib.
+	return (jlong)tdb_max_timestamp(db);
+
+}
+
+
+JNIEXPORT jlong JNICALL Java_io_sqooba_traildbj_TrailDBj_tdbVersion
+  (JNIEnv *env, jobject thisObject, jobject jdb) 
+{
+
+	// Convert arguments.
+	const tdb *db = (tdb*) env->GetDirectBufferAddress(jdb);
+	
+	// Call lib.
+	return (jlong)tdb_version(db);
+
+}
+
+JNIEXPORT jstring JNICALL Java_io_sqooba_traildbj_TrailDBj_tdbErrorStr
+  (JNIEnv *env, jobject thisObject, jint jerrcode) 
+{
+
+	// Convert arguments.
+	int nativeInt = (int)jerrcode;
+
+	// Call lib.
+	const char *res = tdb_error_str((tdb_error)nativeInt);
+
+	// COnvert result and return it.
+	return env->NewStringUTF(res);
+
+}

@@ -55,6 +55,86 @@ JNIEXPORT jint JNICALL Java_io_sqooba_traildbj_TrailDBj_tdbConsAppend
 JNIEXPORT jint JNICALL Java_io_sqooba_traildbj_TrailDBj_tdbConsFinalize
   (JNIEnv *, jobject, jobject);
 
+/*
+ * Class:     io_sqooba_traildbj_TrailDBj
+ * Method:    tdbInit
+ * Signature: ()Ljava/nio/ByteBuffer;
+ */
+JNIEXPORT jobject JNICALL Java_io_sqooba_traildbj_TrailDBj_tdbInit
+  (JNIEnv *, jobject);
+
+/*
+ * Class:     io_sqooba_traildbj_TrailDBj
+ * Method:    tdbOpen
+ * Signature: (Ljava/nio/ByteBuffer;Ljava/lang/String;)I
+ */
+JNIEXPORT jint JNICALL Java_io_sqooba_traildbj_TrailDBj_tdbOpen
+  (JNIEnv *, jobject, jobject, jstring);
+
+/*
+ * Class:     io_sqooba_traildbj_TrailDBj
+ * Method:    tdbClose
+ * Signature: (Ljava/nio/ByteBuffer;)V
+ */
+JNIEXPORT void JNICALL Java_io_sqooba_traildbj_TrailDBj_tdbClose
+  (JNIEnv *, jobject, jobject);
+
+/*
+ * Class:     io_sqooba_traildbj_TrailDBj
+ * Method:    tdbNumTrails
+ * Signature: (Ljava/nio/ByteBuffer;)J
+ */
+JNIEXPORT jlong JNICALL Java_io_sqooba_traildbj_TrailDBj_tdbNumTrails
+  (JNIEnv *, jobject, jobject);
+
+/*
+ * Class:     io_sqooba_traildbj_TrailDBj
+ * Method:    tdbNumEvents
+ * Signature: (Ljava/nio/ByteBuffer;)J
+ */
+JNIEXPORT jlong JNICALL Java_io_sqooba_traildbj_TrailDBj_tdbNumEvents
+  (JNIEnv *, jobject, jobject);
+
+/*
+ * Class:     io_sqooba_traildbj_TrailDBj
+ * Method:    tdbNumFields
+ * Signature: (Ljava/nio/ByteBuffer;)J
+ */
+JNIEXPORT jlong JNICALL Java_io_sqooba_traildbj_TrailDBj_tdbNumFields
+  (JNIEnv *, jobject, jobject);
+
+/*
+ * Class:     io_sqooba_traildbj_TrailDBj
+ * Method:    tdbMinTimestamp
+ * Signature: (Ljava/nio/ByteBuffer;)J
+ */
+JNIEXPORT jlong JNICALL Java_io_sqooba_traildbj_TrailDBj_tdbMinTimestamp
+  (JNIEnv *, jobject, jobject);
+
+/*
+ * Class:     io_sqooba_traildbj_TrailDBj
+ * Method:    tdbMaxTimestamp
+ * Signature: (Ljava/nio/ByteBuffer;)J
+ */
+JNIEXPORT jlong JNICALL Java_io_sqooba_traildbj_TrailDBj_tdbMaxTimestamp
+  (JNIEnv *, jobject, jobject);
+
+/*
+ * Class:     io_sqooba_traildbj_TrailDBj
+ * Method:    tdbVersion
+ * Signature: (Ljava/nio/ByteBuffer;)J
+ */
+JNIEXPORT jlong JNICALL Java_io_sqooba_traildbj_TrailDBj_tdbVersion
+  (JNIEnv *, jobject, jobject);
+
+/*
+ * Class:     io_sqooba_traildbj_TrailDBj
+ * Method:    tdbErrorStr
+ * Signature: (I)Ljava/lang/String;
+ */
+JNIEXPORT jstring JNICALL Java_io_sqooba_traildbj_TrailDBj_tdbErrorStr
+  (JNIEnv *, jobject, jint);
+
 #ifdef __cplusplus
 }
 #endif
