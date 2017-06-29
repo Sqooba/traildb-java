@@ -227,3 +227,46 @@ JNIEXPORT jstring JNICALL Java_io_sqooba_traildbj_TrailDBj_tdbErrorStr
 	return env->NewStringUTF(res);
 
 }
+
+JNIEXPORT jlong JNICALL Java_io_sqooba_traildbj_TrailDBj_tdbLexiconSize
+  (JNIEnv *env, jobject thisObject, jobject jdb, jlong jfield) 
+{
+
+	// Convert arguments.
+	const tdb *db = (tdb*) env->GetDirectBufferAddress(jdb);
+	int nativeInt = (int)jfield;
+
+	// Call lib.
+	return (jlong)tdb_lexicon_size(db, nativeInt);
+
+}
+
+JNIEXPORT jint JNICALL Java_io_sqooba_traildbj_TrailDBj_tdbGetField
+  (JNIEnv *env, jobject thisObject, jobject jdb, jstring jfieldName, jobject jfield) 
+{
+
+	// Convert arguments.
+	const tdb *db = (tdb*) env->GetDirectBufferAddress(jdb);
+	const char *field_name = env->GetStringUTFChars(jfieldName, 0);
+	//tdb_field *field= (tdb_field*) env->GetDirectBufferAddress(jfield);
+	tdb_field *field = NULL;
+
+	// Call lib.
+	return tdb_get_field(db, field_name, field);
+}
+
+JNIEXPORT jstring JNICALL Java_io_sqooba_traildbj_TrailDBj_tdbGetFieldName
+  (JNIEnv *env, jobject thisObject, jobject jdb, jlong jfield) 
+{
+
+	// Convert arguments.
+	const tdb *db = (tdb*) env->GetDirectBufferAddress(jdb);
+	int nativeField = (int)jfield;
+
+	// Call lib.
+	const char *field_name = tdb_get_field_name(db, nativeField);
+
+	// Return res.
+	return env->NewStringUTF(field_name);
+}
+

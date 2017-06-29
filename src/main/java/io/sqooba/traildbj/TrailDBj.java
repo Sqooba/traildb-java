@@ -19,7 +19,7 @@ public enum TrailDBj {
     private static final Logger LOGGER = Logger.getLogger(TrailDBj.class.getName());
 
     static {
-        System.load("/home/osboxes/TrailDBj/src/main/java/io/sqooba/traildbj/libtest.so");
+        System.load("/home/osboxes/TrailDBj/src/main/java/libtest.so");
     }
 
     // ========================================================================
@@ -81,6 +81,32 @@ public enum TrailDBj {
 
     /** const char *tdb_error_str(tdb_error errcode) */
     private native String tdbErrorStr(int errcode);
+
+    // ========================================================================
+    // Working with items, fields and values.
+    // ========================================================================
+    // TODO function to check if cast are possible from uint64 to uint32 are not implemented.
+
+    /** uint64_t tdb_lexicon_size(const tdb *db, tdb_field field) */
+    private native long tdbLexiconSize(ByteBuffer db, long field); // tdb_field is a C int, ID of the field.
+
+    /** tdb_error tdb_get_field(tdb *db, const char *field_name, tdb_field *field) */
+    private native int tdbGetField(ByteBuffer db, String fieldName, ByteBuffer field);
+
+    /** const char *tdb_get_field_name(tdb *db, tdb_field field) */
+    private native String tdbGetFieldName(ByteBuffer db, long field);
+
+    /** tdb_item tdb_get_item(tdb *db, tdb_field field, const char *value, uint64_t value_length) */
+    // FIXME WARNING be carefull with that return type.
+    private native long tdbGetItem(ByteBuffer db, long field, String value);
+
+    /** const char *tdb_get_value(tdb *db, tdb_field field, tdb_val val, uint64_t *value_length) */
+    // TODO WARNING be extremely careful here with val(uint64_t) and omitted last param value_length.
+    private native String tdbGetValue(ByteBuffer db, long field, long val);
+
+    /** const char *tdb_get_item_value(tdb *db, tdb_item item, uint64_t *value_length) */
+    // TODO WARNING verfiy cast from char* to jstring, without using last omitted param.
+    private native String tdbGetItemValue(ByteBuffer db, long item);
 
     // ========================================================================
     // Helper classes.
@@ -178,6 +204,7 @@ public enum TrailDBj {
         private long numTrails;
         private long numEvents;
         private long numFields;
+        private String[] fields;
 
         public TrailDB(String path) {
             if (path == null) {
@@ -194,6 +221,12 @@ public enum TrailDBj {
             this.numTrails = trailDBj.tdbNumTrails(db);
             this.numEvents = trailDBj.tdbNumEvents(db);
             this.numFields = trailDBj.tdbNumFields(db);
+            this.fields = new String[(int)numFields];
+            
+            
+            for(int i = 0; i < fields.length; i++) {
+                fields[i] = trailDBj.tdbGetFieldName(this.db, i);
+            }
         }
 
         public long length() {
@@ -222,6 +255,18 @@ public enum TrailDBj {
                 LOGGER.log(Level.WARNING, "version overflow.");
             }
             return version;
+        }
+
+        public long getField(String fieldName) {
+            ByteBuffer b = ByteBuffer.allocate(4);
+            if (trailDBj.tdbGetField(this.db, fieldName, b) != 0) {
+                throw new TrailDBError("Failed to retreive field.");
+            }
+            return b.getInt(0);
+        }
+        
+        public long getLexiconSize(long fieldId) {
+            return trailDBj.tdbLexiconSize(this.db, fieldId);
         }
 
         @Override
