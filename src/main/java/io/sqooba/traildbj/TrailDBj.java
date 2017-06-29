@@ -19,7 +19,7 @@ public enum TrailDBj {
     private static final Logger LOGGER = Logger.getLogger(TrailDBj.class.getName());
 
     static {
-        System.load("/home/osboxes/TrailDBj/src/io/sqooba/traildbj/libtest.so");
+        System.load("/home/osboxes/TrailDBj/src/main/java/io/sqooba/traildbj/libtest.so");
     }
 
     // ========================================================================
