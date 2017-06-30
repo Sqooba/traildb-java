@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import io.sqooba.traildbj.TrailDBj.TrailDB;
 import io.sqooba.traildbj.TrailDBj.TrailDBConstructor;
+
 public class Main {
 
     public static void main(String[] args) throws IOException {
@@ -13,19 +14,21 @@ public class Main {
         cons.add("2323", 123, new String[] { "a" });
         cons.add(cookie, 124, new String[] { "b", "c" });
         cons.add(cookie, 125, new String[] { "aa", "d" });
-        cons.add(cookie, 126, new String[] { "b", "c"});
-        cons.add(cookie, 127, new String[] { "b", "c"});
+        cons.add(cookie, 126, new String[] { "b", "c" });
+        cons.add(cookie, 127, new String[] { "b", "c" });
         TrailDB db = cons.finalise();
         cons.close();
 
         TrailDB db2 = new TrailDB("test1");
         System.out.println(db2.getMinTimestamp());
-        //System.out.println(db2.length());
-        System.out.println(db2.getLexiconSize(0));
+        System.out.println(db2.length());
         System.out.println(db2.getLexiconSize(1));
         System.out.println(db2.getLexiconSize(2));
         System.out.println(db2.getLexiconSize(3));
-        System.out.println(db2.getLexiconSize(20));
+        System.out.println(db2.getField("field1"));
+        System.out.println(db2.getFieldName(1));
+        System.out.println(db2.getItem(1, "b"));
+        System.out.println(db2.getItemValue(513));
         db2.close();
     }
 }

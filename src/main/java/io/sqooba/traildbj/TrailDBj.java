@@ -3,6 +3,8 @@ package io.sqooba.traildbj;
 import java.io.Closeable;
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -86,9 +88,10 @@ public enum TrailDBj {
     // Working with items, fields and values.
     // ========================================================================
     // TODO function to check if cast are possible from uint64 to uint32 are not implemented.
+    // FIXME find a more appropriate representation for an item. Overflow are critical.
 
     /** uint64_t tdb_lexicon_size(const tdb *db, tdb_field field) */
-    private native long tdbLexiconSize(ByteBuffer db, long field); // tdb_field is a C int, ID of the field.
+    private native long tdbLexiconSize(ByteBuffer db, long field); // tdb_field is a C uint32_t, ID of the field.
 
     /** tdb_error tdb_get_field(tdb *db, const char *field_name, tdb_field *field) */
     private native int tdbGetField(ByteBuffer db, String fieldName, ByteBuffer field);
@@ -97,16 +100,14 @@ public enum TrailDBj {
     private native String tdbGetFieldName(ByteBuffer db, long field);
 
     /** tdb_item tdb_get_item(tdb *db, tdb_field field, const char *value, uint64_t value_length) */
-    // FIXME WARNING be carefull with that return type.
     private native long tdbGetItem(ByteBuffer db, long field, String value);
 
     /** const char *tdb_get_value(tdb *db, tdb_field field, tdb_val val, uint64_t *value_length) */
-    // TODO WARNING be extremely careful here with val(uint64_t) and omitted last param value_length.
-    private native String tdbGetValue(ByteBuffer db, long field, long val);
+    // TODO WARNING be extremely careful here with val(uint64_t)
+    private native String tdbGetValue(ByteBuffer db, long field, long val, ByteBuffer value_length);
 
     /** const char *tdb_get_item_value(tdb *db, tdb_item item, uint64_t *value_length) */
-    // TODO WARNING verfiy cast from char* to jstring, without using last omitted param.
-    private native String tdbGetItemValue(ByteBuffer db, long item);
+    private native String tdbGetItemValue(ByteBuffer db, long item, ByteBuffer value_length);
 
     // ========================================================================
     // Helper classes.
@@ -142,8 +143,8 @@ public enum TrailDBj {
             }
 
             // Initialisation.
-            this.cons = trailDBj.tdbConsInit();
-            if (trailDBj.tdbConsOpen(this.cons, path, ofields, ofields.length) != 0) {
+            this.cons = this.trailDBj.tdbConsInit();
+            if (this.trailDBj.tdbConsOpen(this.cons, path, ofields, ofields.length) != 0) {
                 throw new TrailDBError("Can not open constructor.");
             }
 
@@ -165,7 +166,7 @@ public enum TrailDBj {
                 value_lenghts[i] = values[i].length();
             }
 
-            if (trailDBj.tdbConsAdd(cons, uuid.getBytes(), timestamp, values, value_lenghts) != 0) {
+            if (this.trailDBj.tdbConsAdd(this.cons, uuid.getBytes(), timestamp, values, value_lenghts) != 0) {
                 throw new TrailDBError("Failed to add.");
             }
         }
@@ -179,7 +180,7 @@ public enum TrailDBj {
          * file. Events can not be added after this has been called.
          */
         public TrailDB finalise() {
-            if (trailDBj.tdbConsFinalize(this.cons) != 0) {
+            if (this.trailDBj.tdbConsFinalize(this.cons) != 0) {
                 throw new TrailDBError("Failed to finalize.");
             }
             LOGGER.log(Level.INFO, "Finalisation done.");
@@ -190,91 +191,221 @@ public enum TrailDBj {
         public void close() throws IOException {
             if (this.cons != null) {
                 LOGGER.log(Level.INFO, "Closing TrailDB.");
-                trailDBj.tdbConsClose(this.cons);
+                this.trailDBj.tdbConsClose(this.cons);
             }
         }
     }
 
+    /**
+     * Class used to query an existing TrailDB.
+     * 
+     * @author Vilya
+     *
+     */
     public static class TrailDB implements Closeable {
 
         private TrailDBj trailDBj = TrailDBj.INSTANCE;
 
+        /** ByteBuffer holding a pointer to the traildb. */
         private ByteBuffer db;
 
         private long numTrails;
         private long numEvents;
         private long numFields;
-        private String[] fields;
+        private List<String> fields;
 
+        /**
+         * Construct a TrailDB on the given .tdb file.
+         * 
+         * @param path The path to the TrailDB file.
+         */
         public TrailDB(String path) {
             if (path == null) {
                 throw new NullPointerException("Path must not be null.");
             }
 
-            ByteBuffer db = trailDBj.tdbInit();
+            ByteBuffer db = this.trailDBj.tdbInit();
             this.db = db;
 
-            if (trailDBj.tdbOpen(this.db, path) != 0) {
+            if (this.trailDBj.tdbOpen(this.db, path) != 0) {
                 throw new TrailDBError("Failed to opend db.");
             }
 
-            this.numTrails = trailDBj.tdbNumTrails(db);
-            this.numEvents = trailDBj.tdbNumEvents(db);
-            this.numFields = trailDBj.tdbNumFields(db);
-            this.fields = new String[(int)numFields];
-            
-            
-            for(int i = 0; i < fields.length; i++) {
-                fields[i] = trailDBj.tdbGetFieldName(this.db, i);
+            this.numTrails = this.trailDBj.tdbNumTrails(db);
+            this.numEvents = this.trailDBj.tdbNumEvents(db);
+            this.numFields = this.trailDBj.tdbNumFields(db);
+            this.fields = new ArrayList<>((int)this.numFields);
+
+            for(int i = 0; i < this.numFields; i++) {
+                this.fields.add(this.trailDBj.tdbGetFieldName(this.db, i));
             }
         }
 
+        /**
+         * Return the number of trails in the TrailDB.
+         * 
+         * @return The number of trails.
+         */
         public long length() {
             return this.numTrails;
         }
 
+        /**
+         * Get the oldest timestamp.
+         * 
+         * @return The oldest timestamp.
+         */
         public long getMinTimestamp() {
-            long min = trailDBj.tdbMinTimestamp(this.db);
+            long min = this.trailDBj.tdbMinTimestamp(this.db);
             if (min < 0) {
                 throw new TrailDBError("long overflow.");
             }
             return min;
         }
 
+        /**
+         * Get the newest timestamp.
+         * 
+         * @return The newest timestmap.
+         */
         public long getMaxTimestamp() {
-            long max = trailDBj.tdbMaxTimestamp(this.db);
+            long max = this.trailDBj.tdbMaxTimestamp(this.db);
             if (max < 0) {
                 throw new TrailDBError("long overflow, received a negtive value for max timestamp.");
             }
             return max;
         }
 
+        /**
+         * Get the version.
+         * 
+         * @return The version.
+         */
         public long getVersion() {
-            long version = trailDBj.tdbVersion(this.db);
+            long version = this.trailDBj.tdbVersion(this.db);
             if (version < 0) {
                 LOGGER.log(Level.WARNING, "version overflow.");
             }
             return version;
         }
 
+        /**
+         * Get the field ID given a field name.
+         * 
+         * @param fieldName The field name.
+         * @return The corresponding field ID.
+         * @throws TrailDBError if the specified field is not found.
+         */
         public long getField(String fieldName) {
             ByteBuffer b = ByteBuffer.allocate(4);
-            if (trailDBj.tdbGetField(this.db, fieldName, b) != 0) {
-                throw new TrailDBError("Failed to retreive field.");
+            if (this.trailDBj.tdbGetField(this.db, fieldName, b) != 0) {
+                throw new TrailDBError("Failed to retreive field. Field not found");
             }
             return b.getInt(0);
         }
-        
-        public long getLexiconSize(long fieldId) {
-            return trailDBj.tdbLexiconSize(this.db, fieldId);
+
+        /**
+         * Get the number of distinct values in the given field, +1 counting the null value.
+         * 
+         * @param field The field ID.
+         * @return The number of distinct values.
+         * @throws TrailDBError if the field index is invalid ( <=0 | > number of fields).
+         */
+        public long getLexiconSize(long field) {
+            long value = this.trailDBj.tdbLexiconSize(this.db, field);
+            if (value == 0) {
+                throw new TrailDBError("Invalid field index.");
+            }
+            return value;
+        }
+
+        /**
+         * Get the field name given a field ID.
+         * 
+         * @param fieldId The field ID.
+         * @return The corresponding field name.
+         * @throws TrailDBError if the field id is invalid ( <=0 | > number of fields).
+         */
+        public String getFieldName(long fieldId) {
+            String res = this.trailDBj.tdbGetFieldName(this.db, fieldId);
+            if (res == null) {
+                throw new TrailDBError("Invalid field id.");
+            }
+            return res;
+        }
+
+        /**
+         * <p>Get the item corresponding to a value. Note that this is a relatively slow operation that may need to scan
+         * through all values in the field.
+         * 
+         * <p> WARNING: the returned value maybe suffer overflow!
+         * 
+         * @param fieldID The field ID.
+         * @param value The value in the field.
+         * @return An item encoded in a long, which was casted from uint64_t.
+         * @throws TrailDBError if no item is found.
+         */
+        public long getItem(long fieldID, String value) {
+            long item = this.trailDBj.tdbGetItem(this.db, fieldID, value);
+            if (item == 0) {
+                throw new TrailDBError("No item found.");
+            }
+            if (item < 0) {
+                LOGGER.warning("Returned item overflow, deal with it carefully!");
+            }
+            return item;
+        }
+
+        /**
+         * Get the value corresponding to a field ID and value ID pair.
+         * 
+         * @param field The field ID.
+         * @param val The value ID.
+         * @return The corresponding field value.
+         * @throws TrailDBError if the returned value is too big for Java.
+         */
+        public String getValue(long field, long val) {
+            ByteBuffer bb = ByteBuffer.allocate(8);
+            String value = this.trailDBj.tdbGetValue(this.db, field, val, bb);
+            if (value == null) {
+                throw new TrailDBError("Error reading value.");
+            }
+            long value_length = bb.getLong(0);
+            if (value_length > Integer.MAX_VALUE) {
+                throw new TrailDBError(
+                        "Overflow, received a String value that is larger than the java String capacity.");
+            }
+            return value.substring(0, (int)value_length);
+        }
+
+        /**
+         * Get the value corresponding to an item. This is a shorthand version of getValue().
+         * 
+         * @param item The item.
+         * @return The corresponding field value.
+         * @throws TrailDBError if the value was not found or the returned value is too big for Java.
+         */
+        public String getItemValue(long item) {
+            ByteBuffer bb = ByteBuffer.allocate(8);
+            String value = this.trailDBj.tdbGetItemValue(this.db, item, bb);
+            if (value == null) {
+                throw new TrailDBError("Value not found.");
+            }
+            long value_length = bb.getLong(0);
+            if (value_length > Integer.MAX_VALUE) {
+                throw new TrailDBError(
+                        "Overflow, received a String value that is larger than the java String capacity.");
+            }
+            return value.substring(0, (int)value_length);
         }
 
         @Override
         public void close() throws IOException {
             if (this.db != null) {
-                trailDBj.tdbClose(this.db);
+                this.trailDBj.tdbClose(this.db);
             }
         }
+
     }
 
     /**
