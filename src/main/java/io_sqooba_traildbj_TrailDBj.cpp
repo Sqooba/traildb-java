@@ -1,6 +1,8 @@
 #include "io_sqooba_traildbj_TrailDBj.h"
 #include <jni.h>
 #include <stdio.h>
+#include <iostream>
+using namespace std;
 
 extern "C" {
 	#include <traildb.h>
@@ -249,10 +251,21 @@ JNIEXPORT jint JNICALL Java_io_sqooba_traildbj_TrailDBj_tdbGetField
 	const tdb *db = (tdb*) env->GetDirectBufferAddress(jdb);
 	const char *field_name = env->GetStringUTFChars(jfieldName, 0);
 	//tdb_field *field= (tdb_field*) env->GetDirectBufferAddress(jfield);
-	tdb_field *field = NULL;
+	tdb_field *field = (tdb_field*)malloc(sizeof(tdb_field));
+
+	jclass jc = env->GetObjectClass(jfield);
+	jmethodID mid = env->GetMethodID(jc, "putInt","(I)Ljava/nio/ByteBuffer;");
+	
 
 	// Call lib.
-	return tdb_get_field(db, field_name, field);
+	int err = tdb_get_field(db, field_name, field);
+
+	// Store to the buffer the what has been put in the pointer.
+	env->CallObjectMethod(jfield, mid, *field);
+
+	free(field);
+
+	return err;
 }
 
 JNIEXPORT jstring JNICALL Java_io_sqooba_traildbj_TrailDBj_tdbGetFieldName
@@ -269,4 +282,69 @@ JNIEXPORT jstring JNICALL Java_io_sqooba_traildbj_TrailDBj_tdbGetFieldName
 	// Return res.
 	return env->NewStringUTF(field_name);
 }
+
+JNIEXPORT jlong JNICALL Java_io_sqooba_traildbj_TrailDBj_tdbGetItem
+  (JNIEnv *env, jobject thisObject, jobject jdb, jlong jfield, jstring jvalue) 
+{
+
+	// Convert arguments.
+	const tdb *db = (tdb*) env->GetDirectBufferAddress(jdb);
+	int field = (int)jfield;
+	const char *value = env->GetStringUTFChars(jvalue, 0);
+
+	// Call lib.
+	return (jlong)tdb_get_item(db, field, value, sizeof(*value));
+
+}
+
+JNIEXPORT jstring JNICALL Java_io_sqooba_traildbj_TrailDBj_tdbGetValue
+  (JNIEnv *env, jobject thisObject, jobject jdb, jlong jfield, jlong jval, jobject jvalueLength)
+{
+
+	// Convert arguments.
+	const tdb *db = (tdb*) env->GetDirectBufferAddress(jdb);
+	uint32_t field = (uint32_t)jfield;
+	uint64_t val = (uint64_t)jval;
+	uint64_t *value_length = (uint64_t*)malloc(sizeof(uint64_t));
+
+	jclass jc = env->GetObjectClass(jvalueLength);
+	jmethodID mid = env->GetMethodID(jc, "putLong","(J)Ljava/nio/ByteBuffer;");
+	
+
+	// Call lib.
+	const char* v = tdb_get_value(db, field, val, value_length);
+
+	// Store to the buffer the what has been put in the pointer.
+	env->CallObjectMethod(jvalueLength, mid, *value_length);
+
+	free(value_length);
+
+	return env->NewStringUTF(v);
+}
+
+JNIEXPORT jstring JNICALL Java_io_sqooba_traildbj_TrailDBj_tdbGetItemValue
+  (JNIEnv *env, jobject thisObject, jobject jdb, jlong jitem, jobject jvalueLength)
+{
+
+	// Convert arguments.
+	const tdb *db = (tdb*) env->GetDirectBufferAddress(jdb);
+	uint64_t item = (uint64_t)jitem;
+	uint64_t *value_length = (uint64_t*)malloc(sizeof(uint64_t));
+
+	jclass jc = env->GetObjectClass(jvalueLength);
+	jmethodID mid = env->GetMethodID(jc, "putLong","(J)Ljava/nio/ByteBuffer;");
+	
+
+	// Call lib.
+	const char* v = tdb_get_item_value(db, item, value_length);
+
+	// Store to the buffer the what has been put in the pointer.
+	env->CallObjectMethod(jvalueLength, mid, *value_length);
+
+	free(value_length);
+
+	return env->NewStringUTF(v);
+
+}
+
 
