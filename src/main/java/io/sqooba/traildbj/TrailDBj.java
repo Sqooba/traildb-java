@@ -89,6 +89,7 @@ public enum TrailDBj {
     // ========================================================================
     // TODO function to check if cast are possible from uint64 to uint32 are not implemented.
     // FIXME find a more appropriate representation for an item. Overflow are critical.
+    // TODO look if releasing JNI objects is needed.
 
     /** uint64_t tdb_lexicon_size(const tdb *db, tdb_field field) */
     private native long tdbLexiconSize(ByteBuffer db, long field); // tdb_field is a C uint32_t, ID of the field.
@@ -158,16 +159,23 @@ public enum TrailDBj {
          * @param uuid UUID of the event to be added.
          * @param timestamp Event timestamp.
          * @param values Value of each field.
+         * @throws TrailDBError if number of values does not match number of fields or failed to add to the DB.
          */
         public void add(String uuid, long timestamp, String[] values) {
             int n = values.length;
+            if (n != this.ofields.length) {
+                // FIXME this is a hack to avoid random errors in the C lib.
+                // Need to investigate add function in JNI.
+                throw new TrailDBError("Number of values does not match number of fields.");
+            }
             long[] value_lenghts = new long[n];
             for(int i = 0; i < n; i++) {
                 value_lenghts[i] = values[i].length();
             }
 
-            if (this.trailDBj.tdbConsAdd(this.cons, uuid.getBytes(), timestamp, values, value_lenghts) != 0) {
-                throw new TrailDBError("Failed to add.");
+            int err = this.trailDBj.tdbConsAdd(this.cons, uuid.getBytes(), timestamp, values, value_lenghts);
+            if (err != 0) {
+                throw new TrailDBError("Failed to add: " + err);
             }
         }
 
@@ -258,7 +266,7 @@ public enum TrailDBj {
         public long getMinTimestamp() {
             long min = this.trailDBj.tdbMinTimestamp(this.db);
             if (min < 0) {
-                throw new TrailDBError("long overflow.");
+                throw new TrailDBError("long overflow:" + min);
             }
             return min;
         }
@@ -305,7 +313,7 @@ public enum TrailDBj {
         }
 
         /**
-         * Get the number of distinct values in the given field, +1 counting the null value.
+         * Get the number of distinct values in the given field, +1 counting the empty string if not present.
          * 
          * @param field The field ID.
          * @return The number of distinct values.
@@ -357,12 +365,14 @@ public enum TrailDBj {
         }
 
         /**
-         * Get the value corresponding to a field ID and value ID pair.
+         * <p> Get the value corresponding to a field ID and value ID pair.
+         * 
+         * <p> Calling with the empty string for {@code val} will result in an error.
          * 
          * @param field The field ID.
          * @param val The value ID.
          * @return The corresponding field value.
-         * @throws TrailDBError if the returned value is too big for Java.
+         * @throws TrailDBError if the returned value is too big for Java or not found in the db.
          */
         public String getValue(long field, long val) {
             ByteBuffer bb = ByteBuffer.allocate(8);
@@ -413,7 +423,7 @@ public enum TrailDBj {
      * 
      * @author Vilya
      */
-    private static class TrailDBError extends RuntimeException {
+    public static class TrailDBError extends RuntimeException {
 
         private static final long serialVersionUID = -6086129664942253809L;
 

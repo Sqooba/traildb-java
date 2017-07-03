@@ -2,7 +2,8 @@
 #include <jni.h>
 #include <stdio.h>
 #include <iostream>
-using namespace std;
+#include <sys/resource.h>
+#include <string.h>
 
 extern "C" {
 	#include <traildb.h>
@@ -11,6 +12,7 @@ extern "C" {
 JNIEXPORT jobject JNICALL Java_io_sqooba_traildbj_TrailDBj_tdbConsInit
   (JNIEnv *env, jobject thisObject) 
 {
+
 	void *cons = tdb_cons_init();
 	jobject bb = env->NewDirectByteBuffer((void*) cons, sizeof(&cons));
     return bb;
@@ -53,7 +55,10 @@ JNIEXPORT jint JNICALL Java_io_sqooba_traildbj_TrailDBj_tdbConsAdd
 	(JNIEnv *env, jobject thisObject, jobject consj, jbyteArray uuidj, jlong timestampj, jobjectArray valuesj, jlongArray valuesLengths) 
 {
 
-
+// core dumps may be disallowed by parent of this process; change that
+	//struct rlimit core_limits;
+	//core_limits.rlim_cur = core_limits.rlim_max = RLIM_INFINITY;
+	//setrlimit(RLIMIT_CORE, &core_limits);
 	// Convert arguments.
 	tdb_cons *cons = (tdb_cons*) env->GetDirectBufferAddress(consj);
 
@@ -67,16 +72,14 @@ JNIEXPORT jint JNICALL Java_io_sqooba_traildbj_TrailDBj_tdbConsAdd
 		jstring objString = (jstring)env->GetObjectArrayElement(valuesj, i);
 		const char *field = env->GetStringUTFChars(objString, 0);
 		values[i] = field;
+		//std::cout << "i";
     }
 
-	jlong *ptr = env->GetLongArrayElements(valuesLengths, NULL);
+	jlong *ptr = env->GetLongArrayElements(valuesLengths, 0);
 	const uint64_t *values_lengths = (const uint64_t*)ptr;
 	
 	// Call lib.
 	return tdb_cons_add(cons, uuid, (long) timestampj, values, values_lengths);
-
-	// Releasing resources.
-	env->ReleaseByteArrayElements(uuidj, dataPtr, JNI_ABORT);
 }
 
 JNIEXPORT jint JNICALL Java_io_sqooba_traildbj_TrailDBj_tdbConsAppend
@@ -293,7 +296,7 @@ JNIEXPORT jlong JNICALL Java_io_sqooba_traildbj_TrailDBj_tdbGetItem
 	const char *value = env->GetStringUTFChars(jvalue, 0);
 
 	// Call lib.
-	return (jlong)tdb_get_item(db, field, value, sizeof(*value));
+	return (jlong)tdb_get_item(db, field, value, (uint64_t)strlen(value));
 
 }
 
