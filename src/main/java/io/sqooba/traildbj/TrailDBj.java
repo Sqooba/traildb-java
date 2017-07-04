@@ -9,6 +9,9 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.apache.commons.codec.DecoderException;
+import org.apache.commons.codec.binary.Hex;
+
 /**
  * This class is used to perform native call to the TrailDB C library. Base on the available Python bindings.
  * 
@@ -18,6 +21,20 @@ import java.util.logging.Logger;
 public enum TrailDBj {
 
     INSTANCE;
+
+    public String UUIDHex(String uuid) {
+        return Hex.encodeHexString(uuid.getBytes());
+    }
+
+    public String UUIDRaw(String hexUUID) {
+        String res = null;
+        try {
+            res = new String(Hex.decodeHex(hexUUID.toCharArray()));
+        } catch(DecoderException e) {
+            LOGGER.log(Level.SEVERE, "Failed to convert hexstring to string.", e);
+        }
+        return res;
+    }
 
     private static final Logger LOGGER = Logger.getLogger(TrailDBj.class.getName());
 
@@ -110,6 +127,22 @@ public enum TrailDBj {
 
     /** const char *tdb_get_item_value(tdb *db, tdb_item item, uint64_t *value_length) */
     private native String tdbGetItemValue(ByteBuffer db, long item, ByteBuffer value_length);
+
+    // ========================================================================
+    // Working with UUIDs.
+    // ========================================================================
+
+    /** const uint8_t *tdb_get_uuid(const tdb *db, uint64_t trail_id) */
+    private native ByteBuffer tdbGetUUID(ByteBuffer db, long traildId);
+
+    /** tdb_error tdb_get_trail_id(const tdb *db, const uint8_t uuid[16], uint64_t *trail_id) */
+    private native int tdbGetTrailId(ByteBuffer db, byte[] uuid, ByteBuffer trailId);
+
+    /** tdb_error tdb_uuid_raw(const uint8_t hexuuid[32], uint8_t uuid[16]) */
+    // private native int tdbUUIDRaw(byte[] hexuuid, byte[] uuid);
+
+    /** void tdb_uuid_hex(const uint8_t uuid[16], uint8_t hexuuid[32]) */
+    // private native void tdbUUIDHex(byte[] uuid, byte[] hexuuid);
 
     // ========================================================================
     // Helper classes.
@@ -418,6 +451,42 @@ public enum TrailDBj {
                         "Overflow, received a String value that is larger than the java String capacity.");
             }
             return value.substring(0, (int)value_length);
+        }
+
+        /**
+         * Get the UUID given a trail ID.
+         * 
+         * @param traildID
+         * @return A raw 16-byte UUID.
+         * @throws TrailDBError if the {@code traildID} is invalid i.e. less than 0 or greater than the number of
+         *         trails.
+         */
+        public String getUUID(long traildID) {
+            ByteBuffer uuid = this.trailDBj.tdbGetUUID(this.db, traildID);
+            if (uuid == null) {
+                throw new TrailDBError("Invalid trail ID.");
+            }
+            return new String(uuid.array());
+        }
+
+        /**
+         * Get the trail ID given a UUID.
+         *
+         * @param uuid A raw 16-byte UUID.
+         * @return The traild ID corresponding to {@code uuid}.
+         * @throws TrailDBError if the UUID was not found.
+         */
+        public long getTrailID(String uuid) {
+            ByteBuffer trailID = ByteBuffer.allocate(8);
+            int errCode = this.trailDBj.tdbGetTrailId(this.db, uuid.getBytes(), trailID);
+            if (errCode != 0) {
+                throw new TrailDBError("UUID not found. " + errCode);
+            }
+            long res = trailID.getLong(0);
+            if (res < 0) {
+                LOGGER.warning("Received trail ID overflow: " + res);
+            }
+            return res;
         }
 
         @Override
