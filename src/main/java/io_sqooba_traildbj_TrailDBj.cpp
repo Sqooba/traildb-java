@@ -55,10 +55,6 @@ JNIEXPORT jint JNICALL Java_io_sqooba_traildbj_TrailDBj_tdbConsAdd
 	(JNIEnv *env, jobject thisObject, jobject consj, jbyteArray uuidj, jlong timestampj, jobjectArray valuesj, jlongArray valuesLengths) 
 {
 
-// core dumps may be disallowed by parent of this process; change that
-	//struct rlimit core_limits;
-	//core_limits.rlim_cur = core_limits.rlim_max = RLIM_INFINITY;
-	//setrlimit(RLIMIT_CORE, &core_limits);
 	// Convert arguments.
 	tdb_cons *cons = (tdb_cons*) env->GetDirectBufferAddress(consj);
 
@@ -72,11 +68,10 @@ JNIEXPORT jint JNICALL Java_io_sqooba_traildbj_TrailDBj_tdbConsAdd
 		jstring objString = (jstring)env->GetObjectArrayElement(valuesj, i);
 		const char *field = env->GetStringUTFChars(objString, 0);
 		values[i] = field;
-		//std::cout << "i";
     }
 
-	jlong *ptr = env->GetLongArrayElements(valuesLengths, 0);
-	const uint64_t *values_lengths = (const uint64_t*)ptr;
+	jlong *val_len_ptr = env->GetLongArrayElements(valuesLengths, 0);
+	const uint64_t *values_lengths = (const uint64_t*)val_len_ptr;
 	
 	// Call lib.
 	return tdb_cons_add(cons, uuid, (long) timestampj, values, values_lengths);

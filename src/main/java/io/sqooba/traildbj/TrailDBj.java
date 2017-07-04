@@ -173,9 +173,9 @@ public enum TrailDBj {
                 value_lenghts[i] = values[i].length();
             }
 
-            int err = this.trailDBj.tdbConsAdd(this.cons, uuid.getBytes(), timestamp, values, value_lenghts);
-            if (err != 0) {
-                throw new TrailDBError("Failed to add: " + err);
+            int errCode = this.trailDBj.tdbConsAdd(this.cons, uuid.getBytes(), timestamp, values, value_lenghts);
+            if (errCode != 0) {
+                throw new TrailDBError("Failed to add: " + errCode);
             }
         }
 

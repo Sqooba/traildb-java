@@ -22,6 +22,8 @@ public class TrailDBTest {
 
     @Before
     public void setUp() throws IOException {
+
+        // Initialise a TrailDB with some events.
         TrailDBConstructor cons = new TrailDBConstructor(this.path, new String[] { "field1", "field2" });
         String cookie = "12345678123456781234567812345678";
         String cookie2 = "345830947509385384759384795384593874";
@@ -93,13 +95,13 @@ public class TrailDBTest {
 
     @Test
     public void appendCorrectly() throws IOException {
-        TrailDBConstructor cons2 = new TrailDBConstructor(this.path + "2", new String[] { "field1", "field2" });
-        cons2.add("12345", 119, new String[] { "asdf", "qwer" });
-        cons2.append(this.db);
-        TrailDB db2 = cons2.finalise();
-        cons2.close();
+        TrailDBConstructor otherCons = new TrailDBConstructor(this.path + "other", new String[] { "field1", "field2" });
+        otherCons.add("12345", 119, new String[] { "asdf", "qwer" });
+        otherCons.append(this.db);
+        TrailDB db2 = otherCons.finalise();
+        otherCons.close();
 
-        File f = new File(this.path + "2" + ".tdb");
+        File f = new File(this.path + "other" + ".tdb");
         assertTrue(f.exists() && !f.isDirectory());
 
         assertEquals("kaguya", db2.getValue(1, 4));
@@ -109,24 +111,26 @@ public class TrailDBTest {
 
         // Cleanup.
         f.delete();
-        FileUtils.deleteDirectory(new File(this.path + "2"));
+        FileUtils.deleteDirectory(new File(this.path + "other"));
     }
 
     @Test(expected = TrailDBError.class)
     public void appendShouldFailInCaseDifferentFields() throws IOException {
-        TrailDBConstructor cons3 = new TrailDBConstructor(this.path + "3", new String[] { "f1", "f2" });
+        TrailDBConstructor failCons = new TrailDBConstructor(this.path + "fail", new String[] { "f1", "f2" });
         try {
-            cons3.append(this.db);
+            failCons.append(this.db);
         } catch(TrailDBError e) {
             throw e;
         } finally {
-            cons3.close();
-            FileUtils.deleteDirectory(new File(this.path + "3"));
+            failCons.close();
+            FileUtils.deleteDirectory(new File(this.path + "fail"));
         }
     }
 
     @After
     public void tearDown() throws IOException {
+
+        // Clear the TrailDB files/directories created for the tests.
         File f = new File(this.path + ".tdb");
         if (f.exists() && !f.isDirectory()) {
             f.delete();
