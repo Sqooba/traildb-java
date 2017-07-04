@@ -179,8 +179,18 @@ public enum TrailDBj {
             }
         }
 
-        public void append() {
-            throw new UnsupportedOperationException("Not done yet because need existing db.");
+        /**
+         * Merge an existing TrailDB to this constructor. The fields must be equal between the existing and the new
+         * TrailDB.
+         * 
+         * @param db The db to merge to this one.
+         * @throws TrailDBError if the merge fails.
+         */
+        public void append(TrailDB db) {
+            int errCode = this.trailDBj.tdbConsAppend(this.cons, db.db);
+            if (errCode != 0) {
+                throw new TrailDBError("Failed to merge dbs: " + errCode);
+            }
         }
 
         /**
