@@ -1,6 +1,7 @@
 package io.sqooba.traildbj;
 
 import java.io.Closeable;
+import java.io.File;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
@@ -21,7 +22,7 @@ public enum TrailDBj {
     private static final Logger LOGGER = Logger.getLogger(TrailDBj.class.getName());
 
     static {
-        System.load("/home/osboxes/TrailDBj/src/main/java/libtest.so");
+        System.load(new File("TrailDBWrapper/libtest.so").getAbsolutePath());
     }
 
     // ========================================================================
