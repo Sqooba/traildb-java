@@ -59,6 +59,9 @@ public enum TrailDBj {
 
     private static final Logger LOGGER = Logger.getLogger(TrailDBj.class.getName());
 
+    /** 8 bytes are need to represents 64 bits. */
+    private static final int UINT64 = 8;
+
     static {
         System.load(new File("TrailDBWrapper/libtest.so").getAbsolutePath());
     }
@@ -503,7 +506,7 @@ public enum TrailDBj {
          * @throws IllegalArgumentException If {@code uuid} is an invalid 32-byte hex string.
          */
         public long getTrailID(String uuid) {
-            ByteBuffer trailID = ByteBuffer.allocate(8);
+            ByteBuffer trailID = ByteBuffer.allocate(UINT64);
             byte[] rawUUID = this.trailDBj.UUIDRaw(uuid);
             if (rawUUID == null) {
                 throw new IllegalArgumentException("Invalid UUID.");

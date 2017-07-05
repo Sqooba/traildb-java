@@ -355,8 +355,8 @@ JNIEXPORT jobject JNICALL Java_io_sqooba_traildbj_TrailDBj_tdbGetUUID
 
 	// Call lib.
 	const uint8_t *uuid = tdb_get_uuid(db, trail_id);
-	jobject bb = env->NewDirectByteBuffer((void *)uuid, 16); // Raw uuid is 16-byte.
-    return bb;
+	jobject UUIDByteBuffer = env->NewDirectByteBuffer((void *)uuid, 16); // Raw uuid is 16-byte.
+	return UUIDByteBuffer;
 
 }
 
@@ -376,13 +376,13 @@ JNIEXPORT jint JNICALL Java_io_sqooba_traildbj_TrailDBj_tdbGetTrailId
 	jmethodID mid = env->GetMethodID(jc, "putLong","(J)Ljava/nio/ByteBuffer;");
 
 	// Call lib.
-	int err = tdb_get_trail_id(db, uuid, trail_id);
+	int errCode = tdb_get_trail_id(db, uuid, trail_id);
 
 	env->CallObjectMethod(jtraildID, mid, *trail_id);
 
 	free(trail_id);
 
-	return err;
+	return errCode;
 }
 
 
