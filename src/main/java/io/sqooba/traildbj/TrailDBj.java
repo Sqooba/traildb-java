@@ -12,15 +12,6 @@ import java.util.logging.Logger;
 import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.binary.Hex;
 
-// TODO function to check if cast are possible from uint64 to uint32 are not implemented.
-// TODO find a more appropriate representation for an item. Overflow are critical. In fact if we only pass items we
-// received without trying to work on them, there should be no problems since a Java long and C uint64_t represents
-// the same bits, it's just that in Java the long will be treated differently. And in case we want to work with an
-// Item, there are some unsigned method in the Long class.
-// TODO look if releasing JNI objects is needed.
-// TODO instead of passing a ByteBuffer ( like in getTrailID) maybe we can just work with long and do the work in
-// JNI since anyway at the end we call getLong on the ByteBuffer, which returns a long. But this would require to change the method signature.
-// TODO Potential issue with char encoding when doing String.getBytes().
 /**
  * This class is used to perform native call to the TrailDB C library. Base on the available Python bindings.
  * 
