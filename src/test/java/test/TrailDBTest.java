@@ -19,18 +19,18 @@ public class TrailDBTest {
 
     private TrailDB db;
     private String path = "testdb";
+    private String cookie = "12345678123456781234567812345678";
+    private String otherCookie = "12121212121212121212121212121212";
 
     @Before
     public void setUp() throws IOException {
 
         // Initialise a TrailDB with some events.
         TrailDBConstructor cons = new TrailDBConstructor(this.path, new String[] { "field1", "field2" });
-        String cookie = "12345678123456781234567812345678";
-        String cookie2 = "345830947509385384759384795384593874";
-        cons.add(cookie, 120, new String[] { "a", "hinata" });
-        cons.add(cookie, 121, new String[] { "vilya", "" });
-        cons.add(cookie2, 122, new String[] { "kaguya", "hinata" });
-        cons.add(cookie2, 123, new String[] { "alongstring", "averyveryverylongstring" });
+        cons.add(this.cookie, 120, new String[] { "a", "hinata" });
+        cons.add(this.cookie, 121, new String[] { "vilya", "" });
+        cons.add(this.otherCookie, 122, new String[] { "kaguya", "hinata" });
+        cons.add(this.otherCookie, 123, new String[] { "alongstring", "averyveryverylongstring" });
         this.db = cons.finalise();
         cons.close();
     }
@@ -96,7 +96,7 @@ public class TrailDBTest {
     @Test
     public void appendCorrectly() throws IOException {
         TrailDBConstructor otherCons = new TrailDBConstructor(this.path + "other", new String[] { "field1", "field2" });
-        otherCons.add("12345", 119, new String[] { "asdf", "qwer" });
+        otherCons.add("11111111111111111111111111111111", 119, new String[] { "asdf", "qwer" });
         otherCons.append(this.db);
         TrailDB db2 = otherCons.finalise();
         otherCons.close();
@@ -125,6 +125,27 @@ public class TrailDBTest {
             failCons.close();
             FileUtils.deleteDirectory(new File(this.path + "fail"));
         }
+    }
+
+    @Test
+    public void getUUIDAndGetTrailIDReturnCorrectValues() {
+        assertEquals(this.cookie, this.db.getUUID(this.db.getTrailID(this.cookie)));
+        assertEquals(this.otherCookie, this.db.getUUID(this.db.getTrailID(this.otherCookie)));
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void getUUIDShouldFailWithWrongUUID() {
+        this.db.getUUID(-1);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void getTrailIDShouldFailWithInvalidString() {
+        this.db.getTrailID("invalidhex");
+    }
+
+    @Test(expected = TrailDBError.class)
+    public void getTrailIDShouldFailWithWrongUUID() {
+        this.db.getTrailID("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
     }
 
     @After
