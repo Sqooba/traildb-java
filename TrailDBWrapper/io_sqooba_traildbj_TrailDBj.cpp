@@ -14,7 +14,7 @@ JNIEXPORT jobject JNICALL Java_io_sqooba_traildbj_TrailDBj_tdbConsInit
 {
 
 	void *cons = tdb_cons_init();
-	jobject bb = env->NewDirectByteBuffer((void*) cons, sizeof(&cons));
+	jobject bb = env->NewDirectByteBuffer((void*) cons, sizeof(void *));
     return bb;
 }
 
@@ -343,6 +343,46 @@ JNIEXPORT jstring JNICALL Java_io_sqooba_traildbj_TrailDBj_tdbGetItemValue
 
 	return env->NewStringUTF(v);
 
+}
+
+JNIEXPORT jobject JNICALL Java_io_sqooba_traildbj_TrailDBj_tdbGetUUID
+  (JNIEnv *env, jobject thisObject, jobject jdb, jlong jtrailID) 
+{
+
+	// Convert arguments.
+	const tdb *db = (tdb*) env->GetDirectBufferAddress(jdb);
+	uint64_t trail_id = (uint64_t) jtrailID;
+
+	// Call lib.
+	const uint8_t *uuid = tdb_get_uuid(db, trail_id);
+	jobject bb = env->NewDirectByteBuffer((void *)uuid, 16); // Raw uuid is 16-byte.
+    return bb;
+
+}
+
+JNIEXPORT jint JNICALL Java_io_sqooba_traildbj_TrailDBj_tdbGetTrailId
+  (JNIEnv *env, jobject thisObject, jobject jdb, jbyteArray juuid, jobject jtraildID) 
+{
+
+	// Convert arguments.
+	const tdb *db = (tdb*) env->GetDirectBufferAddress(jdb);
+
+	jbyte* dataPtr = env->GetByteArrayElements(juuid, NULL);
+	const uint8_t *uuid = (const uint8_t*)dataPtr;
+
+	uint64_t *trail_id = (uint64_t*)malloc(sizeof(uint64_t));
+
+	jclass jc = env->GetObjectClass(jtraildID);
+	jmethodID mid = env->GetMethodID(jc, "putLong","(J)Ljava/nio/ByteBuffer;");
+
+	// Call lib.
+	int err = tdb_get_trail_id(db, uuid, trail_id);
+
+	env->CallObjectMethod(jtraildID, mid, *trail_id);
+
+	free(trail_id);
+
+	return err;
 }
 
 
