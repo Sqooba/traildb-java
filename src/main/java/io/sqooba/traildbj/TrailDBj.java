@@ -1,12 +1,16 @@
 package io.sqooba.traildbj;
 
 import java.io.Closeable;
+import java.io.File;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import org.apache.commons.codec.DecoderException;
+import org.apache.commons.codec.binary.Hex;
 
 /**
  * This class is used to perform native call to the TrailDB C library. Base on the available Python bindings.
@@ -18,10 +22,39 @@ public enum TrailDBj {
 
     INSTANCE;
 
+    /**
+     * Convert a raw 16-byte UUID into its hexadecimal string representation.
+     * 
+     * @param rawUUID 16-byte UUID.
+     * @return A 32-byte hexadecimal string representation.
+     */
+    public String UUIDHex(byte[] rawUUID) {
+        return Hex.encodeHexString(rawUUID);
+    }
+
+    /**
+     * Convert a 32-byte hexadecimal string representation of an UUID into a raw 16-byte UUID.
+     * 
+     * @param hexUUID The UUID to be converted.
+     * @return The raw 16-byte UUID.
+     */
+    public byte[] UUIDRaw(String hexUUID) {
+        byte[] b = null;
+        try {
+            b = Hex.decodeHex(hexUUID.toCharArray());
+        } catch(DecoderException e) {
+            LOGGER.log(Level.SEVERE, "Failed to convert hexstring to string.", e);
+        }
+        return b;
+    }
+
     private static final Logger LOGGER = Logger.getLogger(TrailDBj.class.getName());
 
+    /** 8 bytes are need to represents 64 bits. */
+    private static final int UINT64 = 8;
+
     static {
-        System.load("/home/osboxes/TrailDBj/src/main/java/libtest.so");
+        System.load(new File("TrailDBWrapper/libtest.so").getAbsolutePath());
     }
 
     // ========================================================================
@@ -87,9 +120,6 @@ public enum TrailDBj {
     // ========================================================================
     // Working with items, fields and values.
     // ========================================================================
-    // TODO function to check if cast are possible from uint64 to uint32 are not implemented.
-    // FIXME find a more appropriate representation for an item. Overflow are critical.
-    // TODO look if releasing JNI objects is needed.
 
     /** uint64_t tdb_lexicon_size(const tdb *db, tdb_field field) */
     private native long tdbLexiconSize(ByteBuffer db, long field); // tdb_field is a C uint32_t, ID of the field.
@@ -109,6 +139,16 @@ public enum TrailDBj {
 
     /** const char *tdb_get_item_value(tdb *db, tdb_item item, uint64_t *value_length) */
     private native String tdbGetItemValue(ByteBuffer db, long item, ByteBuffer value_length);
+
+    // ========================================================================
+    // Working with UUIDs.
+    // ========================================================================
+
+    /** const uint8_t *tdb_get_uuid(const tdb *db, uint64_t trail_id) */
+    private native ByteBuffer tdbGetUUID(ByteBuffer db, long traildId);
+
+    /** tdb_error tdb_get_trail_id(const tdb *db, const uint8_t uuid[16], uint64_t *trail_id) */
+    private native int tdbGetTrailId(ByteBuffer db, byte[] uuid, ByteBuffer trailId);
 
     // ========================================================================
     // Helper classes.
@@ -160,6 +200,7 @@ public enum TrailDBj {
          * @param timestamp Event timestamp.
          * @param values Value of each field.
          * @throws TrailDBError if number of values does not match number of fields or failed to add to the DB.
+         * @throws IllegalArgumentException If {@code uuid} is an invalid 32-byte hex string.
          */
         public void add(String uuid, long timestamp, String[] values) {
             int n = values.length;
@@ -173,7 +214,11 @@ public enum TrailDBj {
                 value_lenghts[i] = values[i].length();
             }
 
-            int errCode = this.trailDBj.tdbConsAdd(this.cons, uuid.getBytes(), timestamp, values, value_lenghts);
+            byte[] rawUUID = this.trailDBj.UUIDRaw(uuid);
+            if (rawUUID == null) {
+                throw new IllegalArgumentException("uuid is invalid.");
+            }
+            int errCode = this.trailDBj.tdbConsAdd(this.cons, rawUUID, timestamp, values, value_lenghts);
             if (errCode != 0) {
                 throw new TrailDBError("Failed to add: " + errCode);
             }
@@ -417,6 +462,55 @@ public enum TrailDBj {
                         "Overflow, received a String value that is larger than the java String capacity.");
             }
             return value.substring(0, (int)value_length);
+        }
+
+        /**
+         * Get the UUID given a trail ID.
+         * 
+         * @param trailID The trail ID.
+         * @return A raw 16-byte UUID.
+         * @throws TrailDBError if the {@code trailID} is invalid i.e. less than 0 or greater than the number of trails.
+         * @throws IllegalArgumentException If {@code trailID} is less than 0 or >= than the number of trails.
+         */
+        public String getUUID(long trailID) {
+            if (trailID < 0 || trailID >= this.length()) {
+                throw new IllegalArgumentException("Invalid trail ID.");
+            }
+
+            ByteBuffer uuid = this.trailDBj.tdbGetUUID(this.db, trailID);
+            if (uuid == null) {
+                throw new TrailDBError("Invalid trail ID.");
+            }
+
+            byte[] bytes = new byte[uuid.capacity()];
+            uuid.position(0);
+            uuid.get(bytes, 0, uuid.capacity());
+            return this.trailDBj.UUIDHex(bytes);
+        }
+
+        /**
+         * Get the trail ID given a UUID.
+         *
+         * @param uuid A raw 16-byte UUID.
+         * @return The traild ID corresponding to {@code uuid}.
+         * @throws TrailDBError if the UUID was not found.
+         * @throws IllegalArgumentException If {@code uuid} is an invalid 32-byte hex string.
+         */
+        public long getTrailID(String uuid) {
+            ByteBuffer trailID = ByteBuffer.allocate(UINT64);
+            byte[] rawUUID = this.trailDBj.UUIDRaw(uuid);
+            if (rawUUID == null) {
+                throw new IllegalArgumentException("Invalid UUID.");
+            }
+            int errCode = this.trailDBj.tdbGetTrailId(this.db, rawUUID, trailID);
+            if (errCode != 0) {
+                throw new TrailDBError("UUID not found. " + errCode);
+            }
+            long res = trailID.getLong(0);
+            if (res < 0) {
+                LOGGER.warning("Received trail ID overflow: " + res);
+            }
+            return res;
         }
 
         @Override

@@ -183,6 +183,22 @@ JNIEXPORT jstring JNICALL Java_io_sqooba_traildbj_TrailDBj_tdbGetValue
 JNIEXPORT jstring JNICALL Java_io_sqooba_traildbj_TrailDBj_tdbGetItemValue
   (JNIEnv *, jobject, jobject, jlong, jobject);
 
+/*
+ * Class:     io_sqooba_traildbj_TrailDBj
+ * Method:    tdbGetUUID
+ * Signature: (Ljava/nio/ByteBuffer;J)Ljava/nio/ByteBuffer;
+ */
+JNIEXPORT jobject JNICALL Java_io_sqooba_traildbj_TrailDBj_tdbGetUUID
+  (JNIEnv *, jobject, jobject, jlong);
+
+/*
+ * Class:     io_sqooba_traildbj_TrailDBj
+ * Method:    tdbGetTrailId
+ * Signature: (Ljava/nio/ByteBuffer;[BLjava/nio/ByteBuffer;)I
+ */
+JNIEXPORT jint JNICALL Java_io_sqooba_traildbj_TrailDBj_tdbGetTrailId
+  (JNIEnv *, jobject, jobject, jbyteArray, jobject);
+
 #ifdef __cplusplus
 }
 #endif
