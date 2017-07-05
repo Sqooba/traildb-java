@@ -3,6 +3,8 @@ package io.sqooba.traildbj;
 import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
@@ -11,6 +13,8 @@ import java.util.logging.Logger;
 
 import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.binary.Hex;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 
 /**
  * This class is used to perform native call to the TrailDB C library. Base on the available Python bindings.
@@ -54,7 +58,35 @@ public enum TrailDBj {
     private static final int UINT64 = 8;
 
     static {
-        System.load(new File("TrailDBWrapper/libtest.so").getAbsolutePath());
+        System.out.println("Loading library...");
+        try {
+            System.loadLibrary("libtest");
+            System.out.println("Lib loaded from memory");
+        } catch(UnsatisfiedLinkError e) {
+            loadLib("test");
+        }
+    }
+
+    private static void loadLib(String name) {
+        name = System.mapLibraryName(name);
+        try {
+            InputStream in = TrailDBj.class.getResourceAsStream("/" + name);
+
+            File dirOut = new File("TrailDBWrapper/");
+            dirOut.mkdir();
+
+            File fileOut = File.createTempFile("traildbj", name.substring(name.indexOf(".")), dirOut);
+
+            System.out.println("Writing lib to: " + fileOut.getAbsolutePath());
+            OutputStream out = FileUtils.openOutputStream(fileOut);
+            IOUtils.copy(in, out);
+            in.close();
+            out.close();
+
+            System.load(fileOut.getAbsolutePath());
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
     }
 
     // ========================================================================
