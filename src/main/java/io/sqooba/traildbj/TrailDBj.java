@@ -7,6 +7,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -58,15 +59,15 @@ public enum TrailDBj {
     private static final int UINT64 = 8;
 
     static {
-        System.out.println("Loading library...");
-        try {
-            System.loadLibrary("libtest");
-            System.out.println("Lib loaded from memory");
-        } catch(UnsatisfiedLinkError e) {
-            loadLib("test");
-        }
+        loadLib("test");
     }
 
+    /**
+     * Extract the library from the jar/project, copy it outside so we can load it because this is not possible from
+     * inside the jar.
+     * 
+     * @param name The name of the library, without prefix/suffix.
+     */
     private static void loadLib(String name) {
         name = System.mapLibraryName(name);
         try {
@@ -87,7 +88,8 @@ public enum TrailDBj {
 
             System.load(fileOut.getAbsolutePath());
         } catch(Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Failed to load library.", e);
+            System.exit(-1);
         }
     }
 
@@ -218,6 +220,9 @@ public enum TrailDBj {
             if (path == null) {
                 throw new NullPointerException("Path must not be null.");
             }
+            if (Arrays.asList(ofields).contains("")) {
+                throw new IllegalArgumentException("Fields must not contain empty String.");
+            }
 
             // Initialisation.
             this.cons = this.trailDBj.tdbConsInit();
@@ -323,7 +328,7 @@ public enum TrailDBj {
          */
         public TrailDB(String path) {
             if (path == null) {
-                throw new NullPointerException("Path must not be null.");
+                throw new IllegalArgumentException("Path must not be null.");
             }
 
             ByteBuffer db = this.trailDBj.tdbInit();
@@ -558,7 +563,6 @@ public enum TrailDBj {
                 this.trailDBj.tdbClose(this.db);
             }
         }
-
     }
 
     /**
