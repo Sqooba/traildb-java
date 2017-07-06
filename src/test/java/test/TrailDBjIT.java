@@ -15,7 +15,7 @@ import io.sqooba.traildbj.TrailDBj.TrailDB;
 import io.sqooba.traildbj.TrailDBj.TrailDBConstructor;
 import io.sqooba.traildbj.TrailDBj.TrailDBError;
 
-public class TrailDBTest {
+public class TrailDBjIT {
 
     private TrailDB db;
     private String path = "testdb";
@@ -146,6 +146,36 @@ public class TrailDBTest {
     @Test(expected = TrailDBError.class)
     public void getTrailIDShouldFailWithWrongUUID() {
         this.db.getTrailID("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
+    }
+
+    @Test(expected = TrailDBError.class)
+    public void getFieldShouldFailOnNonExistentField() {
+        this.db.getField("wrongfield");
+    }
+
+    @Test(expected = TrailDBError.class)
+    public void getLexiconSizeShouldFailOnWrongFieldIndex() {
+        this.db.getLexiconSize(-1);
+    }
+
+    @Test(expected = TrailDBError.class)
+    public void getFieldNameShouldFailOnInvalidFieldId() {
+        this.db.getFieldName(-1);
+    }
+
+    @Test(expected = TrailDBError.class)
+    public void getItemShouldFailIfNoItemFound() {
+        this.db.getItem(-1, "wrong");
+    }
+
+    @Test(expected = TrailDBError.class)
+    public void getValueShouldFailIfValueNotFound() {
+        this.db.getValue(-1, -1);
+    }
+
+    @Test(expected = TrailDBError.class)
+    public void getItemValueShouldFailIfValueNotFound() {
+        this.db.getItemValue(-1);
     }
 
     @After
