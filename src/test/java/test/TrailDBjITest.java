@@ -15,7 +15,7 @@ import io.sqooba.traildbj.TrailDBj.TrailDB;
 import io.sqooba.traildbj.TrailDBj.TrailDBConstructor;
 import io.sqooba.traildbj.TrailDBj.TrailDBError;
 
-public class TrailDBjIT {
+public class TrailDBjITest {
 
     private TrailDB db;
     private String path = "testdb";
@@ -41,15 +41,27 @@ public class TrailDBjIT {
         assertTrue(f.exists() && !f.isDirectory());
     }
 
-    @SuppressWarnings("resource")
     @Test(expected = NullPointerException.class)
     public void constructionShouldFailWithNullPath() {
         new TrailDBConstructor(null, new String[] { "" });
     }
 
+    @Test(expected = IllegalArgumentException.class)
+    public void constructionShouldFailWithEmptyFieldName() throws IOException {
+        new TrailDBConstructor(this.path, new String[] { "", "" });
+
+    }
+
     @Test(expected = TrailDBError.class)
     public void addShouldFailIfValNbrNotEqualFieldNbr() throws IOException {
-        TrailDBConstructor cons = new TrailDBConstructor(this.path, new String[] { "" });
+        TrailDBConstructor cons = new TrailDBConstructor(this.path, new String[] { "f1" });
+        cons.add("c", 1, new String[] { "a", "b" });
+        cons.close();
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void addShouldFailWithInvalidUUID() throws IOException {
+        TrailDBConstructor cons = new TrailDBConstructor(this.path, new String[] { "f1", "f2" });
         cons.add("c", 1, new String[] { "a", "b" });
         cons.close();
     }
@@ -127,6 +139,11 @@ public class TrailDBjIT {
         }
     }
 
+    @Test(expected = IllegalArgumentException.class)
+    public void openTrailDBOnNullPathShouldFail() {
+        new TrailDB(null);
+    }
+
     @Test
     public void getUUIDAndGetTrailIDReturnCorrectValues() {
         assertEquals(this.cookie, this.db.getUUID(this.db.getTrailID(this.cookie)));
@@ -187,5 +204,6 @@ public class TrailDBjIT {
             f.delete();
         }
         FileUtils.deleteDirectory(new File(this.path));
+        this.db.close();
     }
 }
