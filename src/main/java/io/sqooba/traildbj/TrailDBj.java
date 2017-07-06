@@ -360,7 +360,7 @@ public enum TrailDBj {
         public long getMinTimestamp() {
             long min = this.trailDBj.tdbMinTimestamp(this.db);
             if (min < 0) {
-                throw new TrailDBError("long overflow:" + min);
+                LOGGER.log(Level.WARNING, "long overflow, received a negtive value for min timestamp.");
             }
             return min;
         }
@@ -373,7 +373,7 @@ public enum TrailDBj {
         public long getMaxTimestamp() {
             long max = this.trailDBj.tdbMaxTimestamp(this.db);
             if (max < 0) {
-                throw new TrailDBError("long overflow, received a negtive value for max timestamp.");
+                LOGGER.log(Level.WARNING, "long overflow, received a negtive value for max timestamp.");
             }
             return max;
         }
