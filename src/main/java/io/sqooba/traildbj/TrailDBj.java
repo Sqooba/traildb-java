@@ -211,6 +211,8 @@ public enum TrailDBj {
          * 
          * @param path TrailDB output path.
          * @param ofields Names of fields.
+         * @throws NullPointerException If given path is null.
+         * @throws TrailDBError If allocation fails or can not open constructor.
          */
         public TrailDBConstructor(String path, String[] ofields) {
             if (path == null) {
@@ -219,6 +221,9 @@ public enum TrailDBj {
 
             // Initialisation.
             this.cons = this.trailDBj.tdbConsInit();
+            if (this.cons == null) {
+                throw new TrailDBError("Failed to allocate memory for constructor.");
+            }
             if (this.trailDBj.tdbConsOpen(this.cons, path, ofields, ofields.length) != 0) {
                 throw new TrailDBError("Can not open constructor.");
             }
