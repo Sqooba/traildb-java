@@ -83,6 +83,8 @@ public enum TrailDBj {
             in.close();
             out.close();
 
+            fileOut.deleteOnExit();
+
             System.load(fileOut.getAbsolutePath());
         } catch(Exception e) {
             e.printStackTrace();
