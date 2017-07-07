@@ -65,20 +65,28 @@ public class TrailDBjTest {
     @Test
     public void constructionFailure() throws Exception {
 
+        // Test that the correct exception is thrown when the initial db construction fails (C lib failure).
+
         this.expectedEx.expect(TrailDBError.class);
         this.expectedEx.expectMessage("Failed to allocate memory for constructor.");
 
+        // Mock the init C call to make it fail.
         PowerMockito.when(this.mockInstance, method(TrailDBj.class, "tdbConsInit")).withNoArguments().thenReturn(null);
 
+        // Call constructor which calls the init C method.
         new TrailDBConstructor("asdf", new String[] { "f1", "f2" });
     }
 
     @Test
     public void addFailure() throws Exception {
 
+        // Test that the correct exception is thrown when adding an event fails (C lib failure).
+
         this.expectedEx.expect(TrailDBError.class);
         this.expectedEx.expectMessage("Failed to add: -1");
 
+        // Because the whole class is a mock, we have to mock all methods and make them succeed in order to further call
+        // the add method.
         PowerMockito.when(this.mockInstance, method(TrailDBj.class, "tdbConsInit")).withNoArguments()
                 .thenReturn(this.someBB);
 
@@ -92,6 +100,7 @@ public class TrailDBjTest {
                 .withArguments(anyObject(), anyObject(), anyLong(), anyObject(), anyObject())
                 .thenReturn(-1);
 
+        // Call the code that will throw.
         TrailDBConstructor cons = new TrailDBConstructor(this.path, new String[] { "field1", "field2" });
         cons.add(this.cookie, 120, new String[] { "a", "hinata" });
     }

@@ -59,7 +59,7 @@ public enum TrailDBj {
     private static final int UINT64 = 8;
 
     static {
-        loadLib("test");
+        loadLib("traildb4j");
     }
 
     /**
@@ -76,7 +76,7 @@ public enum TrailDBj {
             File dirOut = new File("TrailDBWrapper/");
             dirOut.mkdir();
 
-            File fileOut = File.createTempFile("traildbj", name.substring(name.indexOf(".")), dirOut);
+            File fileOut = File.createTempFile("traildb4j", name.substring(name.indexOf(".")), dirOut);
 
             System.out.println("Writing lib to: " + fileOut.getAbsolutePath());
             OutputStream out = FileUtils.openOutputStream(fileOut);
