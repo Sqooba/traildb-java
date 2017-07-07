@@ -11,8 +11,10 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import io.sqooba.traildbj.TrailDBj.Event;
 import io.sqooba.traildbj.TrailDBj.TrailDB;
 import io.sqooba.traildbj.TrailDBj.TrailDBConstructor;
+import io.sqooba.traildbj.TrailDBj.TrailDBCursor;
 import io.sqooba.traildbj.TrailDBj.TrailDBError;
 
 public class TrailDBjITest {
@@ -33,6 +35,18 @@ public class TrailDBjITest {
         cons.add(this.otherCookie, 123, new String[] { "alongstring", "averyveryverylongstring" });
         this.db = cons.finalise();
         cons.close();
+    }
+
+    @Test
+    public void test() {
+        TrailDBCursor cursor = this.db.trail(0);
+        Event e = cursor.next();
+        System.out.println(e);
+        System.out.println(cursor.next());
+        TrailDBCursor cursor2 = this.db.trail(1);
+        Event e2 = cursor2.next();
+        System.out.println(e2);
+        System.out.println(cursor2.next());
     }
 
     @Test

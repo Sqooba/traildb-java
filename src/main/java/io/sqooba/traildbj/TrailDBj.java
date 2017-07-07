@@ -8,7 +8,9 @@ import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -185,6 +187,25 @@ public enum TrailDBj {
 
     /** tdb_error tdb_get_trail_id(const tdb *db, const uint8_t uuid[16], uint64_t *trail_id) */
     private native int tdbGetTrailId(ByteBuffer db, byte[] uuid, ByteBuffer trailId);
+
+    // ========================================================================
+    // Query events with cursors.
+    // ========================================================================
+
+    /** tdb_cursor *tdb_cursor_new(const tdb *db) */
+    private native ByteBuffer tdbCursorNew(ByteBuffer db); // A cursor is a void *.
+
+    /** void tdb_cursor_free(tdb_cursor *cursor) */
+    private native void tdbCursorFree(ByteBuffer cursor);
+
+    /** tdb_error tdb_get_trail(tdb_cursor *cursor, uint64_t trail_id) */
+    private native int tdbGetTrail(ByteBuffer cursor, long trailID);
+
+    /** uint64_t tdb_get_trail_length(tdb_cursor *cursor) */
+    private native long tdbGetTrailLength(ByteBuffer cursor);
+
+    /** const tdb_event *tdb_cursor_next(tdb_cursor *cursor) */
+    private native void tdbCursorNext(ByteBuffer cursor, Event event); // Fill the event in jni.
 
     // ========================================================================
     // Helper classes.
@@ -557,11 +578,108 @@ public enum TrailDBj {
             return res;
         }
 
+        public TrailDBCursor trail(long trailID) { // Python has more params.
+            ByteBuffer cursor = this.trailDBj.tdbCursorNew(this.db);
+            if (cursor == null) {
+                throw new TrailDBError("Memory allocation failed for cursor.");
+            }
+            int errCode = this.trailDBj.tdbGetTrail(cursor, trailID);
+            if (errCode != 0) {
+                throw new TrailDBError("Falied to create cursor: " + errCode);
+            }
+            Event e = new Event(this, this.fields);
+            return new TrailDBCursor(cursor, e);
+        }
+
+        public Map<String, TrailDBCursor> trails() {
+            Map<String, TrailDBCursor> res = new HashMap<>();
+            for(int i = 0; i < this.length(); i++) {
+                res.put(this.getUUID(i), this.trail(i));
+            }
+
+            return res;
+        }
+
         @Override
         public void close() throws IOException {
             if (this.db != null) {
                 this.trailDBj.tdbClose(this.db);
             }
+        }
+    }
+
+    public static class TrailDBCursor {
+
+        private ByteBuffer cursor;
+        private Event event;
+
+        public TrailDBCursor(ByteBuffer cursor, Event event) {
+            this.event = event;
+            this.cursor = cursor;
+        }
+
+        public Event next() {
+            // ByteBuffer next = TrailDBj.INSTANCE.tdbCursorNext(this.cursor);
+            // this.event.build(next);
+
+            TrailDBj.INSTANCE.tdbCursorNext(this.cursor, this.event);
+            return this.event;
+        }
+
+        @Override
+        public void finalize() {
+            if (this.cursor != null) {
+                TrailDBj.INSTANCE.tdbCursorFree(this.cursor);
+            }
+        }
+    }
+
+    public static class Event {
+
+        private TrailDB trailDB;
+
+        private long timestamp;
+        private long numItems;
+        private List<Long> items; // items encoded on uint64_t.
+        /** This one contains the timestamp name. */
+        private List<String> fieldsNames;
+        private List<String> fieldsValues;
+
+        /**
+         * The constructor just initialise the name of the fields (timestamp, field1, field2,...) and doest NOT fill
+         * items.
+         * 
+         * @param fieldsNames
+         */
+        public Event(TrailDB trailDB, List<String> fieldsNames) {
+            this.trailDB = trailDB;
+            this.fieldsNames = fieldsNames;
+        }
+
+        public void build(long timestamp, long numItems) {
+            this.timestamp = timestamp;
+            this.numItems = numItems;
+            this.items = new ArrayList<>((int)numItems);
+            this.fieldsValues = new ArrayList<>();
+        }
+
+        public void addItem(long item) {
+            this.items.add(item);
+            this.fieldsValues.add(this.trailDB.getItemValue(item));
+        }
+
+        @Override
+        public String toString() {
+            StringBuilder sb = new StringBuilder();
+            String sep = ", ";
+            for(int i = 0; i < this.numItems; i++) {
+                if (i == this.numItems - 1) {
+                    sep = "";
+                }
+                // Skip the "time" in names.
+                sb.append(this.fieldsNames.get(i + 1) + "=" + this.fieldsValues.get(i) + sep);
+            }
+            return "Event(time=" + this.timestamp + ", " + sb.toString() + ")";
         }
     }
 

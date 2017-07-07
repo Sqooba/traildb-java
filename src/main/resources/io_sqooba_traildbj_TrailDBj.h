@@ -7,6 +7,8 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
+#undef io_sqooba_traildbj_TrailDBj_UINT64
+#define io_sqooba_traildbj_TrailDBj_UINT64 8L
 /*
  * Class:     io_sqooba_traildbj_TrailDBj
  * Method:    tdbConsInit
@@ -198,6 +200,46 @@ JNIEXPORT jobject JNICALL Java_io_sqooba_traildbj_TrailDBj_tdbGetUUID
  */
 JNIEXPORT jint JNICALL Java_io_sqooba_traildbj_TrailDBj_tdbGetTrailId
   (JNIEnv *, jobject, jobject, jbyteArray, jobject);
+
+/*
+ * Class:     io_sqooba_traildbj_TrailDBj
+ * Method:    tdbCursorNew
+ * Signature: (Ljava/nio/ByteBuffer;)Ljava/nio/ByteBuffer;
+ */
+JNIEXPORT jobject JNICALL Java_io_sqooba_traildbj_TrailDBj_tdbCursorNew
+  (JNIEnv *, jobject, jobject);
+
+/*
+ * Class:     io_sqooba_traildbj_TrailDBj
+ * Method:    tdbCursorFree
+ * Signature: (Ljava/nio/ByteBuffer;)V
+ */
+JNIEXPORT void JNICALL Java_io_sqooba_traildbj_TrailDBj_tdbCursorFree
+  (JNIEnv *, jobject, jobject);
+
+/*
+ * Class:     io_sqooba_traildbj_TrailDBj
+ * Method:    tdbGetTrail
+ * Signature: (Ljava/nio/ByteBuffer;J)I
+ */
+JNIEXPORT jint JNICALL Java_io_sqooba_traildbj_TrailDBj_tdbGetTrail
+  (JNIEnv *, jobject, jobject, jlong);
+
+/*
+ * Class:     io_sqooba_traildbj_TrailDBj
+ * Method:    tdbGetTrailLength
+ * Signature: (Ljava/nio/ByteBuffer;)J
+ */
+JNIEXPORT jlong JNICALL Java_io_sqooba_traildbj_TrailDBj_tdbGetTrailLength
+  (JNIEnv *, jobject, jobject);
+
+/*
+ * Class:     io_sqooba_traildbj_TrailDBj
+ * Method:    tdbCursorNext
+ * Signature: (Ljava/nio/ByteBuffer;Lio/sqooba/traildbj/TrailDBj/Event;)V
+ */
+JNIEXPORT void JNICALL Java_io_sqooba_traildbj_TrailDBj_tdbCursorNext
+  (JNIEnv *, jobject, jobject, jobject);
 
 #ifdef __cplusplus
 }
