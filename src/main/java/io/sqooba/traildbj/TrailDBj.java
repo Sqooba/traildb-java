@@ -7,6 +7,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -58,15 +59,15 @@ public enum TrailDBj {
     private static final int UINT64 = 8;
 
     static {
-        System.out.println("Loading library...");
-        try {
-            System.loadLibrary("libtest");
-            System.out.println("Lib loaded from memory");
-        } catch(UnsatisfiedLinkError e) {
-            loadLib("test");
-        }
+        loadLib("traildb4j");
     }
 
+    /**
+     * Extract the library from the jar/project, copy it outside so we can load it because this is not possible from
+     * inside the jar.
+     * 
+     * @param name The name of the library, without prefix/suffix.
+     */
     private static void loadLib(String name) {
         name = System.mapLibraryName(name);
         try {
@@ -75,7 +76,7 @@ public enum TrailDBj {
             File dirOut = new File("TrailDBWrapper/");
             dirOut.mkdir();
 
-            File fileOut = File.createTempFile("traildbj", name.substring(name.indexOf(".")), dirOut);
+            File fileOut = File.createTempFile("traildb4j", name.substring(name.indexOf(".")), dirOut);
 
             System.out.println("Writing lib to: " + fileOut.getAbsolutePath());
             OutputStream out = FileUtils.openOutputStream(fileOut);
@@ -83,9 +84,12 @@ public enum TrailDBj {
             in.close();
             out.close();
 
+            fileOut.deleteOnExit();
+
             System.load(fileOut.getAbsolutePath());
         } catch(Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Failed to load library.", e);
+            System.exit(-1);
         }
     }
 
@@ -209,14 +213,22 @@ public enum TrailDBj {
          * 
          * @param path TrailDB output path.
          * @param ofields Names of fields.
+         * @throws NullPointerException If given path is null.
+         * @throws TrailDBError If allocation fails or can not open constructor.
          */
         public TrailDBConstructor(String path, String[] ofields) {
             if (path == null) {
                 throw new NullPointerException("Path must not be null.");
             }
+            if (Arrays.asList(ofields).contains("")) {
+                throw new IllegalArgumentException("Fields must not contain empty String.");
+            }
 
             // Initialisation.
             this.cons = this.trailDBj.tdbConsInit();
+            if (this.cons == null) {
+                throw new TrailDBError("Failed to allocate memory for constructor.");
+            }
             if (this.trailDBj.tdbConsOpen(this.cons, path, ofields, ofields.length) != 0) {
                 throw new TrailDBError("Can not open constructor.");
             }
@@ -316,7 +328,7 @@ public enum TrailDBj {
          */
         public TrailDB(String path) {
             if (path == null) {
-                throw new NullPointerException("Path must not be null.");
+                throw new IllegalArgumentException("Path must not be null.");
             }
 
             ByteBuffer db = this.trailDBj.tdbInit();
@@ -353,7 +365,7 @@ public enum TrailDBj {
         public long getMinTimestamp() {
             long min = this.trailDBj.tdbMinTimestamp(this.db);
             if (min < 0) {
-                throw new TrailDBError("long overflow:" + min);
+                LOGGER.log(Level.WARNING, "long overflow, received a negtive value for min timestamp.");
             }
             return min;
         }
@@ -366,7 +378,7 @@ public enum TrailDBj {
         public long getMaxTimestamp() {
             long max = this.trailDBj.tdbMaxTimestamp(this.db);
             if (max < 0) {
-                throw new TrailDBError("long overflow, received a negtive value for max timestamp.");
+                LOGGER.log(Level.WARNING, "long overflow, received a negtive value for max timestamp.");
             }
             return max;
         }
@@ -551,7 +563,6 @@ public enum TrailDBj {
                 this.trailDBj.tdbClose(this.db);
             }
         }
-
     }
 
     /**
