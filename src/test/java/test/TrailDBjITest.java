@@ -34,7 +34,6 @@ public class TrailDBjITest {
         cons.add(this.otherCookie, 122, new String[] { "kaguya", "hinata" });
         cons.add(this.otherCookie, 123, new String[] { "alongstring", "averyveryverylongstring" });
         this.db = cons.finalise();
-        cons.close();
     }
 
     @Test
@@ -70,14 +69,12 @@ public class TrailDBjITest {
     public void addShouldFailIfValNbrNotEqualFieldNbr() throws IOException {
         TrailDBConstructor cons = new TrailDBConstructor(this.path, new String[] { "f1" });
         cons.add("c", 1, new String[] { "a", "b" });
-        cons.close();
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void addShouldFailWithInvalidUUID() throws IOException {
         TrailDBConstructor cons = new TrailDBConstructor(this.path, new String[] { "f1", "f2" });
         cons.add("c", 1, new String[] { "a", "b" });
-        cons.close();
     }
 
     @Test
@@ -125,7 +122,6 @@ public class TrailDBjITest {
         otherCons.add("11111111111111111111111111111111", 119, new String[] { "asdf", "qwer" });
         otherCons.append(this.db);
         TrailDB db2 = otherCons.finalise();
-        otherCons.close();
 
         File f = new File(this.path + "other" + ".tdb");
         assertTrue(f.exists() && !f.isDirectory());
@@ -148,7 +144,6 @@ public class TrailDBjITest {
         } catch(TrailDBError e) {
             throw e;
         } finally {
-            failCons.close();
             FileUtils.deleteDirectory(new File(this.path + "fail"));
         }
     }
@@ -218,6 +213,5 @@ public class TrailDBjITest {
             f.delete();
         }
         FileUtils.deleteDirectory(new File(this.path));
-        this.db.close();
     }
 }

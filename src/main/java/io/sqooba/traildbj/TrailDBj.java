@@ -1,8 +1,6 @@
 package io.sqooba.traildbj;
 
-import java.io.Closeable;
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
@@ -216,7 +214,7 @@ public enum TrailDBj {
      * 
      * @author Vilya
      */
-    public static class TrailDBConstructor implements Closeable {
+    public static class TrailDBConstructor {
 
         private TrailDBj trailDBj = TrailDBj.INSTANCE;
 
@@ -316,7 +314,7 @@ public enum TrailDBj {
         }
 
         @Override
-        public void close() throws IOException {
+        public void finalize() {
             if (this.cons != null) {
                 LOGGER.log(Level.INFO, "Closing TrailDB.");
                 this.trailDBj.tdbConsClose(this.cons);
@@ -330,7 +328,7 @@ public enum TrailDBj {
      * @author Vilya
      *
      */
-    public static class TrailDB implements Closeable {
+    public static class TrailDB {
 
         private TrailDBj trailDBj = TrailDBj.INSTANCE;
 
@@ -601,7 +599,7 @@ public enum TrailDBj {
         }
 
         @Override
-        public void close() throws IOException {
+        public void finalize() {
             if (this.db != null) {
                 this.trailDBj.tdbClose(this.db);
             }
