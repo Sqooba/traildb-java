@@ -1,7 +1,7 @@
-#include "Sample1.h"
+#include "TrailDB.h"
 #include <string.h>
 
-JNIEXPORT jint JNICALL Java_Sample1_intMethod (JNIEnv *env, jobject obj, jint num) {
+JNIEXPORT jint JNICALL Java_Sample1_intMethod(JNIEnv *env, jobject obj, jint num) {
    return num * num;
 }
 

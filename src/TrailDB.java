@@ -1,4 +1,6 @@
-public class Sample1 {
+package traildb;
+
+public class TrailDB {
 	public native int intMethod(int n);
 
 	public native boolean booleanMethod(boolean bool);
@@ -10,8 +12,8 @@ public class Sample1 {
 	public static native int staticFoo(int a);
 
 	public static void main(String[] args) {
-		System.loadLibrary("Sample1");
-		Sample1 sample = new Sample1();
+		System.loadLibrary("TrailDB");
+		TrailDB sample = new TrailDB();
 		int square = sample.intMethod(5);
 		boolean bool = sample.booleanMethod(true);
 		String text = sample.stringMethod("JAVA");
