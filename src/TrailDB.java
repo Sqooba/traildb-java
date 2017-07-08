@@ -12,7 +12,6 @@ public class TrailDB {
 	public static native int staticFoo(int a);
 
 	public static void main(String[] args) {
-		System.loadLibrary("TrailDB");
 		TrailDB sample = new TrailDB();
 		int square = sample.intMethod(5);
 		boolean bool = sample.booleanMethod(true);
@@ -22,5 +21,8 @@ public class TrailDB {
 		System.out.println("booleanMethod: " + bool);
 		System.out.println("stringMethod: " + text);
 		System.out.println("intArrayMethod: " + sum);
+	}
+	static {
+		System.loadLibrary("TrailDB");
 	}
 }
