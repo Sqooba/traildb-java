@@ -16,6 +16,7 @@ public class Example {
 		cons.add(cookie1, 4, new String[] {"jerry", "speak"});
 
 		cons.finalize();
+		cons.close();
 
 		System.out.println("Reached End");
 	}

@@ -59,11 +59,9 @@ JNIEXPORT void JNICALL Java_traildb_TrailDBConstructor_init(JNIEnv *env, jobject
 	(*env)->SetLongField(env, obj, fid, (long) cons);
 }
 
-
 JNIEXPORT void JNICALL Java_traildb_TrailDBConstructor_finalize(JNIEnv *env, jobject obj) {
 	jclass cls;
 	jfieldID fid;
-	jobject bb;
 
 	tdb_error err;
 	tdb_cons *cons;
@@ -140,4 +138,25 @@ JNIEXPORT void JNICALL Java_traildb_TrailDBConstructor_nativeAdd(JNIEnv *env, jo
 	}
 
 	free(tgt_values);
+}
+
+JNIEXPORT void JNICALL Java_traildb_TrailDBConstructor_close(JNIEnv *env, jobject obj) {
+	jclass cls;
+	jfieldID fid;
+
+	tdb_error err;
+	tdb_cons *cons;
+
+	// Retrieve cons pointer
+
+	cls = (*env)->GetObjectClass(env, obj);
+	fid = (*env)->GetFieldID(env, cls, "cons", "J");
+	if (fid == NULL) {
+		return;
+	}
+	cons = (tdb_cons *) (*env)->GetLongField(env, obj, fid);
+
+	// Close tdb
+
+	tdb_cons_close(cons);
 }
