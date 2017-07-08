@@ -9,53 +9,77 @@ JNIEXPORT void JNICALL Java_traildb_TrailDBConstructor_init(JNIEnv *env, jobject
 
 	tdb_error err;
 	tdb_cons *cons;
-	const char *str;
-	const char *field_names[] = {"hello", "world"};
+	const char *root_str;
+	const char **fields_str;
 	uint64_t num_fields;
 
-	cons = tdb_cons_init();
-	str = (*env)->GetStringUTFChars(env, root, NULL);
+	// Get Number of fields
 
 	num_fields = (*env)->GetArrayLength(env, fields);
 
-	if ((err = tdb_cons_open(cons, str, field_names, 2))) {
+	// Get char pointers
+
+	jobject temp_field;
+	fields_str = malloc(num_fields * sizeof(char*));
+	for (int i = 0; i < num_fields; i++) {
+		temp_field = (*env)->GetObjectArrayElement(env, fields, i);
+		fields_str[i] = (*env)->GetStringUTFChars(env, temp_field, NULL);
+	}
+
+	root_str = (*env)->GetStringUTFChars(env, root, NULL);
+
+	// Initialize and open tdb
+
+	cons = tdb_cons_init();
+	if ((err = tdb_cons_open(cons, root_str, fields_str, 2))) {
 		printf("Opening TrailDB constructor failed: %s\n", tdb_error_str(err));
 		exit(1);
 	}
-	(*env)->ReleaseStringUTFChars(env, root, str);
+
+	// Release strings
+
+	for (int i = 0; i < num_fields; i++) {
+		temp_field = (*env)->GetObjectArrayElement(env, fields, i);
+		(*env)->ReleaseStringUTFChars(env, temp_field, fields_str[i]);
+	}
+
+	free(fields_str);
+
+	(*env)->ReleaseStringUTFChars(env, root, root_str);
+
+	// Store cons pointer
 
 	cls = (*env)->GetObjectClass(env, obj);
-	fid = (*env)->GetFieldID(env, cls, "cons", "Ljava/lang/Object;");
+	fid = (*env)->GetFieldID(env, cls, "cons", "J");
 	if (fid == NULL) {
-		return; /* failed to find the field */
+		return;
 	}
-	(*env)->SetObjectField(env, obj, fid, (jobject) cons);
+
+	(*env)->SetLongField(env, obj, fid, (long) cons);
 }
 
-JNIEXPORT void JNICALL Java_TrailDBConstructor_finalize(JNIEnv *env, jobject obj) {
+
+JNIEXPORT void JNICALL Java_traildb_TrailDBConstructor_finalize(JNIEnv *env, jobject obj) {
 	jclass cls;
 	jfieldID fid;
-	jobject jobj;
+	jobject bb;
 
 	tdb_error err;
 	tdb_cons *cons;
 
+	// Retrieve cons pointer
+
 	cls = (*env)->GetObjectClass(env, obj);
-	fid = (*env)->GetFieldID(env, cls, "cons", "Ljava/lang/Object;");
-
+	fid = (*env)->GetFieldID(env, cls, "cons", "J");
 	if (fid == NULL) {
-		return; /* failed to find the field */
+		return;
 	}
+	cons = (tdb_cons *) (*env)->GetLongField(env, obj, fid);
 
-	jobj = (*env)->GetObjectField(env, obj, fid);
-	cons = (tdb_cons *) jobj;
+	// Finalize tdb
 
 	if ((err = tdb_cons_finalize(cons))) {
 		printf("Finalizing TrailDB constructor failed: %s\n", tdb_error_str(err));
 		exit(1);
 	}
-}
-
-JNIEXPORT void JNICALL Java_TrailDBConstructor_add(JNIEnv *env, jobject obj, jobject uuid, jint timestamp, jobjectArray values) {
-	return;
 }

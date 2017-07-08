@@ -4,7 +4,12 @@ package traildb;
 import java.util.UUID;
 
 public class TrailDBConstructor {
-	private Object cons;
+	// https://rkennke.wordpress.com/2007/07/20/efficient-jni-programming-part-i/
+	// https://rkennke.wordpress.com/2007/07/24/efficient-jni-programming-ii-field-and-method-access/
+	// https://rkennke.wordpress.com/2007/07/28/efficient-jni-programming-iii-array-access/
+	// https://rkennke.wordpress.com/2007/07/30/efficient-jni-programming-iv-wrapping-native-data-objects/
+
+	private long cons;
 	public TrailDBConstructor(String root, String[] fields) {
 		init(root, fields);
 	}
