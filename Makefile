@@ -16,7 +16,7 @@ run: build examples
 	java -Djava.library.path=$(PWD)/$(OBJ) -classpath '$(OBJ)' Example
 
 $(OBJ)/lib%.so: src/%.c include/%.h
-	$(CC) $(INCLUDE) $(CFLAGS) $< -o $@
+	$(CC) $(INCLUDE) $(CFLAGS) $< -o $@ -ltraildb
 
 include/%.h:
 	javah -classpath '$(OBJ)' -o $@ $(patsubst include/%.h,traildb.%,$@)
