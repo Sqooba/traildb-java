@@ -12,24 +12,24 @@ CLASSES=$(patsubst src/%.java,$(OBJ)/%.class,$(JAVAS))
 build: $(CLASSES) $(OBJECTS)
 
 .PHONY: run
-run: build
-	java -Djava.library.path=$(PWD)/$(OBJ) -classpath '$(OBJ)' Sample1 
+run: build examples
+	java -Djava.library.path=$(PWD)/$(OBJ) -classpath '$(OBJ)' Example
 
 $(OBJ)/lib%.so: src/%.c include/%.h
 	$(CC) $(INCLUDE) $(CFLAGS) $< -o $@
 
 include/%.h:
-	javah -classpath 'src' -o $@ $(patsubst include/%.h,%,$@)
+	javah -classpath '$(OBJ)' -o $@ $(patsubst include/%.h,traildb.%,$@)
 
 $(OBJ)/%.class: src/%.java
 	javac $< -d $(OBJ)
 
 .PHONY: examples
 examples: $(EXAMPLES)
-	javac $^ -d $(OBJ)
+	javac -classpath '$(OBJ)' $^ -d $(OBJ)
 
 .PHONY: clean
 clean:
 	rm -f $(OBJ)/*.so $(OBJ)/*.class
 
-.PRECIOUS: include/%.h
+# .PRECIOUS: include/%.h
