@@ -3,20 +3,33 @@ CFLAGS=-shared -fPIC
 INCLUDE=-Iinclude -I/usr/lib/jvm/java-8-openjdk-amd64/include -I/usr/lib/jvm/java-8-openjdk-amd64/include/linux
 OBJ=src/obj
 
+JAVAS=$(wildcard src/*.java)
+EXAMPLES=$(wildcard examples/*.java)
+OBJECTS=$(patsubst src/%.java,$(OBJ)/lib%.so,$(JAVAS))
+CLASSES=$(patsubst src/%.java,$(OBJ)/%.class,$(JAVAS))
+
 .PHONY: build
-build: $(OBJ)/libSample1.so $(OBJ)/Sample1.class
+build: $(CLASSES) $(OBJECTS)
 
 .PHONY: run
 run: build
-	java -Djava.library.path=$(PWD)/$(OBJ) -classpath '$(OBJ)' Sample1
+	java -Djava.library.path=$(PWD)/$(OBJ) -classpath '$(OBJ)' Sample1 
 
-$(OBJ)/libSample1.so: src/Sample1.c include/Sample1.h 
+$(OBJ)/lib%.so: src/%.c include/%.h
 	$(CC) $(INCLUDE) $(CFLAGS) $< -o $@
 
-$(OBJ)/Sample1.class: src/Sample1.java
-	javac src/Sample1.java -d $(OBJ)
+include/%.h:
+	javah -classpath 'src' -o $@ $(patsubst include/%.h,%,$@)
 
+$(OBJ)/%.class: src/%.java
+	javac $< -d $(OBJ)
+
+.PHONY: examples
+examples: $(EXAMPLES)
+	javac $^ -d $(OBJ)
 
 .PHONY: clean
 clean:
 	rm -f $(OBJ)/*.so $(OBJ)/*.class
+
+.PRECIOUS: include/%.h

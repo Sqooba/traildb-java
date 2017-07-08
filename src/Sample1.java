@@ -7,6 +7,8 @@ public class Sample1 {
 
 	public native int intArrayMethod(int[] intArray);
 
+	public static native int staticFoo(int a);
+
 	public static void main(String[] args) {
 		System.loadLibrary("Sample1");
 		Sample1 sample = new Sample1();
@@ -17,6 +19,6 @@ public class Sample1 {
 		System.out.println("intMethod: " + square);
 		System.out.println("booleanMethod: " + bool);
 		System.out.println("stringMethod: " + text);
-		// System.out.println("intArrayMethod: " + sum);
+		System.out.println("intArrayMethod: " + sum);
 	}
 }
