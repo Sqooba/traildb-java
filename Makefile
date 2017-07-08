@@ -32,4 +32,8 @@ examples: $(EXAMPLES)
 clean:
 	rm -f $(OBJ)/*.so $(OBJ)/*.class
 
-# .PRECIOUS: include/%.h
+.PHONY: descriptors
+descriptors:
+	javap -s -p $(OBJ)/traildb/*
+
+.PRECIOUS: include/%.h
