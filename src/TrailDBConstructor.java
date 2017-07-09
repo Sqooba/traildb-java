@@ -4,13 +4,23 @@ package traildb;
 import java.util.UUID;
 import java.nio.ByteBuffer;
 
-public class TrailDBConstructor {
-	// https://rkennke.wordpress.com/2007/07/20/efficient-jni-programming-part-i/
-	// https://rkennke.wordpress.com/2007/07/24/efficient-jni-programming-ii-field-and-method-access/
-	// https://rkennke.wordpress.com/2007/07/28/efficient-jni-programming-iii-array-access/
-	// https://rkennke.wordpress.com/2007/07/30/efficient-jni-programming-iv-wrapping-native-data-objects/
 
+public class TrailDBConstructor {
 	private long cons;
+
+	public enum TDB_OPT_CONS_KEY {
+		TDB_OPT_CONS_OUTPUT_FORMAT,
+		TDB_OPT_CONS_NO_BIGRAMS,
+	}
+	public enum TDB_OPT_CONS_VALUE {
+		// We have duplicate items here because the documentation
+		// mentions one pair and the C API uses another.
+		TDB_OPT_CONS_OUTPUT_FORMAT_DIR,
+		TDB_OPT_CONS_OUTPUT_DIR,
+		TDB_OPT_CONS_OUTPUT_FORMAT_PACKAGE,
+		TDB_OPT_CONS_OUTPUT_PACKAGE,
+	}
+
 	public TrailDBConstructor(String root, String[] fields) {
 		init(root, fields);
 	}
@@ -32,6 +42,9 @@ public class TrailDBConstructor {
 
 	public native void finalize();
 	public native void close();
+	public native void setOpt(TDB_OPT_CONS_KEY key, TDB_OPT_CONS_VALUE value);
+	public native TDB_OPT_CONS_VALUE getOpt(TDB_OPT_CONS_KEY key);
+
 	static {
 		System.loadLibrary("TrailDBConstructor");
 	}

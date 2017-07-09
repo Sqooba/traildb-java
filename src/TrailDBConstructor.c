@@ -144,7 +144,6 @@ JNIEXPORT void JNICALL Java_traildb_TrailDBConstructor_close(JNIEnv *env, jobjec
 	jclass cls;
 	jfieldID fid;
 
-	tdb_error err;
 	tdb_cons *cons;
 
 	// Retrieve cons pointer
@@ -159,4 +158,123 @@ JNIEXPORT void JNICALL Java_traildb_TrailDBConstructor_close(JNIEnv *env, jobjec
 	// Close tdb
 
 	tdb_cons_close(cons);
+}
+
+JNIEXPORT void JNICALL Java_traildb_TrailDBConstructor_setOpt(JNIEnv *env, jobject obj, jobject key, jobject value) {
+	jclass cls;
+	jfieldID fid;
+
+	tdb_cons *cons;
+	tdb_opt_key key_flag;
+	tdb_opt_value value_flag;
+
+	// Retrieve cons pointer
+
+	cls = (*env)->GetObjectClass(env, obj);
+	fid = (*env)->GetFieldID(env, cls, "cons", "J");
+	if (fid == NULL) {
+		return;
+	}
+	cons = (tdb_cons *) (*env)->GetLongField(env, obj, fid);
+
+	// Get ordinal of key enum
+
+	jmethodID getValueMethod = (*env)->GetMethodID(env, (*env)->FindClass(env, "traildb/TrailDB$TDB_OPT_CONS_KEY"), "ordinal", "()I");
+	jint ord = (*env)->CallIntMethod(env, key, getValueMethod);
+
+	switch (ord) {
+		case 0:
+			key_flag = TDB_OPT_CONS_OUTPUT_FORMAT; // 1001
+			break;
+		case 1:
+			key_flag = TDB_OPT_CONS_NO_BIGRAMS; // 1002
+			break;
+		default:
+			printf("Unrecognized option key\n");
+			exit(1);
+	}
+
+	// Get ordinal of value enum
+
+	getValueMethod = (*env)->GetMethodID(env, (*env)->FindClass(env, "traildb/TrailDB$TDB_OPT_CONS_VALUE"), "ordinal", "()I");
+	ord = (*env)->CallIntMethod(env, key, getValueMethod);
+
+	switch (ord) {
+		case 0:
+			value_flag.value = TDB_OPT_CONS_OUTPUT_FORMAT_DIR; // 0
+			break;
+		case 1:
+			value_flag.value = TDB_OPT_CONS_OUTPUT_FORMAT_DIR; // 0
+			break;
+		case 2:
+			value_flag.value = TDB_OPT_CONS_OUTPUT_FORMAT_PACKAGE; // 1
+			break;
+		case 3:
+			value_flag.value = TDB_OPT_CONS_OUTPUT_FORMAT_PACKAGE; // 1
+			break;
+		default:
+			printf("Unrecognized option value\n");
+			exit(1);
+	}
+
+	// Set option
+
+	tdb_cons_set_opt(cons, key_flag, value_flag);
+}
+
+JNIEXPORT jobject JNICALL Java_traildb_TrailDBConstructor_getOpt(JNIEnv *env, jobject obj, jobject key) {
+	jclass cls;
+	jfieldID fid;
+
+	tdb_cons *cons;
+	tdb_opt_key key_flag;
+	tdb_opt_value value_flag;
+	char value_name[32]; // 32 is arbitrary
+
+	// Retrieve cons pointer
+
+	cls = (*env)->GetObjectClass(env, obj);
+	fid = (*env)->GetFieldID(env, cls, "cons", "J");
+	if (fid == NULL) {
+		printf("Could not retrieve tdb constructor\n");
+		exit(1);
+	}
+	cons = (tdb_cons *) (*env)->GetLongField(env, obj, fid);
+
+	// Get ordinal of key enum
+
+	jmethodID getValueMethod = (*env)->GetMethodID(env, (*env)->FindClass(env, "traildb/TrailDB$TDB_OPT_CONS_KEY"), "ordinal", "()I");
+	jint value = (*env)->CallIntMethod(env, key, getValueMethod);
+
+	switch (value) {
+		case 0:
+			key_flag = TDB_OPT_CONS_OUTPUT_FORMAT; // 1001
+			break;
+		case 1:
+			key_flag = TDB_OPT_CONS_NO_BIGRAMS; // 1002
+			break;
+		default:
+			printf("Unrecognized option key\n");
+			exit(1);
+	}
+
+	// Get option
+
+	tdb_cons_get_opt(cons, key_flag, &value_flag);
+
+	switch (value_flag.value) {
+		case TDB_OPT_CONS_OUTPUT_FORMAT_DIR:
+			strcpy(value_name, "TDB_OPT_CONS_OUTPUT_FORMAT_DIR");
+			break;
+		case TDB_OPT_CONS_OUTPUT_FORMAT_PACKAGE:
+			strcpy(value_name, "TDB_OPT_CONS_OUTPUT_FORMAT_PACKAGE");
+			break;
+		default:
+			printf("Unrecognized option value returned from TrailDB\n");
+			exit(1);
+	}
+
+	jclass jenum = (*env)->FindClass(env, "traildb/TrailDB$TDB_OPT_CONS_VALUE");
+	jfieldID fidEnum = (*env)->GetStaticFieldID(env, jenum , value_name, "LTrailDB$TDB_OPT_CONS_VALUE;");
+	return (*env)->GetStaticObjectField(env, jenum, fidEnum);
 }

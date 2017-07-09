@@ -1,6 +1,11 @@
 package traildb;
 
 public class TrailDB {
+	public enum TDB_OPT_KEY {
+		TDB_OPT_ONLY_DIFF_ITEMS,
+		TDB_OPT_EVENT_FILTER,
+		TDB_OPT_CURSOR_EVENT_BUFFER_SIZE,
+	}
 	public native int intMethod(int n);
 
 	public native boolean booleanMethod(boolean bool);
