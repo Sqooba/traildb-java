@@ -18,14 +18,16 @@ run: build examples
 debug: build examples
 	jdb -Djava.library.path=$(PWD)/$(OBJ) -sourcepath 'examples' -classpath '$(OBJ)' Example
 
+# OBJECTS
 $(OBJ)/lib%.so: src/%.c include/%.h
 	$(CC) $(INCLUDE) $(CFLAGS) $< -o $@ -ltraildb
 
-include/%.h:
+include/%.h: $(OBJ)/%.class
 	javah -jni -classpath '$(OBJ)' -o $@ $(patsubst include/%.h,traildb.%,$@)
 
+# CLASSES
 $(OBJ)/%.class: src/%.java
-	javac $< -d $(OBJ)
+	javac $(JAVAS) -d $(OBJ)
 
 .PHONY: examples
 examples: $(EXAMPLES)
@@ -33,7 +35,7 @@ examples: $(EXAMPLES)
 
 .PHONY: clean
 clean:
-	rm -f $(OBJ)/*.so $(OBJ)/*.class
+	rm -f $(OBJ)/*.so $(OBJ)/traildb/*.class
 	rm include/*.h
 
 .PHONY: descriptors
