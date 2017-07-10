@@ -22,7 +22,7 @@ import org.apache.commons.io.IOUtils;
 /**
  * This class is used to perform native call to the TrailDB C library. Base on the available Python bindings.
  * 
- * @author Vilya
+ * @author B. Sottas
  *
  */
 public enum TrailDBj {
@@ -214,7 +214,7 @@ public enum TrailDBj {
     /**
      * Class allowing to easily construct a new TrailDB.
      * 
-     * @author Vilya
+     * @author B. Sottas
      */
     public static class TrailDBConstructor {
 
@@ -327,7 +327,7 @@ public enum TrailDBj {
     /**
      * Class used to query an existing TrailDB.
      * 
-     * @author Vilya
+     * @author B. Sottas
      *
      */
     public static class TrailDB {
@@ -579,8 +579,7 @@ public enum TrailDBj {
         }
 
         /**
-         * Get a cursor over a particular trail in the database. The cursor allows to iterate over the event in this
-         * trail.
+         * Get a cursor over a particular trail in the database. The cursor allows to iterate over events in this trail.
          * 
          * @param trailID The trail id.
          * @return A cursor over the trail.
@@ -627,7 +626,7 @@ public enum TrailDBj {
      * TrailDB.trail() method. The cursor points to the current event and this event is updated each time a .next() is
      * called.
      * 
-     * @author Vilya
+     * @author B. Sottas
      *
      */
     public static class TrailDBCursor implements Iterable<Event> {
@@ -677,7 +676,7 @@ public enum TrailDBj {
     /**
      * An event in the trail database.
      * 
-     * @author Vilya
+     * @author B. Sottas
      *
      */
     public static class Event {
@@ -690,10 +689,10 @@ public enum TrailDBj {
         private List<Long> items; // items encoded on uint64_t.
 
         /** This one contains the timestamp name. */
-        private List<String> fieldsNames;
+        private List<String> fieldNames;
 
         /** Does NOT contain the timestamp value. */
-        private List<String> fieldsValues;
+        private List<String> fieldValues;
 
         /** Indicates if a tdb_cursor_next as already been called once or not. */
         private boolean built = false;
@@ -706,7 +705,7 @@ public enum TrailDBj {
          */
         protected Event(TrailDB trailDB, List<String> fieldsNames) {
             this.trailDB = trailDB;
-            this.fieldsNames = fieldsNames;
+            this.fieldNames = fieldsNames;
         }
 
         /**
@@ -733,7 +732,7 @@ public enum TrailDBj {
          * @return The fields names of this event.
          */
         public List<String> getFieldNames() {
-            return Collections.unmodifiableList(this.fieldsNames);
+            return Collections.unmodifiableList(this.fieldNames);
         }
 
         /**
@@ -742,7 +741,7 @@ public enum TrailDBj {
          * @return The fields values of this event.
          */
         public List<String> getFieldsValues() {
-            return Collections.unmodifiableList(this.fieldsValues);
+            return Collections.unmodifiableList(this.fieldValues);
         }
 
         @Override
@@ -754,7 +753,7 @@ public enum TrailDBj {
                     sep = "";
                 }
                 // Skip the "time" in names.
-                sb.append(this.fieldsNames.get(i + 1) + "=" + this.fieldsValues.get(i) + sep);
+                sb.append(this.fieldNames.get(i + 1) + "=" + this.fieldValues.get(i) + sep);
             }
             return "Event(time=" + this.timestamp + ", " + sb.toString() + ")";
         }
@@ -769,7 +768,7 @@ public enum TrailDBj {
             this.timestamp = timestamp;
             this.numItems = numItems;
             this.items = new ArrayList<>((int)numItems);
-            this.fieldsValues = new ArrayList<>();
+            this.fieldValues = new ArrayList<>();
             this.built = true;
         }
 
@@ -780,7 +779,7 @@ public enum TrailDBj {
          */
         protected void addItem(long item) {
             this.items.add(item);
-            this.fieldsValues.add(this.trailDB.getItemValue(item));
+            this.fieldValues.add(this.trailDB.getItemValue(item));
         }
 
         /**
@@ -796,7 +795,7 @@ public enum TrailDBj {
     /**
      * Exception thrown when something bad happens while performing action on the TrailDB.
      * 
-     * @author Vilya
+     * @author B. Sottas
      */
     public static class TrailDBError extends RuntimeException {
 
