@@ -6,7 +6,9 @@ import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
@@ -203,7 +205,7 @@ public enum TrailDBj {
     private native long tdbGetTrailLength(ByteBuffer cursor);
 
     /** const tdb_event *tdb_cursor_next(tdb_cursor *cursor) */
-    private native void tdbCursorNext(ByteBuffer cursor, Event event); // Fill the event in jni.
+    private native int tdbCursorNext(ByteBuffer cursor, Event event); // Fill the event in jni.
 
     // ========================================================================
     // Helper classes.
@@ -314,7 +316,7 @@ public enum TrailDBj {
         }
 
         @Override
-        public void finalize() {
+        protected void finalize() {
             if (this.cons != null) {
                 LOGGER.log(Level.INFO, "Closing TrailDB.");
                 this.trailDBj.tdbConsClose(this.cons);
@@ -599,36 +601,54 @@ public enum TrailDBj {
         }
 
         @Override
-        public void finalize() {
+        protected void finalize() {
             if (this.db != null) {
                 this.trailDBj.tdbClose(this.db);
             }
         }
     }
 
-    public static class TrailDBCursor {
+    public static class TrailDBCursor implements Iterable<Event> {
 
         private ByteBuffer cursor;
         private Event event;
 
-        public TrailDBCursor(ByteBuffer cursor, Event event) {
+        protected TrailDBCursor(ByteBuffer cursor, Event event) {
             this.event = event;
             this.cursor = cursor;
         }
 
-        public Event next() {
-            // ByteBuffer next = TrailDBj.INSTANCE.tdbCursorNext(this.cursor);
-            // this.event.build(next);
-
-            TrailDBj.INSTANCE.tdbCursorNext(this.cursor, this.event);
-            return this.event;
-        }
-
         @Override
-        public void finalize() {
+        protected void finalize() {
             if (this.cursor != null) {
                 TrailDBj.INSTANCE.tdbCursorFree(this.cursor);
             }
+        }
+
+        @Override
+        public Iterator<Event> iterator() {
+            return new Iterator<TrailDBj.Event>() {
+
+                int errCode = 0;
+
+                @Override
+                public Event next() {
+                    if (!TrailDBCursor.this.event.isBuilt()) {
+                        TrailDBj.INSTANCE.tdbCursorNext(TrailDBCursor.this.cursor, TrailDBCursor.this.event);
+                    }
+                    return TrailDBCursor.this.event;
+                }
+
+                @Override
+                public boolean hasNext() {
+                    return TrailDBj.INSTANCE.tdbCursorNext(TrailDBCursor.this.cursor, TrailDBCursor.this.event) == 0;
+                }
+
+                @Override
+                public void remove() {
+                    throw new UnsupportedOperationException();
+                }
+            };
         }
     }
 
@@ -639,9 +659,14 @@ public enum TrailDBj {
         private long timestamp;
         private long numItems;
         private List<Long> items; // items encoded on uint64_t.
+
         /** This one contains the timestamp name. */
         private List<String> fieldsNames;
+
+        /** Does NOT contain the timestamp value. */
         private List<String> fieldsValues;
+
+        private boolean built = false;
 
         /**
          * The constructor just initialise the name of the fields (timestamp, field1, field2,...) and doest NOT fill
@@ -649,21 +674,25 @@ public enum TrailDBj {
          * 
          * @param fieldsNames
          */
-        public Event(TrailDB trailDB, List<String> fieldsNames) {
+        protected Event(TrailDB trailDB, List<String> fieldsNames) {
             this.trailDB = trailDB;
             this.fieldsNames = fieldsNames;
         }
 
-        public void build(long timestamp, long numItems) {
-            this.timestamp = timestamp;
-            this.numItems = numItems;
-            this.items = new ArrayList<>((int)numItems);
-            this.fieldsValues = new ArrayList<>();
+        public long getTimestamp() {
+            return this.timestamp;
         }
 
-        public void addItem(long item) {
-            this.items.add(item);
-            this.fieldsValues.add(this.trailDB.getItemValue(item));
+        public long getNumItems() {
+            return this.numItems;
+        }
+
+        public List<String> getFieldNames() {
+            return Collections.unmodifiableList(this.fieldsNames);
+        }
+
+        public List<String> getFieldsValues() {
+            return Collections.unmodifiableList(this.fieldsValues);
         }
 
         @Override
@@ -678,6 +707,23 @@ public enum TrailDBj {
                 sb.append(this.fieldsNames.get(i + 1) + "=" + this.fieldsValues.get(i) + sep);
             }
             return "Event(time=" + this.timestamp + ", " + sb.toString() + ")";
+        }
+
+        protected void build(long timestamp, long numItems) {
+            this.timestamp = timestamp;
+            this.numItems = numItems;
+            this.items = new ArrayList<>((int)numItems);
+            this.fieldsValues = new ArrayList<>();
+            this.built = true;
+        }
+
+        protected void addItem(long item) {
+            this.items.add(item);
+            this.fieldsValues.add(this.trailDB.getItemValue(item));
+        }
+
+        protected boolean isBuilt() {
+            return this.built;
         }
     }
 
