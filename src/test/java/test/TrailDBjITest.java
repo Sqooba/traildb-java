@@ -5,7 +5,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.LinkedList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -40,19 +40,13 @@ public class TrailDBjITest {
     }
 
     @Test
-    public void test() {
+    public void trailsShouldContainCorrectTrailUUIDs() {
         Map<String, TrailDBCursor> map = this.db.trails();
-        for(Map.Entry<String, TrailDBCursor> entry : map.entrySet()) {
-            for(Event event : entry.getValue()) {
-                System.out.println(entry.getKey() + " " + event);
-            }
-        }
-        LinkedList<String> ll = new LinkedList();
-        ll.add("vilya");
-        ll.add("kaguya");
-        for(String s : ll) {
-            System.out.println(s);
-        }
+        assertEquals(2, map.size());
+
+        Iterator<Map.Entry<String, TrailDBCursor>> it = map.entrySet().iterator();
+        assertEquals(this.otherCookie, it.next().getKey());
+        assertEquals(this.cookie, it.next().getKey());
     }
 
     @Test
@@ -86,6 +80,7 @@ public class TrailDBjITest {
         assertEquals("field2", fieldsNames.get(2));
         assertEquals("kaguya", fieldsValues.get(0));
         assertEquals("hinata", fieldsValues.get(1));
+        assertEquals("Event(time=122, field1=kaguya, field2=hinata)", e.toString());
     }
 
     @Test(expected = UnsupportedOperationException.class)
