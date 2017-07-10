@@ -578,6 +578,14 @@ public enum TrailDBj {
             return res;
         }
 
+        /**
+         * Get a cursor over a particular trail in the database. The cursor allows to iterate over the event in this
+         * trail.
+         * 
+         * @param trailID The trail id.
+         * @return A cursor over the trail.
+         * @throws TrailDBError If cursor creation failed in some way.
+         */
         public TrailDBCursor trail(long trailID) { // Python has more params.
             ByteBuffer cursor = this.trailDBj.tdbCursorNew(this.db);
             if (cursor == null) {
@@ -591,6 +599,12 @@ public enum TrailDBj {
             return new TrailDBCursor(cursor, e);
         }
 
+        /**
+         * Get a map containing a trail UUID as key and a trail cursor as value, allowing to iterate over all trails in
+         * the database.
+         * 
+         * @return A map containing a trail UUID as key and a trail cursor as value
+         */
         public Map<String, TrailDBCursor> trails() {
             Map<String, TrailDBCursor> res = new HashMap<>();
             for(int i = 0; i < this.length(); i++) {
@@ -608,6 +622,14 @@ public enum TrailDBj {
         }
     }
 
+    /**
+     * Class representing a cursor over a particular trail of the database. The cursor is initially constructed from the
+     * TrailDB.trail() method. The cursor points to the current event and this event is updated each time a .next() is
+     * called.
+     * 
+     * @author Vilya
+     *
+     */
     public static class TrailDBCursor implements Iterable<Event> {
 
         private ByteBuffer cursor;
@@ -652,8 +674,15 @@ public enum TrailDBj {
         }
     }
 
+    /**
+     * An event in the trail database.
+     * 
+     * @author Vilya
+     *
+     */
     public static class Event {
 
+        /** Reference to the TrailDB instance that initially created a cursor containing this event. */
         private TrailDB trailDB;
 
         private long timestamp;
@@ -666,31 +695,52 @@ public enum TrailDBj {
         /** Does NOT contain the timestamp value. */
         private List<String> fieldsValues;
 
+        /** Indicates if a tdb_cursor_next as already been called once or not. */
         private boolean built = false;
 
         /**
          * The constructor just initialise the name of the fields (timestamp, field1, field2,...) and doest NOT fill
          * items.
          * 
-         * @param fieldsNames
+         * @param fieldsNames Names of the fields.
          */
         protected Event(TrailDB trailDB, List<String> fieldsNames) {
             this.trailDB = trailDB;
             this.fieldsNames = fieldsNames;
         }
 
+        /**
+         * Get the timestamp of this event.
+         * 
+         * @return The timestamp of this event.
+         */
         public long getTimestamp() {
             return this.timestamp;
         }
 
+        /**
+         * Get the number of items in this event.
+         * 
+         * @return The number of items in this event.
+         */
         public long getNumItems() {
             return this.numItems;
         }
 
+        /**
+         * Get the fields names of this event. Contains the timestamp name.
+         * 
+         * @return The fields names of this event.
+         */
         public List<String> getFieldNames() {
             return Collections.unmodifiableList(this.fieldsNames);
         }
 
+        /**
+         * Get the fields values of this event. Does NOT contain the timestamp value.
+         * 
+         * @return The fields values of this event.
+         */
         public List<String> getFieldsValues() {
             return Collections.unmodifiableList(this.fieldsValues);
         }
@@ -709,6 +759,12 @@ public enum TrailDBj {
             return "Event(time=" + this.timestamp + ", " + sb.toString() + ")";
         }
 
+        /**
+         * This method is called by the c++ code to initialise this event.
+         * 
+         * @param timestamp The event timestamp.
+         * @param numItems The number of items in this event.
+         */
         protected void build(long timestamp, long numItems) {
             this.timestamp = timestamp;
             this.numItems = numItems;
@@ -717,11 +773,21 @@ public enum TrailDBj {
             this.built = true;
         }
 
+        /**
+         * This method is called by the c++ code to add an item in this event.
+         * 
+         * @param item The item to be added.
+         */
         protected void addItem(long item) {
             this.items.add(item);
             this.fieldsValues.add(this.trailDB.getItemValue(item));
         }
 
+        /**
+         * Indicates if a next() call has be performed at least once on the iterator.
+         * 
+         * @return true if a next() has been called.
+         */
         protected boolean isBuilt() {
             return this.built;
         }
