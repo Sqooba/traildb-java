@@ -463,7 +463,7 @@ JNIEXPORT jint JNICALL Java_io_sqooba_traildbj_TrailDBj_tdbCursorNext
 	}
 	
 	// Construct event.
-	jclass cls = env->FindClass("io/sqooba/traildbj/TrailDBj$Event");
+	jclass cls = env->FindClass("io/sqooba/traildbj/TrailDBEvent");
 	jmethodID midBuild = env->GetMethodID(cls, "build","(JJ)V");
 	jmethodID midAdd = env->GetMethodID(cls, "addItem","(J)V");
 	env->CallObjectMethod(jevent, midBuild, (jlong)timestamp, (jlong)num_items);

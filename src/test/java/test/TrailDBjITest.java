@@ -14,11 +14,11 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import io.sqooba.traildbj.TrailDBj.Event;
-import io.sqooba.traildbj.TrailDBj.TrailDB;
-import io.sqooba.traildbj.TrailDBj.TrailDBConstructor;
-import io.sqooba.traildbj.TrailDBj.TrailDBCursor;
-import io.sqooba.traildbj.TrailDBj.TrailDBError;
+import io.sqooba.traildbj.TrailDB;
+import io.sqooba.traildbj.TrailDBConstructor;
+import io.sqooba.traildbj.TrailDBCursor;
+import io.sqooba.traildbj.TrailDBError;
+import io.sqooba.traildbj.TrailDBEvent;
 
 public class TrailDBjITest {
 
@@ -30,7 +30,7 @@ public class TrailDBjITest {
     @Before
     public void setUp() throws IOException {
 
-        // Initialise a TrailDB with some events.
+        // Initialise a TrailDB with some TrailDBEvents.
         TrailDBConstructor cons = new TrailDBConstructor(this.path, new String[] { "field1", "field2" });
         cons.add(this.cookie, 120, new String[] { "a", "hinata" });
         cons.add(this.cookie, 121, new String[] { "vilya", "" });
@@ -50,26 +50,26 @@ public class TrailDBjITest {
     }
 
     @Test
-    public void trailShouldContainCorrectNumberOfEvents() {
+    public void trailShouldContainCorrectNumberOfTrailDBEvents() {
         TrailDBCursor trail = this.db.trail(0);
         int count = 0;
-        for(Event event : trail) {
+        for(TrailDBEvent TrailDBEvent : trail) {
             count++;
         }
         assertEquals(2, count);
 
         trail = this.db.trail(1);
         count = 0;
-        for(Event event : trail) {
+        for(TrailDBEvent TrailDBEvent : trail) {
             count++;
         }
         assertEquals(2, count);
     }
 
     @Test
-    public void trailShouldContainCorrectEvents() {
+    public void trailShouldContainCorrectTrailDBEvents() {
         TrailDBCursor trail = this.db.trail(0);
-        Event e = trail.iterator().next();
+        TrailDBEvent e = trail.iterator().next();
         List<String> fieldsNames = e.getFieldNames();
         List<String> fieldsValues = e.getFieldsValues();
 

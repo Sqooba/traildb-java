@@ -21,9 +21,9 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.reflect.Whitebox;
 
+import io.sqooba.traildbj.TrailDBConstructor;
+import io.sqooba.traildbj.TrailDBError;
 import io.sqooba.traildbj.TrailDBj;
-import io.sqooba.traildbj.TrailDBj.TrailDBConstructor;
-import io.sqooba.traildbj.TrailDBj.TrailDBError;
 
 /**
  * These are some tests to show how to mock C lib calls, but each test is a pain to write because spying a singleton
