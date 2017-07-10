@@ -5,6 +5,8 @@ import traildb.TrailDBEvent;
 
 public class TrailDBCursor {
 
+	private long cur;
+
 	public native void free();
 
 	public native void getTrail(int trailId);

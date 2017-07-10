@@ -6,7 +6,6 @@
 JNIEXPORT void JNICALL Java_traildb_TrailDBConstructor_init(JNIEnv *env, jobject obj, jstring root, jobjectArray fields) {
 	jclass cls;
 	jfieldID fid;
-	jobject jobj;
 
 	tdb_error err;
 	tdb_cons *cons;

@@ -19,7 +19,11 @@ public class TrailDB {
 		TDB_OPT_CURSOR_EVENT_BUFFER_SIZE,
 	}
 
+	public String root;
+	private long db;
+
 	public TrailDB(String root) {
+		this.root = root;
 		init(root);
 	}
 
