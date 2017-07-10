@@ -12,7 +12,9 @@ import java.util.Map;
 import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 import io.sqooba.traildbj.TrailDB;
 import io.sqooba.traildbj.TrailDBConstructor;
@@ -26,6 +28,9 @@ public class TrailDBjITest {
     private String path = "testdb";
     private String cookie = "12345678123456781234567812345678";
     private String otherCookie = "12121212121212121212121212121212";
+
+    @Rule
+    public ExpectedException expectedEx = ExpectedException.none();
 
     @Before
     public void setUp() throws IOException {
@@ -106,8 +111,22 @@ public class TrailDBjITest {
 
     }
 
-    @Test(expected = TrailDBError.class)
+    @Test
+    public void addingToAlreadyFinalisedDBShouldFail() {
+        this.expectedEx.expect(TrailDBError.class);
+        this.expectedEx.expectMessage("Trying to add event to an already finalised database.");
+
+        TrailDBConstructor cons = new TrailDBConstructor(this.path, new String[] { "field1", "field2" });
+        cons.finalise();
+        cons.add(this.cookie, 120, new String[] { "a", "hinata" });
+    }
+
+    @Test
     public void addShouldFailIfValNbrNotEqualFieldNbr() throws IOException {
+
+        this.expectedEx.expect(TrailDBError.class);
+        this.expectedEx.expectMessage("Number of values does not match number of fields.");
+
         TrailDBConstructor cons = new TrailDBConstructor(this.path, new String[] { "f1" });
         cons.add("c", 1, new String[] { "a", "b" });
     }

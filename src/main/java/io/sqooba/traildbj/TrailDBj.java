@@ -196,5 +196,4 @@ public enum TrailDBj {
 
     /** const tdb_event *tdb_cursor_next(tdb_cursor *cursor) */
     native int tdbCursorNext(ByteBuffer cursor, TrailDBEvent event); // Fill the event in jni.
-
 }
