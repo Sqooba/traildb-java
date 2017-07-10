@@ -5,6 +5,9 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.io.FileUtils;
 import org.junit.After;
@@ -38,14 +41,57 @@ public class TrailDBjITest {
 
     @Test
     public void test() {
-        TrailDBCursor cursor = this.db.trail(0);
-        Event e = cursor.next();
-        System.out.println(e);
-        System.out.println(cursor.next());
-        TrailDBCursor cursor2 = this.db.trail(1);
-        Event e2 = cursor2.next();
-        System.out.println(e2);
-        System.out.println(cursor2.next());
+        Map<String, TrailDBCursor> map = this.db.trails();
+        for(Map.Entry<String, TrailDBCursor> entry : map.entrySet()) {
+            for(Event event : entry.getValue()) {
+                System.out.println(entry.getKey() + " " + event);
+            }
+        }
+        LinkedList<String> ll = new LinkedList();
+        ll.add("vilya");
+        ll.add("kaguya");
+        for(String s : ll) {
+            System.out.println(s);
+        }
+    }
+
+    @Test
+    public void trailShouldContainCorrectNumberOfEvents() {
+        TrailDBCursor trail = this.db.trail(0);
+        int count = 0;
+        for(Event event : trail) {
+            count++;
+        }
+        assertEquals(2, count);
+
+        trail = this.db.trail(1);
+        count = 0;
+        for(Event event : trail) {
+            count++;
+        }
+        assertEquals(2, count);
+    }
+
+    @Test
+    public void trailShouldContainCorrectEvents() {
+        TrailDBCursor trail = this.db.trail(0);
+        Event e = trail.iterator().next();
+        List<String> fieldsNames = e.getFieldNames();
+        List<String> fieldsValues = e.getFieldsValues();
+
+        assertEquals(122, e.getTimestamp());
+        assertEquals(2, e.getNumItems());
+        assertEquals("time", fieldsNames.get(0));
+        assertEquals("field1", fieldsNames.get(1));
+        assertEquals("field2", fieldsNames.get(2));
+        assertEquals("kaguya", fieldsValues.get(0));
+        assertEquals("hinata", fieldsValues.get(1));
+    }
+
+    @Test(expected = UnsupportedOperationException.class)
+    public void trailRemoveShouldThrow() {
+        TrailDBCursor trail = this.db.trail(0);
+        trail.iterator().remove();
     }
 
     @Test
@@ -162,6 +208,11 @@ public class TrailDBjITest {
     @Test(expected = IllegalArgumentException.class)
     public void getUUIDShouldFailWithWrongUUID() {
         this.db.getUUID(-1);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void getUUIDShouldFailWithWrongUUIDBis() {
+        this.db.getUUID(1000);
     }
 
     @Test(expected = IllegalArgumentException.class)
