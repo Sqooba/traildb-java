@@ -436,7 +436,7 @@ JNIEXPORT jlong JNICALL Java_io_sqooba_traildbj_TrailDBj_tdbGetTrailLength
 
 }
 
-JNIEXPORT void JNICALL Java_io_sqooba_traildbj_TrailDBj_tdbCursorNext
+JNIEXPORT jint JNICALL Java_io_sqooba_traildbj_TrailDBj_tdbCursorNext
   (JNIEnv *env, jobject thisObject, jobject jcursor, jobject jevent)
 {
 
@@ -445,6 +445,11 @@ JNIEXPORT void JNICALL Java_io_sqooba_traildbj_TrailDBj_tdbCursorNext
 
 	// Call lib.
 	const tdb_event *event = tdb_cursor_next(cursor);
+
+	// Check if there is no more events.
+	if(!event) {
+		return -1;
+	}
 
 	// Get struct elements.
 	uint64_t timestamp = event->timestamp;
@@ -468,6 +473,7 @@ JNIEXPORT void JNICALL Java_io_sqooba_traildbj_TrailDBj_tdbCursorNext
 		env->CallObjectMethod(jevent, midAdd, (jlong) items[j]);
 	}
 
+	return 0;
 	// TODO release...
 
 }
