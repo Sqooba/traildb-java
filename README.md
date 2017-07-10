@@ -34,8 +34,21 @@ public class Example {
         // Writing db to a file.
         TrailDB db = cons.finalise();
         
-        // Releasing cons handle.
-        cons.close();
+        // Iterate over whole db using cursor.
+        Map<String, TrailDBCursor> map = db.trails();
+        
+        for(Map.Entry<String, TrailDBCursor> entry : map.entrySet()) {
+            for(Event event : entry.getValue()) {
+                System.out.println(entry.getKey() + " " + event);
+            }
+        }
+        
+        // Iterate over single trail.
+        TrailDBCursor trail = db.trail(0);
+        
+        for(Event event : trail) {
+            System.out.println(event);
+        }
     }
 }
 ```
@@ -50,7 +63,7 @@ The full list of methods can be found on the [C API web page](http://traildb.io/
 |-------------------|--------|---------|
 | tdb_cons_init     | Yes    | No      |
 | tdb_cons_open     | Yes    | No      |
-| tdb_cons_close    | Yes    | Yes     |
+| tdb_cons_close    | Yes    | No      |
 | tdb_cons_add      | Yes    | Yes     |
 | tdb_cons_set_opt  | No     | No      |
 | tdb_cons_get_opt  | No     | No      |
@@ -71,7 +84,7 @@ The full list of methods can be found on the [C API web page](http://traildb.io/
 | tdb_min_timestamp | Yes    | Yes     |
 | tdb_max_timestamp | Yes    | Yes     |
 | tdb_version       | Yes    | Yes     |
-| tdb_error_str     | Yes     | No      |
+| tdb_error_str     | Yes    | No      |
 
 #### Setting Options ####
 

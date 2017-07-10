@@ -385,4 +385,97 @@ JNIEXPORT jint JNICALL Java_io_sqooba_traildbj_TrailDBj_tdbGetTrailId
 	return err;
 }
 
+JNIEXPORT jobject JNICALL Java_io_sqooba_traildbj_TrailDBj_tdbCursorNew
+  (JNIEnv *env, jobject thisObject, jobject jdb) 
+{
+
+	// Convert arguments.
+	const tdb *db = (tdb*) env->GetDirectBufferAddress(jdb);
+
+	// Call lib.
+	void *cursor = tdb_cursor_new(db);
+	jobject cursorByteBuffer = env->NewDirectByteBuffer((void*) cursor, sizeof(void *));
+    
+	return cursorByteBuffer;
+}
+
+JNIEXPORT void JNICALL Java_io_sqooba_traildbj_TrailDBj_tdbCursorFree
+  (JNIEnv *env, jobject thisObject, jobject jcursor) 
+{
+
+	// Convert arguments.
+	tdb_cursor *cursor = (tdb_cursor*) env->GetDirectBufferAddress(jcursor);
+
+	// Call lib.
+	tdb_cursor_free(cursor);
+
+}
+
+JNIEXPORT jint JNICALL Java_io_sqooba_traildbj_TrailDBj_tdbGetTrail
+  (JNIEnv *env, jobject thisObject, jobject jcursor, jlong jtrailID) 
+{
+
+	// Convert arguments.
+	tdb_cursor *cursor = (tdb_cursor*) env->GetDirectBufferAddress(jcursor);
+	uint64_t trail_id = (uint64_t) jtrailID;	
+
+	// Call lib.
+	return tdb_get_trail(cursor, trail_id);
+
+}
+
+JNIEXPORT jlong JNICALL Java_io_sqooba_traildbj_TrailDBj_tdbGetTrailLength
+  (JNIEnv *env, jobject thisObject, jobject jcursor) 
+{
+
+	// Convert arguments.
+	tdb_cursor *cursor = (tdb_cursor*) env->GetDirectBufferAddress(jcursor);
+
+	// Call lib.
+	return (jlong) tdb_get_trail_length(cursor);
+
+}
+
+JNIEXPORT jint JNICALL Java_io_sqooba_traildbj_TrailDBj_tdbCursorNext
+  (JNIEnv *env, jobject thisObject, jobject jcursor, jobject jevent)
+{
+
+	// Convert arguments.
+	tdb_cursor *cursor = (tdb_cursor*) env->GetDirectBufferAddress(jcursor);
+
+	// Call lib.
+	const tdb_event *event = tdb_cursor_next(cursor);
+
+	// Check if there is no more events.
+	if(!event) {
+		return -1;
+	}
+
+	// Get struct elements.
+	uint64_t timestamp = event->timestamp;
+	uint64_t num_items = event->num_items;
+	const tdb_item *items_ptr = event->items;
+	tdb_item items[num_items];
+
+	unsigned int i;
+	for(i = 0; i < num_items; i++) {
+		items[i] = items_ptr[i];
+	}
+	
+	// Construct event.
+	jclass cls = env->FindClass("io/sqooba/traildbj/TrailDBj$Event");
+	jmethodID midBuild = env->GetMethodID(cls, "build","(JJ)V");
+	jmethodID midAdd = env->GetMethodID(cls, "addItem","(J)V");
+	env->CallObjectMethod(jevent, midBuild, (jlong)timestamp, (jlong)num_items);
+
+	unsigned int j;
+	for(j = 0; j < num_items; j++) {
+		env->CallObjectMethod(jevent, midAdd, (jlong) items[j]);
+	}
+
+	return 0;
+	// TODO release...
+
+}
+
 

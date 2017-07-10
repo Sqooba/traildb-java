@@ -1,14 +1,16 @@
 package io.sqooba.traildbj;
 
-import java.io.Closeable;
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -20,7 +22,7 @@ import org.apache.commons.io.IOUtils;
 /**
  * This class is used to perform native call to the TrailDB C library. Base on the available Python bindings.
  * 
- * @author Vilya
+ * @author B. Sottas
  *
  */
 public enum TrailDBj {
@@ -187,15 +189,34 @@ public enum TrailDBj {
     private native int tdbGetTrailId(ByteBuffer db, byte[] uuid, ByteBuffer trailId);
 
     // ========================================================================
+    // Query events with cursors.
+    // ========================================================================
+
+    /** tdb_cursor *tdb_cursor_new(const tdb *db) */
+    private native ByteBuffer tdbCursorNew(ByteBuffer db); // A cursor is a void *.
+
+    /** void tdb_cursor_free(tdb_cursor *cursor) */
+    private native void tdbCursorFree(ByteBuffer cursor);
+
+    /** tdb_error tdb_get_trail(tdb_cursor *cursor, uint64_t trail_id) */
+    private native int tdbGetTrail(ByteBuffer cursor, long trailID);
+
+    /** uint64_t tdb_get_trail_length(tdb_cursor *cursor) */
+    private native long tdbGetTrailLength(ByteBuffer cursor);
+
+    /** const tdb_event *tdb_cursor_next(tdb_cursor *cursor) */
+    private native int tdbCursorNext(ByteBuffer cursor, Event event); // Fill the event in jni.
+
+    // ========================================================================
     // Helper classes.
     // ========================================================================
 
     /**
      * Class allowing to easily construct a new TrailDB.
      * 
-     * @author Vilya
+     * @author B. Sottas
      */
-    public static class TrailDBConstructor implements Closeable {
+    public static class TrailDBConstructor {
 
         private TrailDBj trailDBj = TrailDBj.INSTANCE;
 
@@ -295,7 +316,7 @@ public enum TrailDBj {
         }
 
         @Override
-        public void close() throws IOException {
+        protected void finalize() {
             if (this.cons != null) {
                 LOGGER.log(Level.INFO, "Closing TrailDB.");
                 this.trailDBj.tdbConsClose(this.cons);
@@ -306,10 +327,10 @@ public enum TrailDBj {
     /**
      * Class used to query an existing TrailDB.
      * 
-     * @author Vilya
+     * @author B. Sottas
      *
      */
-    public static class TrailDB implements Closeable {
+    public static class TrailDB {
 
         private TrailDBj trailDBj = TrailDBj.INSTANCE;
 
@@ -557,8 +578,43 @@ public enum TrailDBj {
             return res;
         }
 
+        /**
+         * Get a cursor over a particular trail in the database. The cursor allows to iterate over events in this trail.
+         * 
+         * @param trailID The trail id.
+         * @return A cursor over the trail.
+         * @throws TrailDBError If cursor creation failed in some way.
+         */
+        public TrailDBCursor trail(long trailID) { // Python has more params.
+            ByteBuffer cursor = this.trailDBj.tdbCursorNew(this.db);
+            if (cursor == null) {
+                throw new TrailDBError("Memory allocation failed for cursor.");
+            }
+            int errCode = this.trailDBj.tdbGetTrail(cursor, trailID);
+            if (errCode != 0) {
+                throw new TrailDBError("Falied to create cursor: " + errCode);
+            }
+            Event e = new Event(this, this.fields);
+            return new TrailDBCursor(cursor, e);
+        }
+
+        /**
+         * Get a map containing a trail UUID as key and a trail cursor as value, allowing to iterate over all trails in
+         * the database.
+         * 
+         * @return A map containing a trail UUID as key and a trail cursor as value
+         */
+        public Map<String, TrailDBCursor> trails() {
+            Map<String, TrailDBCursor> res = new HashMap<>();
+            for(int i = 0; i < this.length(); i++) {
+                res.put(this.getUUID(i), this.trail(i));
+            }
+
+            return res;
+        }
+
         @Override
-        public void close() throws IOException {
+        protected void finalize() {
             if (this.db != null) {
                 this.trailDBj.tdbClose(this.db);
             }
@@ -566,9 +622,180 @@ public enum TrailDBj {
     }
 
     /**
+     * Class representing a cursor over a particular trail of the database. The cursor is initially constructed from the
+     * TrailDB.trail() method. The cursor points to the current event and this event is updated each time a .next() is
+     * called.
+     * 
+     * @author B. Sottas
+     *
+     */
+    public static class TrailDBCursor implements Iterable<Event> {
+
+        private ByteBuffer cursor;
+        private Event event;
+
+        protected TrailDBCursor(ByteBuffer cursor, Event event) {
+            this.event = event;
+            this.cursor = cursor;
+        }
+
+        @Override
+        protected void finalize() {
+            if (this.cursor != null) {
+                TrailDBj.INSTANCE.tdbCursorFree(this.cursor);
+            }
+        }
+
+        @Override
+        public Iterator<Event> iterator() {
+            return new Iterator<TrailDBj.Event>() {
+
+                int errCode = 0;
+
+                @Override
+                public Event next() {
+                    if (!TrailDBCursor.this.event.isBuilt()) {
+                        TrailDBj.INSTANCE.tdbCursorNext(TrailDBCursor.this.cursor, TrailDBCursor.this.event);
+                    }
+                    return TrailDBCursor.this.event;
+                }
+
+                @Override
+                public boolean hasNext() {
+                    return TrailDBj.INSTANCE.tdbCursorNext(TrailDBCursor.this.cursor, TrailDBCursor.this.event) == 0;
+                }
+
+                @Override
+                public void remove() {
+                    throw new UnsupportedOperationException();
+                }
+            };
+        }
+    }
+
+    /**
+     * An event in the trail database.
+     * 
+     * @author B. Sottas
+     *
+     */
+    public static class Event {
+
+        /** Reference to the TrailDB instance that initially created a cursor containing this event. */
+        private TrailDB trailDB;
+
+        private long timestamp;
+        private long numItems;
+        private List<Long> items; // items encoded on uint64_t.
+
+        /** This one contains the timestamp name. */
+        private List<String> fieldNames;
+
+        /** Does NOT contain the timestamp value. */
+        private List<String> fieldValues;
+
+        /** Indicates if a tdb_cursor_next as already been called once or not. */
+        private boolean built = false;
+
+        /**
+         * The constructor just initialise the name of the fields (timestamp, field1, field2,...) and doest NOT fill
+         * items.
+         * 
+         * @param fieldsNames Names of the fields.
+         */
+        protected Event(TrailDB trailDB, List<String> fieldsNames) {
+            this.trailDB = trailDB;
+            this.fieldNames = fieldsNames;
+        }
+
+        /**
+         * Get the timestamp of this event.
+         * 
+         * @return The timestamp of this event.
+         */
+        public long getTimestamp() {
+            return this.timestamp;
+        }
+
+        /**
+         * Get the number of items in this event.
+         * 
+         * @return The number of items in this event.
+         */
+        public long getNumItems() {
+            return this.numItems;
+        }
+
+        /**
+         * Get the fields names of this event. Contains the timestamp name.
+         * 
+         * @return The fields names of this event.
+         */
+        public List<String> getFieldNames() {
+            return Collections.unmodifiableList(this.fieldNames);
+        }
+
+        /**
+         * Get the fields values of this event. Does NOT contain the timestamp value.
+         * 
+         * @return The fields values of this event.
+         */
+        public List<String> getFieldsValues() {
+            return Collections.unmodifiableList(this.fieldValues);
+        }
+
+        @Override
+        public String toString() {
+            StringBuilder sb = new StringBuilder();
+            String sep = ", ";
+            for(int i = 0; i < this.numItems; i++) {
+                if (i == this.numItems - 1) {
+                    sep = "";
+                }
+                // Skip the "time" in names.
+                sb.append(this.fieldNames.get(i + 1) + "=" + this.fieldValues.get(i) + sep);
+            }
+            return "Event(time=" + this.timestamp + ", " + sb.toString() + ")";
+        }
+
+        /**
+         * This method is called by the c++ code to initialise this event.
+         * 
+         * @param timestamp The event timestamp.
+         * @param numItems The number of items in this event.
+         */
+        protected void build(long timestamp, long numItems) {
+            this.timestamp = timestamp;
+            this.numItems = numItems;
+            this.items = new ArrayList<>((int)numItems);
+            this.fieldValues = new ArrayList<>();
+            this.built = true;
+        }
+
+        /**
+         * This method is called by the c++ code to add an item in this event.
+         * 
+         * @param item The item to be added.
+         */
+        protected void addItem(long item) {
+            this.items.add(item);
+            this.fieldValues.add(this.trailDB.getItemValue(item));
+        }
+
+        /**
+         * Indicates if a next() call has be performed at least once on the iterator.
+         * 
+         * @return true if a next() has been called.
+         */
+        protected boolean isBuilt() {
+            return this.built;
+        }
+    }
+
+    /**
      * Exception thrown when something bad happens while performing action on the TrailDB.
      * 
-     * @author Vilya
+     * @author B. Sottas
      */
     public static class TrailDBError extends RuntimeException {
 

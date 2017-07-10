@@ -5,14 +5,19 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import io.sqooba.traildbj.TrailDBj.Event;
 import io.sqooba.traildbj.TrailDBj.TrailDB;
 import io.sqooba.traildbj.TrailDBj.TrailDBConstructor;
+import io.sqooba.traildbj.TrailDBj.TrailDBCursor;
 import io.sqooba.traildbj.TrailDBj.TrailDBError;
 
 public class TrailDBjITest {
@@ -32,7 +37,56 @@ public class TrailDBjITest {
         cons.add(this.otherCookie, 122, new String[] { "kaguya", "hinata" });
         cons.add(this.otherCookie, 123, new String[] { "alongstring", "averyveryverylongstring" });
         this.db = cons.finalise();
-        cons.close();
+    }
+
+    @Test
+    public void trailsShouldContainCorrectTrailUUIDs() {
+        Map<String, TrailDBCursor> map = this.db.trails();
+        assertEquals(2, map.size());
+
+        Iterator<Map.Entry<String, TrailDBCursor>> it = map.entrySet().iterator();
+        assertEquals(this.otherCookie, it.next().getKey());
+        assertEquals(this.cookie, it.next().getKey());
+    }
+
+    @Test
+    public void trailShouldContainCorrectNumberOfEvents() {
+        TrailDBCursor trail = this.db.trail(0);
+        int count = 0;
+        for(Event event : trail) {
+            count++;
+        }
+        assertEquals(2, count);
+
+        trail = this.db.trail(1);
+        count = 0;
+        for(Event event : trail) {
+            count++;
+        }
+        assertEquals(2, count);
+    }
+
+    @Test
+    public void trailShouldContainCorrectEvents() {
+        TrailDBCursor trail = this.db.trail(0);
+        Event e = trail.iterator().next();
+        List<String> fieldsNames = e.getFieldNames();
+        List<String> fieldsValues = e.getFieldsValues();
+
+        assertEquals(122, e.getTimestamp());
+        assertEquals(2, e.getNumItems());
+        assertEquals("time", fieldsNames.get(0));
+        assertEquals("field1", fieldsNames.get(1));
+        assertEquals("field2", fieldsNames.get(2));
+        assertEquals("kaguya", fieldsValues.get(0));
+        assertEquals("hinata", fieldsValues.get(1));
+        assertEquals("Event(time=122, field1=kaguya, field2=hinata)", e.toString());
+    }
+
+    @Test(expected = UnsupportedOperationException.class)
+    public void trailRemoveShouldThrow() {
+        TrailDBCursor trail = this.db.trail(0);
+        trail.iterator().remove();
     }
 
     @Test
@@ -56,14 +110,12 @@ public class TrailDBjITest {
     public void addShouldFailIfValNbrNotEqualFieldNbr() throws IOException {
         TrailDBConstructor cons = new TrailDBConstructor(this.path, new String[] { "f1" });
         cons.add("c", 1, new String[] { "a", "b" });
-        cons.close();
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void addShouldFailWithInvalidUUID() throws IOException {
         TrailDBConstructor cons = new TrailDBConstructor(this.path, new String[] { "f1", "f2" });
         cons.add("c", 1, new String[] { "a", "b" });
-        cons.close();
     }
 
     @Test
@@ -111,7 +163,6 @@ public class TrailDBjITest {
         otherCons.add("11111111111111111111111111111111", 119, new String[] { "asdf", "qwer" });
         otherCons.append(this.db);
         TrailDB db2 = otherCons.finalise();
-        otherCons.close();
 
         File f = new File(this.path + "other" + ".tdb");
         assertTrue(f.exists() && !f.isDirectory());
@@ -134,7 +185,6 @@ public class TrailDBjITest {
         } catch(TrailDBError e) {
             throw e;
         } finally {
-            failCons.close();
             FileUtils.deleteDirectory(new File(this.path + "fail"));
         }
     }
@@ -153,6 +203,11 @@ public class TrailDBjITest {
     @Test(expected = IllegalArgumentException.class)
     public void getUUIDShouldFailWithWrongUUID() {
         this.db.getUUID(-1);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void getUUIDShouldFailWithWrongUUIDBis() {
+        this.db.getUUID(1000);
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -204,6 +259,5 @@ public class TrailDBjITest {
             f.delete();
         }
         FileUtils.deleteDirectory(new File(this.path));
-        this.db.close();
     }
 }
