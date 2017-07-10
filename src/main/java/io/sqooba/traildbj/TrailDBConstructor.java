@@ -25,6 +25,8 @@ public class TrailDBConstructor {
     /** Handle to the TrailDB, returned by init method. */
     private ByteBuffer cons;
 
+    private boolean closed = false;
+
     /**
      * Construct a new TrailDB.
      * 
@@ -64,6 +66,9 @@ public class TrailDBConstructor {
      * @throws IllegalArgumentException If {@code uuid} is an invalid 32-byte hex string.
      */
     public void add(String uuid, long timestamp, String[] values) {
+        if (this.closed) {
+            throw new TrailDBError("Trying to add event to an already finalised database.");
+        }
         int n = values.length;
         if (n != this.ofields.length) {
             // FIXME this is a hack to avoid random errors in the C lib.
@@ -107,6 +112,7 @@ public class TrailDBConstructor {
             throw new TrailDBError("Failed to finalize.");
         }
         LOGGER.log(Level.INFO, "Finalisation done.");
+        this.closed = true;
         return new TrailDB(this.path);
     }
 
