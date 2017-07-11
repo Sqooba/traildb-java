@@ -1,45 +1,46 @@
 CC=gcc
 CFLAGS=-shared -fPIC
 INCLUDE=-Iinclude -I/usr/lib/jvm/java-8-openjdk-amd64/include -I/usr/lib/jvm/java-8-openjdk-amd64/include/linux
-OBJ=src/obj
+TGT=target
 
-JAVAS=$(wildcard src/*.java)
+JSOURCE=$(wildcard src/*.java)
+CSOURCE=$(wildcard src/*.c)
 EXAMPLES=$(wildcard examples/*.java)
-OBJECTS=$(patsubst src/%.java,$(OBJ)/lib%.so,$(JAVAS))
-CLASSES=$(patsubst src/%.java,$(OBJ)/%.class,$(JAVAS))
+LIBRARIES=$(patsubst src/%.c,$(TGT)/lib%.so,$(CSOURCE))
+JCLASSES=$(patsubst src/%.java,$(TGT)/%.class,$(JSOURCE))
 
 .PHONY: build
-build: $(CLASSES) $(OBJECTS)
+build: $(TGT)/TrailDB.class $(LIBRARIES)
 
 .PHONY: run
 run: build examples
-	java -Djava.library.path=$(PWD)/$(OBJ) -classpath '$(OBJ)' Example
+	java -Djava.library.path=$(PWD)/$(TGT) -classpath '$(TGT)' Example
 
 debug: build examples
-	jdb -Djava.library.path=$(PWD)/$(OBJ) -sourcepath 'examples' -classpath '$(OBJ)' Example
+	jdb -Djava.library.path=$(PWD)/$(TGT) -sourcepath 'examples' -classpath '$(TGT)' Example
 
-# OBJECTS
-$(OBJ)/lib%.so: src/%.c include/%.h
+# LIBRARIES
+$(TGT)/lib%.so: src/%.c include/%.h
 	$(CC) $(INCLUDE) $(CFLAGS) $< -o $@ -ltraildb
 
-include/%.h: $(OBJ)/%.class
-	javah -jni -classpath '$(OBJ)' -o $@ $(patsubst include/%.h,traildb.%,$@)
+include/%.h:
+	javah -jni -classpath '$(TGT)' -o $@ $(patsubst include/%.h,traildb.%,$@)
 
-# CLASSES
-$(OBJ)/%.class: src/%.java
-	javac $(JAVAS) -d $(OBJ)
+# JCLASSES
+$(TGT)/%.class: src/%.java
+	javac $(JSOURCE) -d $(TGT)
 
 .PHONY: examples
 examples: $(EXAMPLES)
-	javac -classpath '$(OBJ)' $^ -d $(OBJ)
+	javac -classpath '$(TGT)' $^ -d $(TGT)
 
 .PHONY: clean
 clean:
-	rm -f $(OBJ)/*.so $(OBJ)/traildb/*.class
+	rm -f $(TGT)/*.so $(TGT)/traildb/*.class
 	rm include/*.h
 
 .PHONY: descriptors
 descriptors:
-	javap -s -p $(OBJ)/traildb/*
+	javap -s -p $(TGT)/traildb/*
 
 .PRECIOUS: include/%.h

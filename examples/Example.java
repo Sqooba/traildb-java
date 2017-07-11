@@ -16,15 +16,9 @@ public class Example {
 		TrailDBEvent event;
 		for (int i=0; i < numCookies; i++) {
 			// uuid = tdb.getUUID(i);
-			cur.getTrail(i);
-			event = cur.next();
 			// System.out.println(uuid);
-			if (event != null) {
-				System.out.println(event.timestamp);
-			}
-
-			event = cur.next();
-			if (event != null) {
+			cur.getTrail(i);
+			while ((event = cur.next()) != null) {
 				System.out.println(event.timestamp);
 			}
 		}

@@ -1,1 +1,1 @@
-#include "../include/TrailDBCursor.h"
+#include "../include/TrailDBMultiCursor.h"
