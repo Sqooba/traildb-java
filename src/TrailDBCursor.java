@@ -9,9 +9,9 @@ public class TrailDBCursor {
 
 	public native void free();
 
-	public native void getTrail(int trailId);
+	public native void getTrail(long trailId);
 
-	public native int getTrailLength();
+	public native long getTrailLength();
 
 	public native void setEventFilter(TrailDBEventFilter filter);
 
@@ -21,4 +21,7 @@ public class TrailDBCursor {
 
 	public native TrailDBEvent peek();
 	
+	static {
+		System.loadLibrary("TrailDBCursor");
+	}
 }

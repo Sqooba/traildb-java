@@ -11,15 +11,22 @@ public class Example {
 	public static void read() {
 		TrailDB tdb = new TrailDB("tiny.tdb");
 		TrailDBCursor cur = tdb.cursorNew();
-		int numCookies = tdb.numTrails();
+		long numCookies = tdb.numTrails();
 		UUID uuid;
 		TrailDBEvent event;
 		for (int i=0; i < numCookies; i++) {
-			uuid = tdb.getUUID(i);
+			// uuid = tdb.getUUID(i);
 			cur.getTrail(i);
 			event = cur.next();
-			System.out.println(uuid);
-			System.out.println(event.timestamp);
+			// System.out.println(uuid);
+			if (event != null) {
+				System.out.println(event.timestamp);
+			}
+
+			event = cur.next();
+			if (event != null) {
+				System.out.println(event.timestamp);
+			}
 		}
 	}
 

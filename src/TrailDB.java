@@ -33,15 +33,15 @@ public class TrailDB {
 
 	public native void willNeed();
 
-	public native int numTrails();
+	public native long numTrails();
 
-	public native int numEvents();
+	public native long numEvents();
 
-	public native int minTimestamp();
+	public native long minTimestamp();
 
-	public native int maxTimestamp();
+	public native long maxTimestamp();
 
-	public native int version();
+	public native long version();
 
 	// Options
 
@@ -49,9 +49,9 @@ public class TrailDB {
 
 	public native int getOpt(TDB_OPT_KEY key); // TODO: Fix this
 
-	public native void setTrailOpt(int trailId, TDB_OPT_KEY key, int value); // TODO: Fix this
+	public native void setTrailOpt(long trailId, TDB_OPT_KEY key, int value); // TODO: Fix this
 
-	public native int getTrailOpt(int trailId, TDB_OPT_KEY key); // TODO: Fix this
+	public native int getTrailOpt(long trailId, TDB_OPT_KEY key); // TODO: Fix this
 
 	// Items
 

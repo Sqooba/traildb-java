@@ -49,23 +49,42 @@ JNIEXPORT void JNICALL Java_traildb_TrailDB_willNeed(JNIEnv *env, jobject obj) {
 
 }
 
-JNIEXPORT jint JNICALL Java_traildb_TrailDB_numTrails(JNIEnv *env, jobject obj) {
+JNIEXPORT jlong JNICALL Java_traildb_TrailDB_numTrails(JNIEnv *env, jobject obj) {
+	jclass cls;
+	jfieldID fid;
+
+	tdb *db;
+	uint64_t result;
+
+	// Retrieve db pointer
+
+	cls = (*env)->GetObjectClass(env, obj);
+	fid = (*env)->GetFieldID(env, cls, "db", "J");
+	if (fid == NULL) {
+		exit(1);
+	}
+	db = (tdb *) (*env)->GetLongField(env, obj, fid);
+
+	// Get number of trails
+
+	result = tdb_num_trails(db);
+
+	return result;
+}
+
+JNIEXPORT jlong JNICALL Java_traildb_TrailDB_numEvents(JNIEnv *env, jobject obj) {
 
 }
 
-JNIEXPORT jint JNICALL Java_traildb_TrailDB_numEvents(JNIEnv *env, jobject obj) {
+JNIEXPORT jlong JNICALL Java_traildb_TrailDB_minTimestamp(JNIEnv *env, jobject obj) {
 
 }
 
-JNIEXPORT jint JNICALL Java_traildb_TrailDB_minTimestamp(JNIEnv *env, jobject obj) {
+JNIEXPORT jlong JNICALL Java_traildb_TrailDB_maxTimestamp(JNIEnv *env, jobject obj) {
 
 }
 
-JNIEXPORT jint JNICALL Java_traildb_TrailDB_maxTimestamp(JNIEnv *env, jobject obj) {
-
-}
-
-JNIEXPORT jint JNICALL Java_traildb_TrailDB_version(JNIEnv *env, jobject obj) {
+JNIEXPORT jlong JNICALL Java_traildb_TrailDB_version(JNIEnv *env, jobject obj) {
 
 }
 
@@ -77,11 +96,11 @@ JNIEXPORT jint JNICALL Java_traildb_TrailDB_getOpt(JNIEnv *env, jobject obj, job
 
 }
 
-JNIEXPORT void JNICALL Java_traildb_TrailDB_setTrailOpt(JNIEnv *env, jobject obj, jint trail_id, jobject key, jint value) {
+JNIEXPORT void JNICALL Java_traildb_TrailDB_setTrailOpt(JNIEnv *env, jobject obj, jlong trail_id, jobject key, jint value) {
 
 }
 
-JNIEXPORT jint JNICALL Java_traildb_TrailDB_getTrailOpt(JNIEnv *env, jobject obj, jint trail_id, jobject key) {
+JNIEXPORT jint JNICALL Java_traildb_TrailDB_getTrailOpt(JNIEnv *env, jobject obj, jlong trail_id, jobject key) {
 
 }
 
@@ -150,6 +169,7 @@ JNIEXPORT jobject JNICALL Java_traildb_TrailDB_cursorNew(JNIEnv *env, jobject ob
 		exit(1);
 	}
 
+	// cursor_obj = new TrailDBCursor();
 	// Get method id of TrailDBCursor constructor
 
 	cid = (*env)->GetMethodID(env, cls, "<init>", "()V");
@@ -158,7 +178,8 @@ JNIEXPORT jobject JNICALL Java_traildb_TrailDB_cursorNew(JNIEnv *env, jobject ob
 
 	cursor_obj = (*env)->NewObject(env, cls, cid);
 
-	// Store cur pointer on cursor
+
+	// Store cur pointer on cursor (cursor_obj.cur = cur)
 
 	fid = (*env)->GetFieldID(env, cls, "cur", "J");
 	if (fid == NULL) {
