@@ -1,7 +1,6 @@
 package test;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
@@ -22,7 +21,7 @@ import io.sqooba.traildbj.TrailDBCursor;
 import io.sqooba.traildbj.TrailDBError;
 import io.sqooba.traildbj.TrailDBEvent;
 
-public class TrailDBjITest {
+public class TrailDBTest {
 
     private TrailDB db;
     private String path = "testdb";
@@ -95,49 +94,6 @@ public class TrailDBjITest {
     }
 
     @Test
-    public void constructionShouldCreateFile() throws IOException {
-        File f = new File(this.path + ".tdb");
-        assertTrue(f.exists() && !f.isDirectory());
-    }
-
-    @Test(expected = NullPointerException.class)
-    public void constructionShouldFailWithNullPath() {
-        new TrailDBConstructor(null, new String[] { "" });
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void constructionShouldFailWithEmptyFieldName() throws IOException {
-        new TrailDBConstructor(this.path, new String[] { "", "" });
-
-    }
-
-    @Test
-    public void addingToAlreadyFinalisedDBShouldFail() {
-        this.expectedEx.expect(TrailDBError.class);
-        this.expectedEx.expectMessage("Trying to add event to an already finalised database.");
-
-        TrailDBConstructor cons = new TrailDBConstructor(this.path, new String[] { "field1", "field2" });
-        cons.finalise();
-        cons.add(this.cookie, 120, new String[] { "a", "hinata" });
-    }
-
-    @Test
-    public void addShouldFailIfValNbrNotEqualFieldNbr() throws IOException {
-
-        this.expectedEx.expect(TrailDBError.class);
-        this.expectedEx.expectMessage("Number of values does not match number of fields.");
-
-        TrailDBConstructor cons = new TrailDBConstructor(this.path, new String[] { "f1" });
-        cons.add("c", 1, new String[] { "a", "b" });
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void addShouldFailWithInvalidUUID() throws IOException {
-        TrailDBConstructor cons = new TrailDBConstructor(this.path, new String[] { "f1", "f2" });
-        cons.add("c", 1, new String[] { "a", "b" });
-    }
-
-    @Test
     public void metaDataShouldBeCorrect() {
         assertEquals(2, this.db.length());
         assertEquals(120, this.db.getMinTimestamp());
@@ -174,38 +130,6 @@ public class TrailDBjITest {
         assertEquals("alongstring", this.db.getValue(1, 4));
         assertEquals("hinata", this.db.getValue(2, 1));
         assertEquals("averyveryverylongstring", this.db.getValue(2, 2));
-    }
-
-    @Test
-    public void appendCorrectly() throws IOException {
-        TrailDBConstructor otherCons = new TrailDBConstructor(this.path + "other", new String[] { "field1", "field2" });
-        otherCons.add("11111111111111111111111111111111", 119, new String[] { "asdf", "qwer" });
-        otherCons.append(this.db);
-        TrailDB db2 = otherCons.finalise();
-
-        File f = new File(this.path + "other" + ".tdb");
-        assertTrue(f.exists() && !f.isDirectory());
-
-        assertEquals("kaguya", db2.getValue(1, 4));
-        assertTrue(this.db.length() + 1 == db2.length());
-        assertTrue(this.db.getMaxTimestamp() == db2.getMaxTimestamp());
-        assertTrue(this.db.getMinTimestamp() != db2.getMinTimestamp());
-
-        // Cleanup.
-        f.delete();
-        FileUtils.deleteDirectory(new File(this.path + "other"));
-    }
-
-    @Test(expected = TrailDBError.class)
-    public void appendShouldFailInCaseDifferentFields() throws IOException {
-        TrailDBConstructor failCons = new TrailDBConstructor(this.path + "fail", new String[] { "f1", "f2" });
-        try {
-            failCons.append(this.db);
-        } catch(TrailDBError e) {
-            throw e;
-        } finally {
-            FileUtils.deleteDirectory(new File(this.path + "fail"));
-        }
     }
 
     @Test(expected = IllegalArgumentException.class)
