@@ -114,11 +114,11 @@ public class TrailDB {
      * @throws TrailDBError if the specified field is not found.
      */
     public long getField(String fieldName) {
-        ByteBuffer b = ByteBuffer.allocate(4);
-        if (this.trailDBj.getField(this.db, fieldName, b) != 0) {
+        long index = this.fields.indexOf(fieldName);
+        if (index == -1) {
             throw new TrailDBError("Failed to retreive field. Field not found");
         }
-        return b.getInt(0);
+        return index;
     }
 
     /**
