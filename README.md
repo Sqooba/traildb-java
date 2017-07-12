@@ -6,7 +6,15 @@ This repository's goal is to provide Java bindings for TrailDB, based on the Pyt
 
 This repository requires having TrailDB installed on the machine. See instructions on the [TrailDB Github readme](https://github.com/traildb/traildb) and in the [getting started guide](http://traildb.io/docs/getting_started/).
 
-At the moment the project is not available but will be soon put in the Sqooba Maven Repository and be available as a single Maven dependency to add to your project.
+If you have the Sqooba Central Repo in your pom.xml, the project is available with:
+
+```
+<dependency>
+    <groupId>io.sqooba</groupId>
+    <artifactId>TrailDBj</artifactId>
+    <version>0.1</version>
+</dependency>
+```
 
 ### Minimal example ###
 
