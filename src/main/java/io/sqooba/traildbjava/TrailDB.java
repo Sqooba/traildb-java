@@ -1,4 +1,4 @@
-package io.sqooba.traildbj;
+package io.sqooba.traildbjava;
 
 import java.nio.ByteBuffer;
 import java.util.ArrayList;

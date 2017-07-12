@@ -1,13 +1,13 @@
-package test;
+package io.sqooba.traildbjava.test;
 
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
-import io.sqooba.traildbj.TrailDB;
-import io.sqooba.traildbj.TrailDBConstructor;
-import io.sqooba.traildbj.TrailDBCursor;
-import io.sqooba.traildbj.TrailDBj;
+import io.sqooba.traildbjava.TrailDB;
+import io.sqooba.traildbjava.TrailDBConstructor;
+import io.sqooba.traildbjava.TrailDBCursor;
+import io.sqooba.traildbjava.TrailDBj;
 import mockit.Deencapsulation;
 import mockit.Expectations;
 

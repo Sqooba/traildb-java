@@ -1,4 +1,4 @@
-package test;
+package io.sqooba.traildbjava.test;
 
 import java.io.File;
 import java.io.IOException;
@@ -10,10 +10,10 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
-import io.sqooba.traildbj.TrailDB;
-import io.sqooba.traildbj.TrailDBConstructor;
-import io.sqooba.traildbj.TrailDBError;
-import io.sqooba.traildbj.TrailDBj;
+import io.sqooba.traildbjava.TrailDB;
+import io.sqooba.traildbjava.TrailDBConstructor;
+import io.sqooba.traildbjava.TrailDBError;
+import io.sqooba.traildbjava.TrailDBj;
 import mockit.Expectations;
 
 public class TrailDBConstructorFailureTest {
