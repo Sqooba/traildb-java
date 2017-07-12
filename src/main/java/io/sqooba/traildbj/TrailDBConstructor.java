@@ -44,11 +44,11 @@ public class TrailDBConstructor {
         }
 
         // Initialisation.
-        this.cons = this.trailDBj.tdbConsInit();
+        this.cons = this.trailDBj.consInit();
         if (this.cons == null) {
             throw new TrailDBError("Failed to allocate memory for constructor.");
         }
-        if (this.trailDBj.tdbConsOpen(this.cons, path, ofields, ofields.length) != 0) {
+        if (this.trailDBj.consOpen(this.cons, path, ofields, ofields.length) != 0) {
             throw new TrailDBError("Can not open constructor.");
         }
 
@@ -84,7 +84,7 @@ public class TrailDBConstructor {
         if (rawUUID == null) {
             throw new IllegalArgumentException("uuid is invalid.");
         }
-        int errCode = this.trailDBj.tdbConsAdd(this.cons, rawUUID, timestamp, values, value_lenghts);
+        int errCode = this.trailDBj.consAdd(this.cons, rawUUID, timestamp, values, value_lenghts);
         if (errCode != 0) {
             throw new TrailDBError("Failed to add: " + errCode);
         }
@@ -97,7 +97,7 @@ public class TrailDBConstructor {
      * @throws TrailDBError if the merge fails.
      */
     public void append(TrailDB db) {
-        int errCode = this.trailDBj.tdbConsAppend(this.cons, db.db);
+        int errCode = this.trailDBj.consAppend(this.cons, db.db);
         if (errCode != 0) {
             throw new TrailDBError("Failed to merge dbs: " + errCode);
         }
@@ -108,7 +108,7 @@ public class TrailDBConstructor {
      * file. Events can not be added after this has been called.
      */
     public TrailDB finalise() {
-        if (this.trailDBj.tdbConsFinalize(this.cons) != 0) {
+        if (this.trailDBj.consFinalize(this.cons) != 0) {
             throw new TrailDBError("Failed to finalize.");
         }
         LOGGER.log(Level.INFO, "Finalisation done.");
@@ -120,7 +120,7 @@ public class TrailDBConstructor {
     protected void finalize() {
         if (this.cons != null) {
             LOGGER.log(Level.INFO, "Closing TrailDB.");
-            this.trailDBj.tdbConsClose(this.cons);
+            this.trailDBj.consClose(this.cons);
         }
     }
 }

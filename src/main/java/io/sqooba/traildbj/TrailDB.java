@@ -41,20 +41,20 @@ public class TrailDB {
             throw new IllegalArgumentException("Path must not be null.");
         }
 
-        ByteBuffer db = this.trailDBj.tdbInit();
+        ByteBuffer db = this.trailDBj.init();
         this.db = db;
 
-        if (this.trailDBj.tdbOpen(this.db, path) != 0) {
+        if (this.trailDBj.open(this.db, path) != 0) {
             throw new TrailDBError("Failed to opend db.");
         }
 
-        this.numTrails = this.trailDBj.tdbNumTrails(db);
-        this.numEvents = this.trailDBj.tdbNumEvents(db);
-        this.numFields = this.trailDBj.tdbNumFields(db);
+        this.numTrails = this.trailDBj.numTrails(db);
+        this.numEvents = this.trailDBj.numEvents(db);
+        this.numFields = this.trailDBj.numFields(db);
         this.fields = new ArrayList<>((int)this.numFields);
 
         for(int i = 0; i < this.numFields; i++) {
-            this.fields.add(this.trailDBj.tdbGetFieldName(this.db, i));
+            this.fields.add(this.trailDBj.getFieldName(this.db, i));
         }
     }
 
@@ -73,7 +73,7 @@ public class TrailDB {
      * @return The oldest timestamp.
      */
     public long getMinTimestamp() {
-        long min = this.trailDBj.tdbMinTimestamp(this.db);
+        long min = this.trailDBj.minTimestamp(this.db);
         if (min < 0) {
             LOGGER.log(Level.WARNING, "long overflow, received a negtive value for min timestamp.");
         }
@@ -86,7 +86,7 @@ public class TrailDB {
      * @return The newest timestmap.
      */
     public long getMaxTimestamp() {
-        long max = this.trailDBj.tdbMaxTimestamp(this.db);
+        long max = this.trailDBj.maxTimestamp(this.db);
         if (max < 0) {
             LOGGER.log(Level.WARNING, "long overflow, received a negtive value for max timestamp.");
         }
@@ -99,7 +99,7 @@ public class TrailDB {
      * @return The version.
      */
     public long getVersion() {
-        long version = this.trailDBj.tdbVersion(this.db);
+        long version = this.trailDBj.version(this.db);
         if (version < 0) {
             LOGGER.log(Level.WARNING, "version overflow.");
         }
@@ -115,7 +115,7 @@ public class TrailDB {
      */
     public long getField(String fieldName) {
         ByteBuffer b = ByteBuffer.allocate(4);
-        if (this.trailDBj.tdbGetField(this.db, fieldName, b) != 0) {
+        if (this.trailDBj.getField(this.db, fieldName, b) != 0) {
             throw new TrailDBError("Failed to retreive field. Field not found");
         }
         return b.getInt(0);
@@ -129,7 +129,7 @@ public class TrailDB {
      * @throws TrailDBError if the field index is invalid ( <=0 | > number of fields).
      */
     public long getLexiconSize(long field) {
-        long value = this.trailDBj.tdbLexiconSize(this.db, field);
+        long value = this.trailDBj.lexiconSize(this.db, field);
         if (value == 0) {
             throw new TrailDBError("Invalid field index.");
         }
@@ -144,7 +144,7 @@ public class TrailDB {
      * @throws TrailDBError if the field id is invalid ( <=0 | > number of fields).
      */
     public String getFieldName(long fieldId) {
-        String res = this.trailDBj.tdbGetFieldName(this.db, fieldId);
+        String res = this.trailDBj.getFieldName(this.db, fieldId);
         if (res == null) {
             throw new TrailDBError("Invalid field id.");
         }
@@ -163,7 +163,7 @@ public class TrailDB {
      * @throws TrailDBError if no item is found.
      */
     public long getItem(long fieldID, String value) {
-        long item = this.trailDBj.tdbGetItem(this.db, fieldID, value);
+        long item = this.trailDBj.getItem(this.db, fieldID, value);
         if (item == 0) {
             throw new TrailDBError("No item found.");
         }
@@ -185,7 +185,7 @@ public class TrailDB {
      */
     public String getValue(long field, long val) {
         ByteBuffer bb = ByteBuffer.allocate(8);
-        String value = this.trailDBj.tdbGetValue(this.db, field, val, bb);
+        String value = this.trailDBj.getValue(this.db, field, val, bb);
         if (value == null) {
             throw new TrailDBError("Error reading value.");
         }
@@ -206,7 +206,7 @@ public class TrailDB {
      */
     public String getItemValue(long item) {
         ByteBuffer bb = ByteBuffer.allocate(8);
-        String value = this.trailDBj.tdbGetItemValue(this.db, item, bb);
+        String value = this.trailDBj.getItemValue(this.db, item, bb);
         if (value == null) {
             throw new TrailDBError("Value not found.");
         }
@@ -231,7 +231,7 @@ public class TrailDB {
             throw new IllegalArgumentException("Invalid trail ID.");
         }
 
-        ByteBuffer uuid = this.trailDBj.tdbGetUUID(this.db, trailID);
+        ByteBuffer uuid = this.trailDBj.getUUID(this.db, trailID);
         if (uuid == null) {
             throw new TrailDBError("Invalid trail ID.");
         }
@@ -256,7 +256,7 @@ public class TrailDB {
         if (rawUUID == null) {
             throw new IllegalArgumentException("Invalid UUID.");
         }
-        int errCode = this.trailDBj.tdbGetTrailId(this.db, rawUUID, trailID);
+        int errCode = this.trailDBj.getTrailId(this.db, rawUUID, trailID);
         if (errCode != 0) {
             throw new TrailDBError("UUID not found. " + errCode);
         }
@@ -275,11 +275,11 @@ public class TrailDB {
      * @throws TrailDBError If cursor creation failed in some way.
      */
     public TrailDBCursor trail(long trailID) { // Python has more params.
-        ByteBuffer cursor = this.trailDBj.tdbCursorNew(this.db);
+        ByteBuffer cursor = this.trailDBj.cursorNew(this.db);
         if (cursor == null) {
             throw new TrailDBError("Memory allocation failed for cursor.");
         }
-        int errCode = this.trailDBj.tdbGetTrail(cursor, trailID);
+        int errCode = this.trailDBj.getTrail(cursor, trailID);
         if (errCode != 0) {
             throw new TrailDBError("Falied to create cursor: " + errCode);
         }
@@ -305,7 +305,7 @@ public class TrailDB {
     @Override
     protected void finalize() {
         if (this.db != null) {
-            this.trailDBj.tdbClose(this.db);
+            this.trailDBj.close(this.db);
         }
     }
 }

@@ -24,7 +24,7 @@ public class TrailDBCursor implements Iterable<TrailDBEvent> {
     @Override
     protected void finalize() {
         if (this.cursor != null) {
-            TrailDBj.INSTANCE.tdbCursorFree(this.cursor);
+            TrailDBj.INSTANCE.cursorFree(this.cursor);
         }
     }
 
@@ -32,19 +32,17 @@ public class TrailDBCursor implements Iterable<TrailDBEvent> {
     public Iterator<TrailDBEvent> iterator() {
         return new Iterator<TrailDBEvent>() {
 
-            int errCode = 0;
-
             @Override
             public TrailDBEvent next() {
                 if (!TrailDBCursor.this.event.isBuilt()) {
-                    TrailDBj.INSTANCE.tdbCursorNext(TrailDBCursor.this.cursor, TrailDBCursor.this.event);
+                    TrailDBj.INSTANCE.cursorNext(TrailDBCursor.this.cursor, TrailDBCursor.this.event);
                 }
                 return TrailDBCursor.this.event;
             }
 
             @Override
             public boolean hasNext() {
-                return TrailDBj.INSTANCE.tdbCursorNext(TrailDBCursor.this.cursor, TrailDBCursor.this.event) == 0;
+                return TrailDBj.INSTANCE.cursorNext(TrailDBCursor.this.cursor, TrailDBCursor.this.event) == 0;
             }
 
             @Override
