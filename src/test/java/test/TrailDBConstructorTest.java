@@ -13,9 +13,9 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
-import io.sqooba.traildbj.TrailDB;
-import io.sqooba.traildbj.TrailDBConstructor;
-import io.sqooba.traildbj.TrailDBError;
+import io.sqooba.traildbjava.TrailDB;
+import io.sqooba.traildbjava.TrailDBConstructor;
+import io.sqooba.traildbjava.TrailDBError;
 
 public class TrailDBConstructorTest {
 

@@ -15,14 +15,15 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
-import io.sqooba.traildbj.TrailDBj;
+import io.sqooba.traildbjava.TrailDBj;
 import mockit.Deencapsulation;
 import mockit.Mock;
 import mockit.MockUp;
 
 public class TrailDBjTest {
 
-    // http://blog.diabol.se/?p=474
+    // This is used to verify that particular messages have been logged when running the tests.
+    // Code copied from: http://blog.diabol.se/?p=474
     private static Logger log = Logger.getLogger(TrailDBj.class.getName());
     private static OutputStream logCapturingStream;
     private static StreamHandler customLogHandler;
