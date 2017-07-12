@@ -15,7 +15,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
-import io.sqooba.traildbjava.TrailDBj;
+import io.sqooba.traildbj.TrailDBj;
 import mockit.Deencapsulation;
 import mockit.Mock;
 import mockit.MockUp;

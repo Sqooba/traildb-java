@@ -1,4 +1,4 @@
-package io.sqooba.traildbjava;
+package io.sqooba.traildbj;
 
 /**
  * Exception thrown when something bad happens while performing action on the TrailDB.

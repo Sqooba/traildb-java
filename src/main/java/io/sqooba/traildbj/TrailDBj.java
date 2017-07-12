@@ -1,4 +1,4 @@
-package io.sqooba.traildbjava;
+package io.sqooba.traildbj;
 
 import java.io.File;
 import java.io.InputStream;
