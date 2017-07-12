@@ -81,7 +81,7 @@ public enum TrailDBj implements TrailDBInterface {
             System.load(fileOut.getAbsolutePath());
         } catch(Exception e) {
             LOGGER.log(Level.SEVERE, "Failed to load library.", e);
-            // System.exit(-1);
+            System.exit(-1);
         }
     }
 

@@ -17,6 +17,8 @@ import org.junit.rules.ExpectedException;
 
 import io.sqooba.traildbj.TrailDBj;
 import mockit.Deencapsulation;
+import mockit.Mock;
+import mockit.MockUp;
 
 public class TrailDBjTest {
 
@@ -50,6 +52,12 @@ public class TrailDBjTest {
 
     @Test
     public void loadLibFail() throws IOException {
+
+        new MockUp<System>() {
+
+            @Mock
+            public void exit(int status) {}
+        };
 
         Deencapsulation.invoke(TrailDBj.INSTANCE, "loadLib", "vi");
         String capturedLog = getTestCapturedLog();
