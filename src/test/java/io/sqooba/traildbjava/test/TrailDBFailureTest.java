@@ -76,7 +76,7 @@ public class TrailDBFailureTest {
     @Test
     public void openFailure() {
         this.expectedEx.expect(TrailDBError.class);
-        this.expectedEx.expectMessage("Failed to opend db.");
+        this.expectedEx.expectMessage("Failed to open db.");
 
         final TrailDBj traildbj = TrailDBj.INSTANCE;
         new Expectations(traildbj) {
@@ -186,7 +186,7 @@ public class TrailDBFailureTest {
     @Test
     public void trailFailure() {
         this.expectedEx.expect(TrailDBError.class);
-        this.expectedEx.expectMessage("Falied to create cursor: -1");
+        this.expectedEx.expectMessage("Failed to create cursor with code: -1");
 
         final TrailDBj traildbj = TrailDBj.INSTANCE;
         new Expectations(traildbj) {
