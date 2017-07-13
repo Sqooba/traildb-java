@@ -5,3 +5,5 @@ bin/
 target/
 TrailDBWrapper/
 TrailDBj.iml
+src/main/resources/*.so
+src/main/resources/*.dylib

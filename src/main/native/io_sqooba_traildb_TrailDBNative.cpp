@@ -1,4 +1,4 @@
-#include "io_sqooba_traildbjava_TrailDBj.h"
+#include "io_sqooba_traildb_TrailDBNative.h"
 #include <jni.h>
 #include <stdio.h>
 #include <iostream>
@@ -9,7 +9,7 @@ extern "C" {
 	#include <traildb.h>
 }
 
-JNIEXPORT jobject JNICALL Java_io_sqooba_traildbjava_TrailDBj_tdbConsInit
+JNIEXPORT jobject JNICALL Java_io_sqooba_traildb_TrailDBNative_tdbConsInit
   (JNIEnv *env, jobject thisObject) 
 {
 
@@ -18,7 +18,7 @@ JNIEXPORT jobject JNICALL Java_io_sqooba_traildbjava_TrailDBj_tdbConsInit
     return bb;
 }
 
-JNIEXPORT jint JNICALL Java_io_sqooba_traildbjava_TrailDBj_tdbConsOpen
+JNIEXPORT jint JNICALL Java_io_sqooba_traildb_TrailDBNative_tdbConsOpen
   (JNIEnv *env, jobject thisObject, jobject consj, jstring rootj, jobjectArray fieldNamesj, jlong numOfieldsj)
 {
 	// Convert arguments.
@@ -40,7 +40,7 @@ JNIEXPORT jint JNICALL Java_io_sqooba_traildbjava_TrailDBj_tdbConsOpen
 	return tdb_cons_open(cons, root, ofield_names, num_ofields);
 }
 
-JNIEXPORT void JNICALL Java_io_sqooba_traildbjava_TrailDBj_tdbConsClose
+JNIEXPORT void JNICALL Java_io_sqooba_traildb_TrailDBNative_tdbConsClose
   (JNIEnv *env, jobject thisObject, jobject consj) 
 {
 
@@ -51,7 +51,7 @@ JNIEXPORT void JNICALL Java_io_sqooba_traildbjava_TrailDBj_tdbConsClose
 	tdb_cons_close(cons);
 }
 
-JNIEXPORT jint JNICALL Java_io_sqooba_traildbjava_TrailDBj_tdbConsAdd
+JNIEXPORT jint JNICALL Java_io_sqooba_traildb_TrailDBNative_tdbConsAdd
 	(JNIEnv *env, jobject thisObject, jobject consj, jbyteArray uuidj, jlong timestampj, jobjectArray valuesj, jlongArray valuesLengths) 
 {
 
@@ -77,7 +77,7 @@ JNIEXPORT jint JNICALL Java_io_sqooba_traildbjava_TrailDBj_tdbConsAdd
 	return tdb_cons_add(cons, uuid, (long) timestampj, values, values_lengths);
 }
 
-JNIEXPORT jint JNICALL Java_io_sqooba_traildbjava_TrailDBj_tdbConsAppend
+JNIEXPORT jint JNICALL Java_io_sqooba_traildb_TrailDBNative_tdbConsAppend
   (JNIEnv *env, jobject thisObject, jobject consj, jobject tdbj) 
 {
 
@@ -90,7 +90,7 @@ JNIEXPORT jint JNICALL Java_io_sqooba_traildbjava_TrailDBj_tdbConsAppend
 
 }
 
-JNIEXPORT jint JNICALL Java_io_sqooba_traildbjava_TrailDBj_tdbConsFinalize
+JNIEXPORT jint JNICALL Java_io_sqooba_traildb_TrailDBNative_tdbConsFinalize
   (JNIEnv *env, jobject thisObject, jobject consj) 
 {
 
@@ -102,7 +102,7 @@ JNIEXPORT jint JNICALL Java_io_sqooba_traildbjava_TrailDBj_tdbConsFinalize
 
 }
 
-JNIEXPORT jobject JNICALL Java_io_sqooba_traildbjava_TrailDBj_tdbInit
+JNIEXPORT jobject JNICALL Java_io_sqooba_traildb_TrailDBNative_tdbInit
   (JNIEnv *env, jobject thisObject) 
 {
 
@@ -112,7 +112,7 @@ JNIEXPORT jobject JNICALL Java_io_sqooba_traildbjava_TrailDBj_tdbInit
 
 }
 
-JNIEXPORT jint JNICALL Java_io_sqooba_traildbjava_TrailDBj_tdbOpen
+JNIEXPORT jint JNICALL Java_io_sqooba_traildb_TrailDBNative_tdbOpen
   (JNIEnv *env, jobject thisObject, jobject jtdb, jstring jroot) 
 {
 
@@ -125,7 +125,7 @@ JNIEXPORT jint JNICALL Java_io_sqooba_traildbjava_TrailDBj_tdbOpen
 
 }
 
-JNIEXPORT void JNICALL Java_io_sqooba_traildbjava_TrailDBj_tdbClose
+JNIEXPORT void JNICALL Java_io_sqooba_traildb_TrailDBNative_tdbClose
   (JNIEnv *env, jobject thisObject, jobject jdb) 
 {
 
@@ -137,7 +137,7 @@ JNIEXPORT void JNICALL Java_io_sqooba_traildbjava_TrailDBj_tdbClose
 
 }
 
-JNIEXPORT jlong JNICALL Java_io_sqooba_traildbjava_TrailDBj_tdbNumTrails
+JNIEXPORT jlong JNICALL Java_io_sqooba_traildb_TrailDBNative_tdbNumTrails
   (JNIEnv *env, jobject thisObject, jobject jdb) 
 {
 
@@ -149,7 +149,7 @@ JNIEXPORT jlong JNICALL Java_io_sqooba_traildbjava_TrailDBj_tdbNumTrails
 
 }
 
-JNIEXPORT jlong JNICALL Java_io_sqooba_traildbjava_TrailDBj_tdbNumEvents
+JNIEXPORT jlong JNICALL Java_io_sqooba_traildb_TrailDBNative_tdbNumEvents
   (JNIEnv *env, jobject thisObject, jobject jdb) 
 {
 
@@ -162,7 +162,7 @@ JNIEXPORT jlong JNICALL Java_io_sqooba_traildbjava_TrailDBj_tdbNumEvents
 
 
 
-JNIEXPORT jlong JNICALL Java_io_sqooba_traildbjava_TrailDBj_tdbNumFields
+JNIEXPORT jlong JNICALL Java_io_sqooba_traildb_TrailDBNative_tdbNumFields
   (JNIEnv *env, jobject thisObject, jobject jdb) 
 {
 
@@ -175,7 +175,7 @@ JNIEXPORT jlong JNICALL Java_io_sqooba_traildbjava_TrailDBj_tdbNumFields
 }
 
 
-JNIEXPORT jlong JNICALL Java_io_sqooba_traildbjava_TrailDBj_tdbMinTimestamp
+JNIEXPORT jlong JNICALL Java_io_sqooba_traildb_TrailDBNative_tdbMinTimestamp
   (JNIEnv *env, jobject thisObject, jobject jdb) 
 {
 
@@ -188,7 +188,7 @@ JNIEXPORT jlong JNICALL Java_io_sqooba_traildbjava_TrailDBj_tdbMinTimestamp
 }
 
 
-JNIEXPORT jlong JNICALL Java_io_sqooba_traildbjava_TrailDBj_tdbMaxTimestamp
+JNIEXPORT jlong JNICALL Java_io_sqooba_traildb_TrailDBNative_tdbMaxTimestamp
   (JNIEnv *env, jobject thisObject, jobject jdb) 
 {
 
@@ -201,7 +201,7 @@ JNIEXPORT jlong JNICALL Java_io_sqooba_traildbjava_TrailDBj_tdbMaxTimestamp
 }
 
 
-JNIEXPORT jlong JNICALL Java_io_sqooba_traildbjava_TrailDBj_tdbVersion
+JNIEXPORT jlong JNICALL Java_io_sqooba_traildb_TrailDBNative_tdbVersion
   (JNIEnv *env, jobject thisObject, jobject jdb) 
 {
 
@@ -213,7 +213,7 @@ JNIEXPORT jlong JNICALL Java_io_sqooba_traildbjava_TrailDBj_tdbVersion
 
 }
 
-JNIEXPORT jstring JNICALL Java_io_sqooba_traildbjava_TrailDBj_tdbErrorStr
+JNIEXPORT jstring JNICALL Java_io_sqooba_traildb_TrailDBNative_tdbErrorStr
   (JNIEnv *env, jobject thisObject, jint jerrcode) 
 {
 
@@ -228,7 +228,7 @@ JNIEXPORT jstring JNICALL Java_io_sqooba_traildbjava_TrailDBj_tdbErrorStr
 
 }
 
-JNIEXPORT jlong JNICALL Java_io_sqooba_traildbjava_TrailDBj_tdbLexiconSize
+JNIEXPORT jlong JNICALL Java_io_sqooba_traildb_TrailDBNative_tdbLexiconSize
   (JNIEnv *env, jobject thisObject, jobject jdb, jlong jfield) 
 {
 
@@ -241,7 +241,7 @@ JNIEXPORT jlong JNICALL Java_io_sqooba_traildbjava_TrailDBj_tdbLexiconSize
 
 }
 
-JNIEXPORT jint JNICALL Java_io_sqooba_traildbjava_TrailDBj_tdbGetField
+JNIEXPORT jint JNICALL Java_io_sqooba_traildb_TrailDBNative_tdbGetField
   (JNIEnv *env, jobject thisObject, jobject jdb, jstring jfieldName, jobject jfield) 
 {
 
@@ -266,7 +266,7 @@ JNIEXPORT jint JNICALL Java_io_sqooba_traildbjava_TrailDBj_tdbGetField
 	return err;
 }
 
-JNIEXPORT jstring JNICALL Java_io_sqooba_traildbjava_TrailDBj_tdbGetFieldName
+JNIEXPORT jstring JNICALL Java_io_sqooba_traildb_TrailDBNative_tdbGetFieldName
   (JNIEnv *env, jobject thisObject, jobject jdb, jlong jfield) 
 {
 
@@ -281,7 +281,7 @@ JNIEXPORT jstring JNICALL Java_io_sqooba_traildbjava_TrailDBj_tdbGetFieldName
 	return env->NewStringUTF(field_name);
 }
 
-JNIEXPORT jlong JNICALL Java_io_sqooba_traildbjava_TrailDBj_tdbGetItem
+JNIEXPORT jlong JNICALL Java_io_sqooba_traildb_TrailDBNative_tdbGetItem
   (JNIEnv *env, jobject thisObject, jobject jdb, jlong jfield, jstring jvalue) 
 {
 
@@ -295,7 +295,7 @@ JNIEXPORT jlong JNICALL Java_io_sqooba_traildbjava_TrailDBj_tdbGetItem
 
 }
 
-JNIEXPORT jstring JNICALL Java_io_sqooba_traildbjava_TrailDBj_tdbGetValue
+JNIEXPORT jstring JNICALL Java_io_sqooba_traildb_TrailDBNative_tdbGetValue
   (JNIEnv *env, jobject thisObject, jobject jdb, jlong jfield, jlong jval, jobject jvalueLength)
 {
 
@@ -320,7 +320,7 @@ JNIEXPORT jstring JNICALL Java_io_sqooba_traildbjava_TrailDBj_tdbGetValue
 	return env->NewStringUTF(v);
 }
 
-JNIEXPORT jstring JNICALL Java_io_sqooba_traildbjava_TrailDBj_tdbGetItemValue
+JNIEXPORT jstring JNICALL Java_io_sqooba_traildb_TrailDBNative_tdbGetItemValue
   (JNIEnv *env, jobject thisObject, jobject jdb, jlong jitem, jobject jvalueLength)
 {
 
@@ -345,7 +345,7 @@ JNIEXPORT jstring JNICALL Java_io_sqooba_traildbjava_TrailDBj_tdbGetItemValue
 
 }
 
-JNIEXPORT jobject JNICALL Java_io_sqooba_traildbjava_TrailDBj_tdbGetUUID
+JNIEXPORT jobject JNICALL Java_io_sqooba_traildb_TrailDBNative_tdbGetUUID
   (JNIEnv *env, jobject thisObject, jobject jdb, jlong jtrailID) 
 {
 
@@ -360,7 +360,7 @@ JNIEXPORT jobject JNICALL Java_io_sqooba_traildbjava_TrailDBj_tdbGetUUID
 
 }
 
-JNIEXPORT jint JNICALL Java_io_sqooba_traildbjava_TrailDBj_tdbGetTrailId
+JNIEXPORT jint JNICALL Java_io_sqooba_traildb_TrailDBNative_tdbGetTrailId
   (JNIEnv *env, jobject thisObject, jobject jdb, jbyteArray juuid, jobject jtraildID) 
 {
 
@@ -385,7 +385,7 @@ JNIEXPORT jint JNICALL Java_io_sqooba_traildbjava_TrailDBj_tdbGetTrailId
 	return err;
 }
 
-JNIEXPORT jobject JNICALL Java_io_sqooba_traildbjava_TrailDBj_tdbCursorNew
+JNIEXPORT jobject JNICALL Java_io_sqooba_traildb_TrailDBNative_tdbCursorNew
   (JNIEnv *env, jobject thisObject, jobject jdb) 
 {
 
@@ -399,7 +399,7 @@ JNIEXPORT jobject JNICALL Java_io_sqooba_traildbjava_TrailDBj_tdbCursorNew
 	return cursorByteBuffer;
 }
 
-JNIEXPORT void JNICALL Java_io_sqooba_traildbjava_TrailDBj_tdbCursorFree
+JNIEXPORT void JNICALL Java_io_sqooba_traildb_TrailDBNative_tdbCursorFree
   (JNIEnv *env, jobject thisObject, jobject jcursor) 
 {
 
@@ -411,7 +411,7 @@ JNIEXPORT void JNICALL Java_io_sqooba_traildbjava_TrailDBj_tdbCursorFree
 
 }
 
-JNIEXPORT jint JNICALL Java_io_sqooba_traildbjava_TrailDBj_tdbGetTrail
+JNIEXPORT jint JNICALL Java_io_sqooba_traildb_TrailDBNative_tdbGetTrail
   (JNIEnv *env, jobject thisObject, jobject jcursor, jlong jtrailID) 
 {
 
@@ -424,7 +424,7 @@ JNIEXPORT jint JNICALL Java_io_sqooba_traildbjava_TrailDBj_tdbGetTrail
 
 }
 
-JNIEXPORT jlong JNICALL Java_io_sqooba_traildbjava_TrailDBj_tdbGetTrailLength
+JNIEXPORT jlong JNICALL Java_io_sqooba_traildb_TrailDBNative_tdbGetTrailLength
   (JNIEnv *env, jobject thisObject, jobject jcursor) 
 {
 
@@ -436,7 +436,7 @@ JNIEXPORT jlong JNICALL Java_io_sqooba_traildbjava_TrailDBj_tdbGetTrailLength
 
 }
 
-JNIEXPORT jint JNICALL Java_io_sqooba_traildbjava_TrailDBj_tdbCursorNext
+JNIEXPORT jint JNICALL Java_io_sqooba_traildb_TrailDBNative_tdbCursorNext
   (JNIEnv *env, jobject thisObject, jobject jcursor, jobject jevent)
 {
 
@@ -463,7 +463,7 @@ JNIEXPORT jint JNICALL Java_io_sqooba_traildbjava_TrailDBj_tdbCursorNext
 	}
 	
 	// Construct event.
-	jclass cls = env->FindClass("io/sqooba/traildbjava/TrailDBEvent");
+	jclass cls = env->FindClass("io/sqooba/traildb/TrailDBEvent");
 	jmethodID midBuild = env->GetMethodID(cls, "build","(JJ)V");
 	jmethodID midAdd = env->GetMethodID(cls, "addItem","(J)V");
 	env->CallObjectMethod(jevent, midBuild, (jlong)timestamp, (jlong)num_items);

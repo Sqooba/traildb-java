@@ -1,4 +1,4 @@
-package io.sqooba.traildbjava.test;
+package io.sqooba.traildb.test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -15,7 +15,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
-import io.sqooba.traildbjava.TrailDBj;
+import io.sqooba.traildb.TrailDBNative;
 import mockit.Deencapsulation;
 import mockit.Mock;
 import mockit.MockUp;
@@ -24,7 +24,7 @@ public class TrailDBjTest {
 
     // This is used to verify that particular messages have been logged when running the tests.
     // Code copied from: http://blog.diabol.se/?p=474
-    private static Logger log = Logger.getLogger(TrailDBj.class.getName());
+    private static Logger log = Logger.getLogger(TrailDBNative.class.getName());
     private static OutputStream logCapturingStream;
     private static StreamHandler customLogHandler;
 
@@ -48,7 +48,7 @@ public class TrailDBjTest {
 
     @Test
     public void constantEnumName() {
-        assertEquals(TrailDBj.INSTANCE, TrailDBj.valueOf("INSTANCE"));
+        assertEquals(TrailDBNative.INSTANCE, TrailDBNative.valueOf("INSTANCE"));
     }
 
     @Test
@@ -60,13 +60,13 @@ public class TrailDBjTest {
             public void exit(int status) {}
         };
 
-        Deencapsulation.invoke(TrailDBj.INSTANCE, "loadLib", "vi");
+        Deencapsulation.invoke(TrailDBNative.INSTANCE, "loadLib", "vi");
         String capturedLog = getTestCapturedLog();
         assertTrue(capturedLog.contains("Failed to load library."));
     }
 
     @Test
     public void errorStrShouldReturnCorrectMessage() {
-        assertEquals("TDB_ERR_INVALID_TRAIL_ID", TrailDBj.INSTANCE.errorStr(-6));
+        assertEquals("TDB_ERR_INVALID_TRAIL_ID", TrailDBNative.INSTANCE.errorStr(-6));
     }
 }

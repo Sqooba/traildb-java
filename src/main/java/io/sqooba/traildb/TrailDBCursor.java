@@ -1,4 +1,4 @@
-package io.sqooba.traildbjava;
+package io.sqooba.traildb;
 
 import java.nio.ByteBuffer;
 import java.util.Iterator;
@@ -27,7 +27,7 @@ public class TrailDBCursor implements Iterable<TrailDBEvent> {
     @Override
     protected void finalize() {
         if (this.cursor != null) {
-            TrailDBj.INSTANCE.cursorFree(this.cursor);
+            TrailDBNative.INSTANCE.cursorFree(this.cursor);
         }
     }
 
@@ -38,14 +38,14 @@ public class TrailDBCursor implements Iterable<TrailDBEvent> {
             @Override
             public TrailDBEvent next() {
                 if (!TrailDBCursor.this.event.isBuilt()) {
-                    TrailDBj.INSTANCE.cursorNext(TrailDBCursor.this.cursor, TrailDBCursor.this.event);
+                    TrailDBNative.INSTANCE.cursorNext(TrailDBCursor.this.cursor, TrailDBCursor.this.event);
                 }
                 return TrailDBCursor.this.event;
             }
 
             @Override
             public boolean hasNext() {
-                return TrailDBj.INSTANCE.cursorNext(TrailDBCursor.this.cursor, TrailDBCursor.this.event) == 0;
+                return TrailDBNative.INSTANCE.cursorNext(TrailDBCursor.this.cursor, TrailDBCursor.this.event) == 0;
             }
 
             @Override

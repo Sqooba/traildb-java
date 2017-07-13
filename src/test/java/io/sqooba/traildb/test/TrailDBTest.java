@@ -1,4 +1,4 @@
-package io.sqooba.traildbjava.test;
+package io.sqooba.traildb.test;
 
 import static org.junit.Assert.assertEquals;
 
@@ -15,11 +15,11 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
-import io.sqooba.traildbjava.TrailDB;
-import io.sqooba.traildbjava.TrailDBConstructor;
-import io.sqooba.traildbjava.TrailDBCursor;
-import io.sqooba.traildbjava.TrailDBError;
-import io.sqooba.traildbjava.TrailDBEvent;
+import io.sqooba.traildb.TrailDB;
+import io.sqooba.traildb.TrailDBConstructor;
+import io.sqooba.traildb.TrailDBCursor;
+import io.sqooba.traildb.TrailDBError;
+import io.sqooba.traildb.TrailDBEvent;
 
 public class TrailDBTest {
 

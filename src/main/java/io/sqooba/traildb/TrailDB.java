@@ -1,4 +1,4 @@
-package io.sqooba.traildbjava;
+package io.sqooba.traildb;
 
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
@@ -21,7 +21,7 @@ public class TrailDB {
     /** 8 bytes are need to represents 64 bits. */
     private static final int UINT64 = 8;
 
-    private TrailDBj trailDBj = TrailDBj.INSTANCE; // FixMe: prefer no singletons
+    private TrailDBNative trailDBj = TrailDBNative.INSTANCE; // FixMe: prefer no singletons
 
     /** ByteBuffer holding a pointer to the traildb. */
     ByteBuffer db;

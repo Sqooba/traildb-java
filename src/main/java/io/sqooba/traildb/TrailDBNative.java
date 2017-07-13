@@ -1,4 +1,4 @@
-package io.sqooba.traildbjava;
+package io.sqooba.traildb;
 
 import java.io.File;
 import java.io.InputStream;
@@ -18,7 +18,7 @@ import org.apache.commons.io.IOUtils;
  * @author B. Sottas
  *
  */
-public enum TrailDBj implements TrailDBInterface {
+public enum TrailDBNative implements TrailDBInterface {
 
     INSTANCE;
 
@@ -48,10 +48,10 @@ public enum TrailDBj implements TrailDBInterface {
         return b;
     }
 
-    private static final Logger LOGGER = Logger.getLogger(TrailDBj.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(TrailDBNative.class.getName());
 
     static {
-        loadLib("traildb4j");
+        loadLib("traildbjava");
     }
 
     /**
@@ -65,12 +65,12 @@ public enum TrailDBj implements TrailDBInterface {
     private static void loadLib(String name) {
         name = System.mapLibraryName(name);
         try {
-            InputStream in = TrailDBj.class.getResourceAsStream("/" + name);
+            InputStream in = TrailDBNative.class.getResourceAsStream("/" + name);
 
             File dirOut = new File("TrailDBWrapper/");
             dirOut.mkdir();
 
-            File fileOut = File.createTempFile("traildb4j", name.substring(name.indexOf(".")), dirOut);
+            File fileOut = File.createTempFile("traildbjava", name.substring(name.indexOf(".")), dirOut);
 
             // FixMe: use logging instead of prints (use slf4j)
             System.out.println("Writing lib to: " + fileOut.getAbsolutePath());
