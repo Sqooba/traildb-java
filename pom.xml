@@ -58,8 +58,8 @@
 			<properties>
 				<os_name>linux</os_name>
 				<lib_name>libtraildbjava.so</lib_name>
-				<jnih>/usr/lib/jvm/java-8-openjdk-amd64/include/</jnih>
-				<jnimdh>/usr/lib/jvm/java-8-openjdk-amd64/include/linux/</jnimdh>
+				<jnih>${JAVA_HOME}/include/</jnih>
+				<jnimdh>${JAVA_HOME}/include/linux/</jnimdh>
 				<link_start>-shared</link_start>
 				<link_end>-L/usr/local/lib -ltdbindex -ltraildb -o</link_end>
 			</properties>
@@ -75,7 +75,7 @@
 			</activation>
 			<properties>
 				<os_name>osx</os_name>
-				<lib_name>libtraildbjava.so</lib_name>
+				<lib_name>libtraildbjava.dylib</lib_name>
 				<jnih>/Library/Java/JavaVirtualMachines/jdk1.8.0_66.jdk/Contents/Home/include/</jnih>
 				<jnimdh>/Library/Java/JavaVirtualMachines/jdk1.8.0_66.jdk/Contents/Home/include/darwin</jnimdh>
 				<link_start>-dynamiclib</link_start>
