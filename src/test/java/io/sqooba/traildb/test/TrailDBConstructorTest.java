@@ -14,7 +14,6 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
 import io.sqooba.traildb.TrailDB;
-import io.sqooba.traildb.TrailDBConstructor;
 import io.sqooba.traildb.TrailDBError;
 
 public class TrailDBConstructorTest {
@@ -31,12 +30,12 @@ public class TrailDBConstructorTest {
     public void setUp() throws IOException {
 
         // Initialise a TrailDB with some TrailDBEvents.
-        TrailDBConstructor cons = new TrailDBConstructor(this.path, new String[] { "field1", "field2" });
-        cons.add(this.cookie, 120, new String[] { "a", "hinata" });
-        cons.add(this.cookie, 121, new String[] { "vilya", "" });
-        cons.add(this.otherCookie, 122, new String[] { "kaguya", "hinata" });
-        cons.add(this.otherCookie, 123, new String[] { "alongstring", "averyveryverylongstring" });
-        this.db = cons.finalise();
+        this.db = new TrailDB.TrailDBBuilder(this.path, new String[] { "field1", "field2" })
+                .add(this.cookie, 120, new String[] { "a", "hinata" })
+                .add(this.cookie, 121, new String[] { "vilya", "" })
+                .add(this.otherCookie, 122, new String[] { "kaguya", "hinata" })
+                .add(this.otherCookie, 123, new String[] { "alongstring", "averyveryverylongstring" })
+                .build();
     }
 
     @After
@@ -58,23 +57,13 @@ public class TrailDBConstructorTest {
 
     @Test(expected = NullPointerException.class)
     public void constructionShouldFailWithNullPath() {
-        new TrailDBConstructor(null, new String[] { "" });
+        new TrailDB.TrailDBBuilder(null, new String[] { "" });
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void constructionShouldFailWithEmptyFieldName() throws IOException {
-        new TrailDBConstructor(this.path, new String[] { "", "" });
+        new TrailDB.TrailDBBuilder(this.path, new String[] { "", "" });
 
-    }
-
-    @Test
-    public void addingToAlreadyFinalisedDBShouldFail() {
-        this.expectedEx.expect(TrailDBError.class);
-        this.expectedEx.expectMessage("Trying to add event to an already finalised database.");
-
-        TrailDBConstructor cons = new TrailDBConstructor(this.path, new String[] { "field1", "field2" });
-        cons.finalise();
-        cons.add(this.cookie, 120, new String[] { "a", "hinata" });
     }
 
     @Test
@@ -83,22 +72,21 @@ public class TrailDBConstructorTest {
         this.expectedEx.expect(TrailDBError.class);
         this.expectedEx.expectMessage("Number of values does not match number of fields.");
 
-        TrailDBConstructor cons = new TrailDBConstructor(this.path, new String[] { "f1" });
-        cons.add("c", 1, new String[] { "a", "b" });
+        new TrailDB.TrailDBBuilder(this.path, new String[] { "f1" }).add("c", 1, new String[] { "a", "b" });
+
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void addShouldFailWithInvalidUUID() throws IOException {
-        TrailDBConstructor cons = new TrailDBConstructor(this.path, new String[] { "f1", "f2" });
-        cons.add("c", 1, new String[] { "a", "b" });
+        new TrailDB.TrailDBBuilder(this.path, new String[] { "f1", "f2" }).add("c", 1, new String[] { "a", "b" });
     }
 
     @Test
     public void appendCorrectly() throws IOException {
-        TrailDBConstructor otherCons = new TrailDBConstructor(this.path + "other", new String[] { "field1", "field2" });
-        otherCons.add("11111111111111111111111111111111", 119, new String[] { "asdf", "qwer" });
-        otherCons.append(this.db);
-        TrailDB db2 = otherCons.finalise();
+        TrailDB db2 = new TrailDB.TrailDBBuilder(this.path + "other", new String[] { "field1", "field2" })
+                .add("11111111111111111111111111111111", 119, new String[] { "asdf", "qwer" })
+                .append(this.db)
+                .build();
 
         File f = new File(this.path + "other" + ".tdb");
         assertTrue(f.exists() && !f.isDirectory());
@@ -115,9 +103,9 @@ public class TrailDBConstructorTest {
 
     @Test(expected = TrailDBError.class)
     public void appendShouldFailInCaseDifferentFields() throws IOException {
-        TrailDBConstructor failCons = new TrailDBConstructor(this.path + "fail", new String[] { "f1", "f2" });
         try {
-            failCons.append(this.db);
+            new TrailDB.TrailDBBuilder(this.path + "fail", new String[] { "f1", "f2" })
+                    .append(this.db);
         } catch(TrailDBError e) {
             throw e;
         } finally {

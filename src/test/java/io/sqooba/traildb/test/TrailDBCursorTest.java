@@ -5,7 +5,6 @@ import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 
 import io.sqooba.traildb.TrailDB;
-import io.sqooba.traildb.TrailDBConstructor;
 import io.sqooba.traildb.TrailDBCursor;
 import io.sqooba.traildb.TrailDBNative;
 import mockit.Deencapsulation;
@@ -18,9 +17,9 @@ public class TrailDBCursorTest {
 
     @Test
     public void cursorFinalizationWithNullCursorField() {
-        TrailDBConstructor cons = new TrailDBConstructor(this.path, new String[] { "field1", "field2" });
-        cons.add(this.cookie, 120, new String[] { "a", "hinata" });
-        TrailDB db = cons.finalise();
+        TrailDB db = new TrailDB.TrailDBBuilder(this.path, new String[] { "field1", "field2" })
+                .add(this.cookie, 120, new String[] { "a", "hinata" })
+                .build();
         TrailDBCursor cursor = db.trail(0);
 
         new Expectations(cursor) {
@@ -33,9 +32,9 @@ public class TrailDBCursorTest {
 
     @Test
     public void getTrailLengthShouldReturnCorrectRemainingEvents() {
-        TrailDBConstructor cons = new TrailDBConstructor(this.path, new String[] { "field1", "field2" });
-        cons.add(this.cookie, 120, new String[] { "a", "hinata" });
-        TrailDB db = cons.finalise();
+        TrailDB db = new TrailDB.TrailDBBuilder(this.path, new String[] { "field1", "field2" })
+                .add(this.cookie, 120, new String[] { "a", "hinata" })
+                .build();
         TrailDBCursor cursor = db.trail(0);
         assertEquals(1, TrailDBNative.INSTANCE.getTrailLength(Deencapsulation.getField(cursor, "cursor")));
     }

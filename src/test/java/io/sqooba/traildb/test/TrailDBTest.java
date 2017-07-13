@@ -16,7 +16,6 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
 import io.sqooba.traildb.TrailDB;
-import io.sqooba.traildb.TrailDBConstructor;
 import io.sqooba.traildb.TrailDBCursor;
 import io.sqooba.traildb.TrailDBError;
 import io.sqooba.traildb.TrailDBEvent;
@@ -35,12 +34,12 @@ public class TrailDBTest {
     public void setUp() throws IOException {
 
         // Initialise a TrailDB with some TrailDBEvents.
-        TrailDBConstructor cons = new TrailDBConstructor(this.path, new String[] { "field1", "field2" });
-        cons.add(this.cookie, 120, new String[] { "a", "hinata" });
-        cons.add(this.cookie, 121, new String[] { "vilya", "" });
-        cons.add(this.otherCookie, 122, new String[] { "kaguya", "hinata" });
-        cons.add(this.otherCookie, 123, new String[] { "alongstring", "averyveryverylongstring" });
-        this.db = cons.finalise();
+        this.db = new TrailDB.TrailDBBuilder(this.path, new String[] { "field1", "field2" })
+                .add(this.cookie, 120, new String[] { "a", "hinata" })
+                .add(this.cookie, 121, new String[] { "vilya", "" })
+                .add(this.otherCookie, 122, new String[] { "kaguya", "hinata" })
+                .add(this.otherCookie, 123, new String[] { "alongstring", "averyveryverylongstring" })
+                .build();
     }
 
     @Test
