@@ -15,12 +15,15 @@ public class TrailDBCursor implements Iterable<TrailDBEvent> {
 
     private ByteBuffer cursor;
     private TrailDBEvent event;
+    // FixMe test parallel cursors
+    // rename in tdbiterator
 
     protected TrailDBCursor(ByteBuffer cursor, TrailDBEvent event) {
         this.event = event;
         this.cursor = cursor;
     }
 
+    // FixMe
     @Override
     protected void finalize() {
         if (this.cursor != null) {

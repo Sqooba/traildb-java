@@ -21,7 +21,7 @@ public class TrailDB {
     /** 8 bytes are need to represents 64 bits. */
     private static final int UINT64 = 8;
 
-    private TrailDBj trailDBj = TrailDBj.INSTANCE;
+    private TrailDBj trailDBj = TrailDBj.INSTANCE; // FixMe: prefer no singletons
 
     /** ByteBuffer holding a pointer to the traildb. */
     ByteBuffer db;
@@ -45,7 +45,7 @@ public class TrailDB {
         this.db = db;
 
         if (this.trailDBj.open(this.db, path) != 0) {
-            throw new TrailDBError("Failed to opend db.");
+            throw new TrailDBError("Failed to open db.");
         }
 
         this.numTrails = this.trailDBj.numTrails(db);
@@ -281,7 +281,7 @@ public class TrailDB {
         }
         int errCode = this.trailDBj.getTrail(cursor, trailID);
         if (errCode != 0) {
-            throw new TrailDBError("Falied to create cursor: " + errCode);
+            throw new TrailDBError("Failed to create cursor with code: " + errCode);
         }
         TrailDBEvent e = new TrailDBEvent(this, this.fields);
         return new TrailDBCursor(cursor, e);
@@ -302,10 +302,12 @@ public class TrailDB {
         return res;
     }
 
+    // FixMe: implement AutoClosable and use close();
     @Override
     protected void finalize() {
         if (this.db != null) {
             this.trailDBj.close(this.db);
+            this.db = null;
         }
     }
 }

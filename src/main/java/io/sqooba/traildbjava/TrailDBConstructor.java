@@ -29,6 +29,7 @@ public class TrailDBConstructor {
 
     /**
      * Construct a new TrailDB.
+     * FixMe: rename Builder/Writer
      * 
      * @param path TrailDB output path.
      * @param ofields Names of fields.
@@ -56,6 +57,12 @@ public class TrailDBConstructor {
         this.ofields = ofields;
     }
 
+    /* FixMe
+    public void add(Event e) {
+        this.add(e.uuid, e.timestamp, e.values);
+    };
+    */
+
     /**
      * Add an event to the TrailDB.
      * 
@@ -75,16 +82,16 @@ public class TrailDBConstructor {
             // Need to investigate add function in JNI.
             throw new TrailDBError("Number of values does not match number of fields.");
         }
-        long[] value_lenghts = new long[n];
+        long[] value_lengths = new long[n];
         for(int i = 0; i < n; i++) {
-            value_lenghts[i] = values[i].length();
+            value_lengths[i] = values[i].length();
         }
 
         byte[] rawUUID = this.trailDBj.UUIDRaw(uuid);
         if (rawUUID == null) {
             throw new IllegalArgumentException("uuid is invalid.");
         }
-        int errCode = this.trailDBj.consAdd(this.cons, rawUUID, timestamp, values, value_lenghts);
+        int errCode = this.trailDBj.consAdd(this.cons, rawUUID, timestamp, values, value_lengths);
         if (errCode != 0) {
             throw new TrailDBError("Failed to add: " + errCode);
         }
@@ -106,6 +113,9 @@ public class TrailDBConstructor {
     /**
      * Finalize TrailDB construction. Finalization takes care of compacting the events and creating a valid TrailDB
      * file. Events can not be added after this has been called.
+     *
+     * FixMe: nope.
+     * FixMe: rename to Build
      */
     public TrailDB finalise() {
         if (this.trailDBj.consFinalize(this.cons) != 0) {

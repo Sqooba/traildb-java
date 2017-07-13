@@ -1,10 +1,14 @@
-# Java bindings for TrailDB #
+Java bindings for TrailDB
+====
 
-This repository's goal is to provide Java bindings for TrailDB, based on the Python bindings available [here](https://github.com/traildb/traildb-python)
+This repository's goal is to provide Java bindings for [TrailDB](http://traildb.io), an efficient tool for storing and querying series of events, 
+based on the Python bindings available [here](https://github.com/traildb/traildb-python)
 
-### Getting started ###
+## Getting started
 
-This repository requires having TrailDB installed on the machine. See instructions on the [TrailDB Github readme](https://github.com/traildb/traildb) and in the [getting started guide](http://traildb.io/docs/getting_started/).
+This repository requires having TrailDB installed on the machine. See instructions on the
+ [TrailDB Github readme](https://github.com/traildb/traildb) and in 
+ the [getting started guide](http://traildb.io/docs/getting_started/).
 
 If you have the Sqooba Central Repo in your pom.xml, the project is available with:
 
@@ -16,7 +20,7 @@ If you have the Sqooba Central Repo in your pom.xml, the project is available wi
 </dependency>
 ```
 
-### Minimal example ###
+## Minimal example
 
 ```java
 import io.sqooba.traildbj.TrailDBj.TrailDB;
@@ -27,6 +31,7 @@ public class Example {
     public static void main(String args[]) throws IOException {
     
         // 32-byte hex String.
+        // The cookie will be used as the trail's uuid.
         String cookie = "12345678123456781234567812345678";
         
         // Name of the db, without .tdb.
@@ -61,13 +66,13 @@ public class Example {
 }
 ```
 
-### Binded methods ###
+## Bound methods
 
 The full list of methods can be found on the [C API web page](http://traildb.io/docs/api/)
 
-#### Construct a new TrailDB ####
+### Construct a new TrailDB
 
-| Method            | Binded | Exposed |
+| Method            | Bound | Exposed |
 |-------------------|--------|---------|
 | tdb_cons_init     | Yes    | No      |
 | tdb_cons_open     | Yes    | No      |
@@ -77,9 +82,9 @@ The full list of methods can be found on the [C API web page](http://traildb.io/
 | tdb_cons_get_opt  | No     | No      |
 | tdb_cons_finalize | Yes    | Yes     |
 
-#### Open a TrailDB and access metadata ####
+### Open a TrailDB and access metadata
 
-| Method            | Binded | Exposed |
+| Method            | Bound | Exposed |
 |-------------------|--------|---------|
 | tdb_init          | Yes    | No      |
 | tdb_open          | Yes    | No      |
@@ -94,13 +99,13 @@ The full list of methods can be found on the [C API web page](http://traildb.io/
 | tdb_version       | Yes    | Yes     |
 | tdb_error_str     | Yes    | No      |
 
-#### Setting Options ####
+### Setting Options
 
 Nothing.
 
-#### Working with items, fields and values ####
+### Working with items, fields and values
 
-| Method             | Binded | Exposed |
+| Method             | Bound | Exposed |
 |--------------------|--------|---------|
 | tdb_item_field     | No     | No      |
 | tdb_item_val       | No     | No      |
@@ -113,13 +118,13 @@ Nothing.
 | tdb_get_value      | Yes    | Yes     |
 | tdb_get_item_value | Yes    | Yes     |
 
-#### Working with UUIDs ####
+### Working with UUIDs
 
-| Method           | Binded | Exposed |
+| Method           | Bound | Exposed |
 |------------------|--------|---------|
 | tdb_get_uuid     | Yes    | Yes     |
 | tdb_get_trail_id | Yes    | Yes     |
 | tdb_uuid_raw     | Yes    | Yes     |
 | tdb_uuid_hex     | Yes    | Yes     |
 
-#### More to come in the future ####
+### More to come in the future

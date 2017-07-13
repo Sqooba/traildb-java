@@ -2,7 +2,9 @@ package io.sqooba.traildbjava;
 
 /**
  * Exception thrown when something bad happens while performing action on the TrailDB.
- * 
+ * FixMe: rename to TrailDBException
+ * FixMe: use checked exceptions? (IOException for example)
+ *
  * @author B. Sottas
  */
 public class TrailDBError extends RuntimeException {

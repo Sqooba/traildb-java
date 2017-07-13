@@ -57,7 +57,9 @@ public enum TrailDBj implements TrailDBInterface {
     /**
      * Extract the library from the jar/project, copy it outside so we can load it because this is not possible from
      * inside the jar.
-     * 
+     *
+     * FixMe: Check how it's done in Snappy
+     *
      * @param name The name of the library, without prefix/suffix.
      */
     private static void loadLib(String name) {
@@ -70,6 +72,7 @@ public enum TrailDBj implements TrailDBInterface {
 
             File fileOut = File.createTempFile("traildb4j", name.substring(name.indexOf(".")), dirOut);
 
+            // FixMe: use logging instead of prints (use slf4j)
             System.out.println("Writing lib to: " + fileOut.getAbsolutePath());
             OutputStream out = FileUtils.openOutputStream(fileOut);
             IOUtils.copy(in, out);
