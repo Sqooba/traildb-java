@@ -76,8 +76,8 @@
 			<properties>
 				<os_name>osx</os_name>
 				<lib_name>libtraildbjava.dylib</lib_name>
-				<jnih>/Library/Java/JavaVirtualMachines/jdk1.8.0_66.jdk/Contents/Home/include/</jnih>
-				<jnimdh>/Library/Java/JavaVirtualMachines/jdk1.8.0_66.jdk/Contents/Home/include/darwin</jnimdh>
+				<jnih>${JAVA_HOME}/include/</jnih>
+				<jnimdh>${JAVA_HOME}/include/darwin</jnimdh>
 				<link_start>-dynamiclib</link_start>
 				<link_end>-L/usr/local/lib -ltraildb -o</link_end>
 			</properties>
