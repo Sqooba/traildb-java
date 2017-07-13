@@ -58,6 +58,28 @@
 			<properties>
 				<os_name>linux</os_name>
 				<lib_name>libtraildbjava.so</lib_name>
+				<jnih>/usr/lib/jvm/java-8-openjdk-amd64/include/</jnih>
+				<jnimdh>/usr/lib/jvm/java-8-openjdk-amd64/include/linux/</jnimdh>
+				<link_start>-shared</link_start>
+				<link_end>-L/usr/local/lib -ltdbindex -ltraildb -o</link_end>
+			</properties>
+		</profile>
+
+		<profile>
+			<id>Mac</id>
+			<activation>
+				<property>
+					<name>platform</name>
+					<value>osx</value>
+				</property>
+			</activation>
+			<properties>
+				<os_name>osx</os_name>
+				<lib_name>libtraildbjava.so</lib_name>
+				<jnih>/Library/Java/JavaVirtualMachines/jdk1.8.0_66.jdk/Contents/Home/include/</jnih>
+				<jnimdh>/Library/Java/JavaVirtualMachines/jdk1.8.0_66.jdk/Contents/Home/include/darwin</jnimdh>
+				<link_start>-dynamiclib</link_start>
+				<link_end>-L/usr/local/lib -ltraildb -o</link_end>
 			</properties>
 		</profile>
 
@@ -131,7 +153,7 @@
 				<extensions>true</extensions>
 				<configuration>
 
-					<javahOS>${os_name}</javahOS>
+					<javahOS>${os.name}</javahOS>
 
 					<sources>
 						<source>
@@ -141,13 +163,10 @@
 							</fileNames>
 						</source>
 						<source>
-							<directory>/usr/lib/jvm/java-8-openjdk-amd64/include/</directory>
+							<directory>${jnih}</directory>
 						</source>
 						<source>
-							<directory>/usr/lib/jvm/java-8-openjdk-amd64/include/linux/</directory>
-						</source>
-						<source>
-							<directory>/usr/local/lib/include</directory>
+							<directory>${jnimdh}</directory>
 						</source>
 					</sources>
 					<compilerProvider>generic-classic</compilerProvider>
@@ -165,13 +184,13 @@
 					<linkerExecutable>gcc</linkerExecutable>
 
 					<linkerStartOptions>
-						<linkerStartOption>-shared</linkerStartOption>
+						<linkerStartOption>${link_start}</linkerStartOption>
 					</linkerStartOptions>
 
 					<linkerFinalName></linkerFinalName>
 
 					<linkerEndOptions>
-						<linkerEndOption>-L/usr/local/lib -ltdbindex -ltraildb -o
+						<linkerEndOption>${link_end}
 							${project.basedir}/src/main/resources/${lib_name}</linkerEndOption>
 					</linkerEndOptions>
 				</configuration>
