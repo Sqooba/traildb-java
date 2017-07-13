@@ -1,4 +1,4 @@
-package io.sqooba.traildbjava;
+package io.sqooba.traildb;
 
 import java.nio.ByteBuffer;
 import java.util.Arrays;
@@ -14,7 +14,7 @@ public class TrailDBConstructor {
 
     private static final Logger LOGGER = Logger.getLogger(TrailDBConstructor.class.getName());
 
-    private TrailDBj trailDBj = TrailDBj.INSTANCE;
+    private TrailDBNative trailDBj = TrailDBNative.INSTANCE;
 
     /** New TrailDB output path, without .tdb. */
     private String path;

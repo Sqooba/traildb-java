@@ -1,13 +1,13 @@
-package io.sqooba.traildbjava.test;
+package io.sqooba.traildb.test;
 
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
-import io.sqooba.traildbjava.TrailDB;
-import io.sqooba.traildbjava.TrailDBConstructor;
-import io.sqooba.traildbjava.TrailDBCursor;
-import io.sqooba.traildbjava.TrailDBj;
+import io.sqooba.traildb.TrailDB;
+import io.sqooba.traildb.TrailDBConstructor;
+import io.sqooba.traildb.TrailDBCursor;
+import io.sqooba.traildb.TrailDBNative;
 import mockit.Deencapsulation;
 import mockit.Expectations;
 
@@ -37,7 +37,7 @@ public class TrailDBCursorTest {
         cons.add(this.cookie, 120, new String[] { "a", "hinata" });
         TrailDB db = cons.finalise();
         TrailDBCursor cursor = db.trail(0);
-        assertEquals(1, TrailDBj.INSTANCE.getTrailLength(Deencapsulation.getField(cursor, "cursor")));
+        assertEquals(1, TrailDBNative.INSTANCE.getTrailLength(Deencapsulation.getField(cursor, "cursor")));
     }
 
 }

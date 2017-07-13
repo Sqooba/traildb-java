@@ -137,7 +137,7 @@
 						<source>
 							<directory>src/main/native</directory>
 							<fileNames>
-								<fileName>io_sqooba_traildbjava_TrailDBj.cpp</fileName>
+								<fileName>io_sqooba_traildb_TrailDBNative.cpp</fileName>
 							</fileNames>
 						</source>
 						<source>

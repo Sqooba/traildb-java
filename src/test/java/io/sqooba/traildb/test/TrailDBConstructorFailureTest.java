@@ -1,4 +1,4 @@
-package io.sqooba.traildbjava.test;
+package io.sqooba.traildb.test;
 
 import java.io.File;
 import java.io.IOException;
@@ -10,10 +10,10 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
-import io.sqooba.traildbjava.TrailDB;
-import io.sqooba.traildbjava.TrailDBConstructor;
-import io.sqooba.traildbjava.TrailDBError;
-import io.sqooba.traildbjava.TrailDBj;
+import io.sqooba.traildb.TrailDB;
+import io.sqooba.traildb.TrailDBConstructor;
+import io.sqooba.traildb.TrailDBError;
+import io.sqooba.traildb.TrailDBNative;
 import mockit.Expectations;
 
 public class TrailDBConstructorFailureTest {
@@ -41,7 +41,7 @@ public class TrailDBConstructorFailureTest {
         this.expectedEx.expect(TrailDBError.class);
         this.expectedEx.expectMessage("Failed to allocate memory for constructor.");
 
-        final TrailDBj traildbj = TrailDBj.INSTANCE;
+        final TrailDBNative traildbj = TrailDBNative.INSTANCE;
         new Expectations(traildbj) {
 
             {
@@ -58,7 +58,7 @@ public class TrailDBConstructorFailureTest {
         this.expectedEx.expect(TrailDBError.class);
         this.expectedEx.expectMessage("Can not open constructor.");
 
-        final TrailDBj traildbj = TrailDBj.INSTANCE;
+        final TrailDBNative traildbj = TrailDBNative.INSTANCE;
         new Expectations(traildbj) {
 
             {
@@ -75,7 +75,7 @@ public class TrailDBConstructorFailureTest {
         this.expectedEx.expect(TrailDBError.class);
         this.expectedEx.expectMessage("Failed to add: -1");
 
-        final TrailDBj traildbj = TrailDBj.INSTANCE;
+        final TrailDBNative traildbj = TrailDBNative.INSTANCE;
         new Expectations(traildbj) {
 
             {
@@ -94,7 +94,7 @@ public class TrailDBConstructorFailureTest {
         this.expectedEx.expect(TrailDBError.class);
         this.expectedEx.expectMessage("Failed to merge dbs: -1");
 
-        final TrailDBj traildbj = TrailDBj.INSTANCE;
+        final TrailDBNative traildbj = TrailDBNative.INSTANCE;
         new Expectations(traildbj) {
 
             {
@@ -113,7 +113,7 @@ public class TrailDBConstructorFailureTest {
         this.expectedEx.expect(TrailDBError.class);
         this.expectedEx.expectMessage("Failed to finalize.");
 
-        final TrailDBj traildbj = TrailDBj.INSTANCE;
+        final TrailDBNative traildbj = TrailDBNative.INSTANCE;
         new Expectations(traildbj) {
 
             {
