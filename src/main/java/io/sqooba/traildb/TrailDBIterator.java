@@ -11,14 +11,14 @@ import java.util.Iterator;
  * @author B. Sottas
  *
  */
-public class TrailDBCursor implements Iterable<TrailDBEvent>, AutoCloseable {
+public class TrailDBIterator implements Iterable<TrailDBEvent>, AutoCloseable {
 
     private ByteBuffer cursor;
     private TrailDBEvent event;
     // FixMe test parallel cursors
     // rename in tdbiterator
 
-    protected TrailDBCursor(ByteBuffer cursor, TrailDBEvent event) {
+    protected TrailDBIterator(ByteBuffer cursor, TrailDBEvent event) {
         this.event = event;
         this.cursor = cursor;
     }
@@ -37,15 +37,15 @@ public class TrailDBCursor implements Iterable<TrailDBEvent>, AutoCloseable {
 
             @Override
             public TrailDBEvent next() {
-                if (!TrailDBCursor.this.event.isBuilt()) {
-                    TrailDBNative.INSTANCE.cursorNext(TrailDBCursor.this.cursor, TrailDBCursor.this.event);
+                if (!TrailDBIterator.this.event.isBuilt()) {
+                    TrailDBNative.INSTANCE.cursorNext(TrailDBIterator.this.cursor, TrailDBIterator.this.event);
                 }
-                return TrailDBCursor.this.event;
+                return TrailDBIterator.this.event;
             }
 
             @Override
             public boolean hasNext() {
-                return TrailDBNative.INSTANCE.cursorNext(TrailDBCursor.this.cursor, TrailDBCursor.this.event) == 0;
+                return TrailDBNative.INSTANCE.cursorNext(TrailDBIterator.this.cursor, TrailDBIterator.this.event) == 0;
             }
 
             @Override

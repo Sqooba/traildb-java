@@ -18,7 +18,7 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
 import io.sqooba.traildb.TrailDB;
-import io.sqooba.traildb.TrailDBCursor;
+import io.sqooba.traildb.TrailDBIterator;
 import io.sqooba.traildb.TrailDBError;
 import io.sqooba.traildb.TrailDBEvent;
 import io.sqooba.traildb.TrailDBNative;
@@ -48,17 +48,17 @@ public class TrailDBTest {
 
     @Test
     public void trailsShouldContainCorrectTrailUUIDs() {
-        Map<String, TrailDBCursor> map = this.db.trails();
+        Map<String, TrailDBIterator> map = this.db.trails();
         assertEquals(2, map.size());
 
-        Iterator<Map.Entry<String, TrailDBCursor>> it = map.entrySet().iterator();
+        Iterator<Map.Entry<String, TrailDBIterator>> it = map.entrySet().iterator();
         assertEquals(this.otherCookie, it.next().getKey());
         assertEquals(this.cookie, it.next().getKey());
     }
 
     @Test
     public void trailShouldContainCorrectNumberOfTrailDBEvents() {
-        TrailDBCursor trail = this.db.trail(0);
+        TrailDBIterator trail = this.db.trail(0);
         int count = 0;
         for(TrailDBEvent TrailDBEvent : trail) {
             count++;
@@ -75,7 +75,7 @@ public class TrailDBTest {
 
     @Test
     public void trailShouldContainCorrectTrailDBEvents() {
-        TrailDBCursor trail = this.db.trail(0);
+        TrailDBIterator trail = this.db.trail(0);
         TrailDBEvent e = trail.iterator().next();
         List<String> fieldsNames = e.getFieldNames();
         List<String> fieldsValues = e.getFieldsValues();
@@ -92,7 +92,7 @@ public class TrailDBTest {
 
     @Test(expected = UnsupportedOperationException.class)
     public void trailRemoveShouldThrow() {
-        TrailDBCursor trail = this.db.trail(0);
+        TrailDBIterator trail = this.db.trail(0);
         trail.iterator().remove();
     }
 
