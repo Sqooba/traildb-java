@@ -4,6 +4,8 @@ import traildb.TrailDBMultiEvent;
 
 public class TrailDBMultiCursor {
 
+	private long cur;
+
 	public native void free();
 
 	public native void reset();

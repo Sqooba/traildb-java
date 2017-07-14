@@ -46,10 +46,19 @@ JNIEXPORT jobject JNICALL Java_traildb_TrailDBCursor_next(JNIEnv *env, jobject o
 
 	tdb_cursor *cur;
 	const tdb_event *event;
+	const tdb *db;
+
+	// Retrieve db pointer
+
+	cls = (*env)->GetObjectClass(env, obj);
+	fid = (*env)->GetFieldID(env, cls, "db", "J");
+	if (fid == NULL) {
+		exit(1);
+	}
+	db = (tdb *) (*env)->GetLongField(env, obj, fid);
 
 	// Retrieve cursor pointer
 
-	cls = (*env)->GetObjectClass(env, obj);
 	fid = (*env)->GetFieldID(env, cls, "cur", "J");
 	if (fid == NULL) {
 		exit(1);
@@ -65,7 +74,6 @@ JNIEXPORT jobject JNICALL Java_traildb_TrailDBCursor_next(JNIEnv *env, jobject o
 	if (event == NULL) {
 		return NULL;
 	}
-
 
 	// Get class of TrailDBEvent
 
@@ -89,7 +97,6 @@ JNIEXPORT jobject JNICALL Java_traildb_TrailDBCursor_next(JNIEnv *env, jobject o
 	if (fid == NULL) {
 		exit(1);
 	}
-
 	(*env)->SetLongField(env, event_obj, fid, (long) event->timestamp);
 
 	// Store number of item
@@ -98,8 +105,23 @@ JNIEXPORT jobject JNICALL Java_traildb_TrailDBCursor_next(JNIEnv *env, jobject o
 	if (fid == NULL) {
 		exit(1);
 	}
-
 	(*env)->SetLongField(env, event_obj, fid, (long) event->num_items);
+
+	// Store items pointer
+
+	fid = (*env)->GetFieldID(env, cls, "items", "J");
+	if (fid == NULL) {
+		exit(1);
+	}
+	(*env)->SetLongField(env, event_obj, fid, (long) event->items);
+
+	// Store db pointer on event
+
+	fid = (*env)->GetFieldID(env, cls, "db", "J");
+	if (fid == NULL) {
+		exit(1);
+	}
+	(*env)->SetLongField(env, event_obj, fid, (long) db);
 
 	return event_obj;
 }

@@ -196,15 +196,21 @@ JNIEXPORT jobject JNICALL Java_traildb_TrailDB_cursorNew(JNIEnv *env, jobject ob
 
 	cursor_obj = (*env)->NewObject(env, cls, cid);
 
-
 	// Store cur pointer on cursor (cursor_obj.cur = cur)
 
 	fid = (*env)->GetFieldID(env, cls, "cur", "J");
 	if (fid == NULL) {
 		exit(1);
 	}
-
 	(*env)->SetLongField(env, cursor_obj, fid, (long) cur);
+
+	// Store db pointer on cursor (cursor_obj.db = db)
+
+	fid = (*env)->GetFieldID(env, cls, "db", "J");
+	if (fid == NULL) {
+		exit(1);
+	}
+	(*env)->SetLongField(env, cursor_obj, fid, (long) db);
 
 	return cursor_obj;
 }

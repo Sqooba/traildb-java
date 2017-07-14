@@ -7,6 +7,8 @@ public class TrailDBCursor {
 
 	private long cur;
 
+	private long db;
+
 	public native void free();
 
 	public native void getTrail(long trailId);
