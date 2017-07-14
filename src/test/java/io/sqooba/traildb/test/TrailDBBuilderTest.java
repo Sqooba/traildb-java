@@ -56,6 +56,18 @@ public class TrailDBBuilderTest {
         assertTrue(f.exists() && !f.isDirectory());
     }
 
+    @Test
+    public void buildingUnchained() throws IOException {
+        TrailDBBuilder builder = new TrailDB.TrailDBBuilder(this.path, new String[] { "field1", "field2" });
+        builder.add(this.cookie, 120, new String[] { "a", "hinata" });
+        builder.add(this.cookie, 121, new String[] { "vilya", "" });
+        builder.add(this.otherCookie, 122, new String[] { "kaguya", "hinata" });
+        builder.add(this.otherCookie, 123, new String[] { "alongstring", "averyveryverylongstring" });
+        builder.build();
+
+        constructionShouldCreateFile();
+    }
+
     @Test(expected = NullPointerException.class)
     public void constructionShouldFailWithNullPath() {
         new TrailDB.TrailDBBuilder(null, new String[] { "" });
