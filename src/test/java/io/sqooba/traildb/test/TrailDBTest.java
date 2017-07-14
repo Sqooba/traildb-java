@@ -136,7 +136,9 @@ public class TrailDBTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void openTrailDBOnNullPathShouldFail() {
-        new TrailDB(null);
+        try (TrailDB db = new TrailDB(null)) {
+            // To auto close.
+        }
     }
 
     @Test

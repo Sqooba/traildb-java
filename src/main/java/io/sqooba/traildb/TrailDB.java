@@ -15,7 +15,7 @@ import java.util.logging.Logger;
  * @author B. Sottas
  *
  */
-public class TrailDB {
+public class TrailDB implements AutoCloseable {
 
     private static final Logger LOGGER = Logger.getLogger(TrailDB.class.getName());
 
@@ -307,9 +307,8 @@ public class TrailDB {
         return res;
     }
 
-    // FixMe: implement AutoClosable and use close();
     @Override
-    protected void finalize() {
+    public void close() {
         if (this.db != null) {
             this.trailDBj.close(this.db);
             this.db = null;

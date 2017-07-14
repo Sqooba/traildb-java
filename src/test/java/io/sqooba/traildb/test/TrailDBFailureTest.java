@@ -86,7 +86,9 @@ public class TrailDBFailureTest {
                 this.result = -1;
             }
         };
-        new TrailDB(this.path);
+        try (TrailDB db = new TrailDB(this.path)) {
+            // Auto close.
+        }
     }
 
     @Test

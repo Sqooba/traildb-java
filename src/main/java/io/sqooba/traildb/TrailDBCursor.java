@@ -11,7 +11,7 @@ import java.util.Iterator;
  * @author B. Sottas
  *
  */
-public class TrailDBCursor implements Iterable<TrailDBEvent> {
+public class TrailDBCursor implements Iterable<TrailDBEvent>, AutoCloseable {
 
     private ByteBuffer cursor;
     private TrailDBEvent event;
@@ -23,11 +23,11 @@ public class TrailDBCursor implements Iterable<TrailDBEvent> {
         this.cursor = cursor;
     }
 
-    // FixMe
     @Override
-    protected void finalize() {
+    public void close() {
         if (this.cursor != null) {
             TrailDBNative.INSTANCE.cursorFree(this.cursor);
+            this.cursor = null;
         }
     }
 
