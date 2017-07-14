@@ -1,6 +1,5 @@
 package traildb;
 
-
 public class TrailDBItem {
 	public int field;
 	public long value;
