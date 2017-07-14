@@ -20,7 +20,7 @@ import mockit.Deencapsulation;
 import mockit.Mock;
 import mockit.MockUp;
 
-public class TrailDBjTest {
+public class TrailDBNativeTest {
 
     // This is used to verify that particular messages have been logged when running the tests.
     // Code copied from: http://blog.diabol.se/?p=474

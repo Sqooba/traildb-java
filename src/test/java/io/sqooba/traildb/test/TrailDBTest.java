@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -19,6 +20,8 @@ import io.sqooba.traildb.TrailDB;
 import io.sqooba.traildb.TrailDBCursor;
 import io.sqooba.traildb.TrailDBError;
 import io.sqooba.traildb.TrailDBEvent;
+import io.sqooba.traildb.TrailDBNative;
+import mockit.Deencapsulation;
 
 public class TrailDBTest {
 
@@ -190,6 +193,14 @@ public class TrailDBTest {
     @Test(expected = TrailDBError.class)
     public void getItemValueShouldFailIfValueNotFound() {
         this.db.getItemValue(-1);
+    }
+
+    @Test
+    public void getFieldShouldReturnCorrectID() {
+        ByteBuffer handle = Deencapsulation.getField(this.db, "db");
+        ByteBuffer res = ByteBuffer.allocate(4);
+        TrailDBNative.INSTANCE.getField(handle, "field1", res);
+        assertEquals(1, res.getInt(0));
     }
 
     @After
