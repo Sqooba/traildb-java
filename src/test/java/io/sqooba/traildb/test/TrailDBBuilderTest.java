@@ -16,7 +16,7 @@ import org.junit.rules.ExpectedException;
 import io.sqooba.traildb.TrailDB;
 import io.sqooba.traildb.TrailDBError;
 
-public class TrailDBConstructorTest {
+public class TrailDBBuilderTest {
 
     private TrailDB db;
     private String path = "testdb";

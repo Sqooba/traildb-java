@@ -15,7 +15,7 @@ import io.sqooba.traildb.TrailDBError;
 import io.sqooba.traildb.TrailDBNative;
 import mockit.Expectations;
 
-public class TrailDBConstructorFailureTest {
+public class TrailDBBuilderFailureTest {
 
     private String path = "testdb";
     private String cookie = "12345678123456781234567812345678";
