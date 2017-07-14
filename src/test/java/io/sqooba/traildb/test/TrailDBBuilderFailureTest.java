@@ -11,12 +11,11 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
 import io.sqooba.traildb.TrailDB;
-import io.sqooba.traildb.TrailDBConstructor;
 import io.sqooba.traildb.TrailDBError;
 import io.sqooba.traildb.TrailDBNative;
 import mockit.Expectations;
 
-public class TrailDBConstructorFailureTest {
+public class TrailDBBuilderFailureTest {
 
     private String path = "testdb";
     private String cookie = "12345678123456781234567812345678";
@@ -49,7 +48,7 @@ public class TrailDBConstructorFailureTest {
                 this.result = null;
             }
         };
-        new TrailDBConstructor(this.path, new String[] { "field1", "field2" });
+        new TrailDB.TrailDBBuilder(this.path, new String[] { "field1", "field2" });
     }
 
     @Test
@@ -66,7 +65,7 @@ public class TrailDBConstructorFailureTest {
                 this.result = -1;
             }
         };
-        new TrailDBConstructor(this.path, new String[] { "field1", "field2" });
+        new TrailDB.TrailDBBuilder(this.path, new String[] { "field1", "field2" });
     }
 
     @Test
@@ -84,8 +83,8 @@ public class TrailDBConstructorFailureTest {
                 this.result = -1;
             }
         };
-        TrailDBConstructor cons = new TrailDBConstructor(this.path, new String[] { "field1", "field2" });
-        cons.add(this.cookie, 120, new String[] { "a", "hinata" });
+        new TrailDB.TrailDBBuilder(this.path, new String[] { "field1", "field2" })
+                .add(this.cookie, 120, new String[] { "a", "hinata" });
     }
 
     @Test
@@ -102,9 +101,8 @@ public class TrailDBConstructorFailureTest {
                 this.result = -1;
             }
         };
-        TrailDBConstructor cons = new TrailDBConstructor(this.path, new String[] { "field1", "field2" });
-        TrailDB db = cons.finalise();
-        cons.append(db);
+        TrailDB db = new TrailDB.TrailDBBuilder(this.path, new String[] { "field1", "field2" }).build();
+        new TrailDB.TrailDBBuilder(this.path, new String[] { "field1", "field2" }).append(db);
     }
 
     @Test
@@ -121,8 +119,7 @@ public class TrailDBConstructorFailureTest {
                 this.result = -1;
             }
         };
-        TrailDBConstructor cons = new TrailDBConstructor(this.path, new String[] { "field1", "field2" });
-        cons.finalise();
+        new TrailDB.TrailDBBuilder(this.path, new String[] { "field1", "field2" }).build();
     }
 
 }

@@ -2,6 +2,7 @@ package io.sqooba.traildb;
 
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,6 +31,10 @@ public class TrailDB {
     private long numEvents;
     private long numFields;
     private List<String> fields;
+
+    private TrailDB(TrailDBBuilder builder) {
+        this(builder.path);
+    }
 
     /**
      * Construct a TrailDB on the given .tdb file.
@@ -310,4 +315,133 @@ public class TrailDB {
             this.db = null;
         }
     }
+
+    /**
+     * Class allowing to easily construct a new TrailDB.
+     * 
+     * @author B. Sottas
+     */
+    public static class TrailDBBuilder {
+
+        private static final Logger LOGGER = Logger.getLogger(TrailDBBuilder.class.getName());
+
+        private TrailDBNative trailDBj = TrailDBNative.INSTANCE;
+
+        /** New TrailDB output path, without .tdb. */
+        private String path;
+
+        /** Names of fields in the new TrailDB. */
+        private String[] ofields;
+
+        /** Handle to the TrailDB, returned by init method. */
+        private ByteBuffer cons;
+
+        /** Tells if this Builder build method has already been called. */
+        private boolean closed = false;
+
+        /**
+         * Build a new TrailDB.
+         * 
+         * @param path TrailDB output path.
+         * @param ofields Names of fields.
+         * @throws NullPointerException If given path is null.
+         * @throws TrailDBError If allocation fails or can not open constructor.
+         */
+        public TrailDBBuilder(String path, String[] ofields) {
+            if (path == null) {
+                throw new NullPointerException("Path must not be null.");
+            }
+            if (Arrays.asList(ofields).contains("")) {
+                throw new IllegalArgumentException("Fields must not contain empty String.");
+            }
+
+            // Initialisation.
+            this.cons = this.trailDBj.consInit();
+            if (this.cons == null) {
+                throw new TrailDBError("Failed to allocate memory for constructor.");
+            }
+            if (this.trailDBj.consOpen(this.cons, path, ofields, ofields.length) != 0) {
+                throw new TrailDBError("Can not open constructor.");
+            }
+
+            this.path = path;
+            this.ofields = ofields;
+        }
+
+        /*
+         * FixMe public void add(Event e) { this.add(e.uuid, e.timestamp, e.values); };
+         */
+
+        /**
+         * Add an event to the TrailDB.
+         * 
+         * @param uuid UUID of the event to be added.
+         * @param timestamp Event timestamp.
+         * @param values Value of each field.
+         * @throws TrailDBError if number of values does not match number of fields or failed to add to the DB.
+         * @throws IllegalArgumentException If {@code uuid} is an invalid 32-byte hex string.
+         */
+        public TrailDBBuilder add(String uuid, long timestamp, String[] values) {
+            if (this.closed) {
+                throw new TrailDBError("Trying to add event to an already finalised database.");
+            }
+
+            int n = values.length;
+            if (n != this.ofields.length) {
+                // FIXME this is a hack to avoid random errors in the C lib.
+                // Need to investigate add function in JNI.
+                throw new TrailDBError("Number of values does not match number of fields.");
+            }
+            long[] value_lengths = new long[n];
+            for(int i = 0; i < n; i++) {
+                value_lengths[i] = values[i].length();
+            }
+
+            byte[] rawUUID = this.trailDBj.UUIDRaw(uuid);
+            if (rawUUID == null) {
+                throw new IllegalArgumentException("uuid is invalid.");
+            }
+            int errCode = this.trailDBj.consAdd(this.cons, rawUUID, timestamp, values, value_lengths);
+            if (errCode != 0) {
+                throw new TrailDBError("Failed to add: " + errCode);
+            }
+
+            return this;
+        }
+
+        /**
+         * Merge an existing TrailDB to this constructor. The fields must be equal between the existing and the new
+         * TrailDB.
+         * 
+         * @param db The db to merge to this one.
+         * @throws TrailDBError if the merge fails.
+         */
+        public TrailDBBuilder append(TrailDB db) {
+            if (this.closed) {
+                throw new TrailDBError("Trying to append to an already finalised database.");
+            }
+
+            int errCode = this.trailDBj.consAppend(this.cons, db.db);
+            if (errCode != 0) {
+                throw new TrailDBError("Failed to merge dbs: " + errCode);
+            }
+
+            return this;
+        }
+
+        public TrailDB build() {
+            this.closed = true; // Prevent add/append calls after building.
+            if (this.trailDBj.consFinalize(this.cons) != 0) {
+                throw new TrailDBError("Failed to finalize.");
+            }
+            LOGGER.log(Level.INFO, "Finalisation done.");
+
+            this.trailDBj.consClose(this.cons);
+            LOGGER.log(Level.INFO, "TrailDBBuilder closed.");
+            this.cons = null;
+
+            return new TrailDB(this);
+        }
+    }
+
 }

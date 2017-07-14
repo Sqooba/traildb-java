@@ -19,7 +19,7 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
 import io.sqooba.traildb.TrailDB;
-import io.sqooba.traildb.TrailDBConstructor;
+import io.sqooba.traildb.TrailDB.TrailDBBuilder;
 import io.sqooba.traildb.TrailDBError;
 import io.sqooba.traildb.TrailDBNative;
 import mockit.Expectations;
@@ -54,12 +54,12 @@ public class TrailDBFailureTest {
         log.addHandler(customLogHandler);
 
         // Initialise a TrailDB with some TrailDBEvents.
-        TrailDBConstructor cons = new TrailDBConstructor(this.path, new String[] { "field1", "field2" });
-        cons.add(this.cookie, 120, new String[] { "a", "hinata" });
-        cons.add(this.cookie, 121, new String[] { "vilya", "" });
-        cons.add(this.otherCookie, 122, new String[] { "kaguya", "hinata" });
-        cons.add(this.otherCookie, 123, new String[] { "alongstring", "averyveryverylongstring" });
-        this.db = cons.finalise();
+        TrailDBBuilder builder = new TrailDBBuilder(this.path, new String[] { "field1", "field2" });
+        builder.add(this.cookie, 120, new String[] { "a", "hinata" });
+        builder.add(this.cookie, 121, new String[] { "vilya", "" });
+        builder.add(this.otherCookie, 122, new String[] { "kaguya", "hinata" });
+        builder.add(this.otherCookie, 123, new String[] { "alongstring", "averyveryverylongstring" });
+        this.db = builder.build();
     }
 
     @After

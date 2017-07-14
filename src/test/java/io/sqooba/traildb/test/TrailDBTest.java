@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -16,10 +17,11 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
 import io.sqooba.traildb.TrailDB;
-import io.sqooba.traildb.TrailDBConstructor;
 import io.sqooba.traildb.TrailDBCursor;
 import io.sqooba.traildb.TrailDBError;
 import io.sqooba.traildb.TrailDBEvent;
+import io.sqooba.traildb.TrailDBNative;
+import mockit.Deencapsulation;
 
 public class TrailDBTest {
 
@@ -35,12 +37,12 @@ public class TrailDBTest {
     public void setUp() throws IOException {
 
         // Initialise a TrailDB with some TrailDBEvents.
-        TrailDBConstructor cons = new TrailDBConstructor(this.path, new String[] { "field1", "field2" });
-        cons.add(this.cookie, 120, new String[] { "a", "hinata" });
-        cons.add(this.cookie, 121, new String[] { "vilya", "" });
-        cons.add(this.otherCookie, 122, new String[] { "kaguya", "hinata" });
-        cons.add(this.otherCookie, 123, new String[] { "alongstring", "averyveryverylongstring" });
-        this.db = cons.finalise();
+        this.db = new TrailDB.TrailDBBuilder(this.path, new String[] { "field1", "field2" })
+                .add(this.cookie, 120, new String[] { "a", "hinata" })
+                .add(this.cookie, 121, new String[] { "vilya", "" })
+                .add(this.otherCookie, 122, new String[] { "kaguya", "hinata" })
+                .add(this.otherCookie, 123, new String[] { "alongstring", "averyveryverylongstring" })
+                .build();
     }
 
     @Test
@@ -191,6 +193,14 @@ public class TrailDBTest {
     @Test(expected = TrailDBError.class)
     public void getItemValueShouldFailIfValueNotFound() {
         this.db.getItemValue(-1);
+    }
+
+    @Test
+    public void getFieldShouldReturnCorrectID() {
+        ByteBuffer handle = Deencapsulation.getField(this.db, "db");
+        ByteBuffer res = ByteBuffer.allocate(4);
+        TrailDBNative.INSTANCE.getField(handle, "field1", res);
+        assertEquals(1, res.getInt(0));
     }
 
     @After
