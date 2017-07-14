@@ -57,7 +57,7 @@ public class TrailDBBuilderTest {
     }
 
     @Test
-    public void buildingUnchained() throws IOException {
+    public void unchainedBuildingShouldWork() throws IOException {
         TrailDBBuilder builder = new TrailDB.TrailDBBuilder(this.path, new String[] { "field1", "field2" });
         builder.add(this.cookie, 120, new String[] { "a", "hinata" });
         builder.add(this.cookie, 121, new String[] { "vilya", "" });
@@ -138,7 +138,7 @@ public class TrailDBBuilderTest {
     }
 
     @Test
-    public void appendingToAlreadyFinalisedSBShouldFail() {
+    public void appendingToAlreadyFinalisedDBShouldFail() {
 
         this.expectedEx.expect(TrailDBError.class);
         this.expectedEx.expectMessage("Trying to append to an already finalised database.");
