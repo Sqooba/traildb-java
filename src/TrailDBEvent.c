@@ -3,7 +3,7 @@
 #include "../include/TrailDBEvent.h"
 
 
-JNIEXPORT jstring JNICALL Java_traildb_TrailDBEvent_getItem(JNIEnv *env, jobject obj, jint index) {
+JNIEXPORT jstring JNICALL Java_traildb_TrailDBEvent_native_1getItem(JNIEnv *env, jobject obj, jint index) {
 	jclass cls;
 	jfieldID fid;
 
@@ -37,6 +37,11 @@ JNIEXPORT jstring JNICALL Java_traildb_TrailDBEvent_getItem(JNIEnv *env, jobject
 	// Get the value of the item
 
 	value = tdb_get_item_value(db, items[index], &value_length);
+	if (value == NULL) {
+		// This probably shouldn't be possible since we already check
+		// for out of bounds error
+		exit(1);
+	}
 
 	// Convert buffer to null-terminated string
 

@@ -10,3 +10,4 @@
 [ ] Benchmark relative to other languages
 [ ] Cache field and method lookups
 [ ] Finish implementing everything else
+[ ] Enable -Wall and -Werr

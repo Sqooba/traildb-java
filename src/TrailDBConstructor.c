@@ -6,6 +6,7 @@
 JNIEXPORT void JNICALL Java_traildb_TrailDBConstructor_init(JNIEnv *env, jobject obj, jstring root, jobjectArray fields) {
 	jclass cls;
 	jfieldID fid;
+	jclass exc;
 
 	tdb_error err;
 	tdb_cons *cons;
@@ -32,8 +33,13 @@ JNIEXPORT void JNICALL Java_traildb_TrailDBConstructor_init(JNIEnv *env, jobject
 
 	cons = tdb_cons_init();
 	if ((err = tdb_cons_open(cons, tgt_root, tgt_fields, num_fields))) {
-		printf("Opening TrailDB constructor failed: %s\n", tdb_error_str(err));
-		exit(1);
+		exc = (*env)->FindClass(env, "java/io/IOException");
+		if (exc == NULL) {
+			/* Could not find the exception - We are in so much trouble right now */
+			exit(1);
+		}
+		(*env)->ThrowNew(env, exc, tdb_error_str(err));
+		return;
 	}
 
 	// Release strings
@@ -61,6 +67,7 @@ JNIEXPORT void JNICALL Java_traildb_TrailDBConstructor_init(JNIEnv *env, jobject
 JNIEXPORT void JNICALL Java_traildb_TrailDBConstructor_finalize(JNIEnv *env, jobject obj) {
 	jclass cls;
 	jfieldID fid;
+	jclass exc;
 
 	tdb_error err;
 	tdb_cons *cons;
@@ -77,14 +84,20 @@ JNIEXPORT void JNICALL Java_traildb_TrailDBConstructor_finalize(JNIEnv *env, job
 	// Finalize tdb
 
 	if ((err = tdb_cons_finalize(cons))) {
-		printf("Finalizing TrailDB constructor failed: %s\n", tdb_error_str(err));
-		exit(1);
+		exc = (*env)->FindClass(env, "java/io/IOException");
+		if (exc == NULL) {
+			/* Could not find the exception - We are in so much trouble right now */
+			exit(1);
+		}
+		(*env)->ThrowNew(env, exc, tdb_error_str(err));
+		return;
 	}
 }
 
-JNIEXPORT void JNICALL Java_traildb_TrailDBConstructor_nativeAdd(JNIEnv *env, jobject obj, jbyteArray uuid, jint ts, jobjectArray values) {
+JNIEXPORT void JNICALL Java_traildb_TrailDBConstructor_native_1add(JNIEnv *env, jobject obj, jbyteArray uuid, jint ts, jobjectArray values) {
 	jclass cls;
 	jfieldID fid;
+	jclass exc;
 
 	jobject temp_value;
 	const char **tgt_values;
@@ -94,6 +107,7 @@ JNIEXPORT void JNICALL Java_traildb_TrailDBConstructor_nativeAdd(JNIEnv *env, jo
 	tdb_error err;
 	tdb_cons *cons;
 	uint64_t num_values;
+	char *err_msg;
 
 	// Get Number of values
 
@@ -124,9 +138,21 @@ JNIEXPORT void JNICALL Java_traildb_TrailDBConstructor_nativeAdd(JNIEnv *env, jo
 
 	// Add event to tdb
 
-	if ((err = tdb_cons_add(cons, tgt_uuid, ts, tgt_values, tgt_lengths))){
-		printf("Adding an event failed: %s\n", tdb_error_str(err));
-		exit(1);
+	if ((err = tdb_cons_add(cons, tgt_uuid, ts, tgt_values, tgt_lengths))) {
+		exc = (*env)->FindClass(env, "java/lang/IllegalArgumentException");
+		if (exc == NULL) {
+			/* Could not find the exception - We are in so much trouble right now */
+			exit(1);
+		}
+		// Subtract 2 because the %s will be replaced
+		err_msg = (char *) malloc(strlen(tdb_error_str(err)) * sizeof(char) + sizeof("Adding an event failed: %s!") - 2);
+
+		sprintf(err_msg, "Adding an event failed: %s!", tdb_error_str(err));
+
+		(*env)->ThrowNew(env, exc, err_msg);
+
+		free(err_msg);
+		// Don't return here because we still need to release the strings
 	}
 
 	// Release strings
@@ -162,6 +188,7 @@ JNIEXPORT void JNICALL Java_traildb_TrailDBConstructor_close(JNIEnv *env, jobjec
 JNIEXPORT void JNICALL Java_traildb_TrailDBConstructor_setOpt(JNIEnv *env, jobject obj, jobject key, jobject value) {
 	jclass cls;
 	jfieldID fid;
+	jclass exc;
 
 	tdb_cons *cons;
 	tdb_opt_key key_flag;
@@ -189,8 +216,13 @@ JNIEXPORT void JNICALL Java_traildb_TrailDBConstructor_setOpt(JNIEnv *env, jobje
 			key_flag = TDB_OPT_CONS_NO_BIGRAMS; // 1002
 			break;
 		default:
-			printf("Unrecognized option key\n");
-			exit(1);
+			exc = (*env)->FindClass(env, "java/lang/IllegalArgumentException");
+			if (exc == NULL) {
+				/* Could not find the exception - We are in so much trouble right now */
+				exit(1);
+			}
+			(*env)->ThrowNew(env, exc, "Unrecognized option key");
+			return;
 	}
 
 	// Get ordinal of value enum
@@ -212,8 +244,13 @@ JNIEXPORT void JNICALL Java_traildb_TrailDBConstructor_setOpt(JNIEnv *env, jobje
 			value_flag.value = TDB_OPT_CONS_OUTPUT_FORMAT_PACKAGE; // 1
 			break;
 		default:
-			printf("Unrecognized option value\n");
-			exit(1);
+			exc = (*env)->FindClass(env, "java/lang/IllegalArgumentException");
+			if (exc == NULL) {
+				/* Could not find the exception - We are in so much trouble right now */
+				exit(1);
+			}
+			(*env)->ThrowNew(env, exc, "Unrecognized option value");
+			return;
 	}
 
 	// Set option
@@ -224,6 +261,7 @@ JNIEXPORT void JNICALL Java_traildb_TrailDBConstructor_setOpt(JNIEnv *env, jobje
 JNIEXPORT jobject JNICALL Java_traildb_TrailDBConstructor_getOpt(JNIEnv *env, jobject obj, jobject key) {
 	jclass cls;
 	jfieldID fid;
+	jclass exc;
 
 	tdb_cons *cons;
 	tdb_opt_key key_flag;
@@ -235,7 +273,6 @@ JNIEXPORT jobject JNICALL Java_traildb_TrailDBConstructor_getOpt(JNIEnv *env, jo
 	cls = (*env)->GetObjectClass(env, obj);
 	fid = (*env)->GetFieldID(env, cls, "cons", "J");
 	if (fid == NULL) {
-		printf("Could not retrieve tdb constructor\n");
 		exit(1);
 	}
 	cons = (tdb_cons *) (*env)->GetLongField(env, obj, fid);
@@ -253,8 +290,13 @@ JNIEXPORT jobject JNICALL Java_traildb_TrailDBConstructor_getOpt(JNIEnv *env, jo
 			key_flag = TDB_OPT_CONS_NO_BIGRAMS; // 1002
 			break;
 		default:
-			printf("Unrecognized option key\n");
-			exit(1);
+			exc = (*env)->FindClass(env, "java/lang/IllegalArgumentException");
+			if (exc == NULL) {
+				/* Could not find the exception - We are in so much trouble right now */
+				exit(1);
+			}
+			(*env)->ThrowNew(env, exc, "Unrecognized option key");
+			return NULL;
 	}
 
 	// Get option
@@ -269,8 +311,13 @@ JNIEXPORT jobject JNICALL Java_traildb_TrailDBConstructor_getOpt(JNIEnv *env, jo
 			strcpy(value_name, "TDB_OPT_CONS_OUTPUT_FORMAT_PACKAGE");
 			break;
 		default:
-			printf("Unrecognized option value returned from TrailDB\n");
-			exit(1);
+			exc = (*env)->FindClass(env, "java/lang/IllegalArgumentException");
+			if (exc == NULL) {
+				/* Could not find the exception - We are in so much trouble right now */
+				exit(1);
+			}
+			(*env)->ThrowNew(env, exc, "Unrecognized option value returned from TrailDB");
+			return NULL;
 	}
 
 	jclass jenum = (*env)->FindClass(env, "traildb/TrailDB$TDB_OPT_CONS_VALUE");

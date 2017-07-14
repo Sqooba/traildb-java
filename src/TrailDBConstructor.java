@@ -29,10 +29,10 @@ public class TrailDBConstructor {
 	public void add(UUID uuid, int timestamp, String[] values) {
 		byte uuidBytes[] = new byte[16];
 		uuidBytes = uuidToBytes(uuid);
-		nativeAdd(uuidBytes, timestamp, values);
+		native_add(uuidBytes, timestamp, values);
 	}
 
-	private native void nativeAdd(byte[] uuid, int timestamp, String[] values);
+	private native void native_add(byte[] uuid, int timestamp, String[] values);
 
 	private static byte[] uuidToBytes(UUID uuid) {
 		long hi = uuid.getMostSignificantBits();

@@ -6,6 +6,7 @@ import traildb.TrailDBMultiCursor;
 
 import java.util.UUID;
 import java.util.HashMap;
+import java.io.FileNotFoundException;
 
 public class TrailDB {
 	public enum TDB_OPT_KEY {
@@ -31,7 +32,7 @@ public class TrailDB {
 		init(root);
 		long n = this.numFields();
 		this.fieldNames = new String[(int) n];
-		this.fieldMap = new HashMap();
+		this.fieldMap = new HashMap<String, Integer>();
 		for (int i = 0; i < n; i++) {
 			this.fieldNames[i] = this.getFieldName(i);
 			this.fieldMap.put(this.fieldNames[i], i);

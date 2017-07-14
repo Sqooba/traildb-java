@@ -5,11 +5,11 @@
 JNIEXPORT void JNICALL Java_traildb_TrailDB_init(JNIEnv *env, jobject obj, jstring root) {
 	jclass cls;
 	jfieldID fid;
+	jclass exc;
 
 	tdb_error err;
 	const char *tgt_root;
 	tdb *db;
-
 
 	// Get strings
 
@@ -22,8 +22,13 @@ JNIEXPORT void JNICALL Java_traildb_TrailDB_init(JNIEnv *env, jobject obj, jstri
 	// Open tdb
 
 	if (err = tdb_open(db, tgt_root)) {
-		printf("Opening TrailDB failed: %s\n", tdb_error_str(err));
-		exit(1);
+		exc = (*env)->FindClass(env, "java/io/FileNotFoundException");
+		if (exc == NULL) {
+			/* Could not find the exception - We are in so much trouble right now */
+			exit(1);
+		}
+		(*env)->ThrowNew(env, exc, tdb_error_str(err));
+		return;
 	}
 
 	// Release strings

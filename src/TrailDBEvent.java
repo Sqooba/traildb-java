@@ -9,7 +9,14 @@ public class TrailDBEvent {
 	private long items; // Points to beginning of items
 	private long db;
 
-	public native String getItem(int i);
+	public String getItem(int i) {
+		if (i >= numItems || i < 0) {
+			throw new IndexOutOfBoundsException("getItem(" + i + ") but numItems in event is" + numItems);
+		}
+		return native_getItem(i);
+	}
+
+	public native String native_getItem(int i);
 
 	static {
 		System.loadLibrary("TrailDBEvent");
