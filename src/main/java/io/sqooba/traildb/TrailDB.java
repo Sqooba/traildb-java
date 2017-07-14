@@ -336,6 +336,9 @@ public class TrailDB {
         /** Handle to the TrailDB, returned by init method. */
         private ByteBuffer cons;
 
+        /** Tells if this Builder build method has already been called. */
+        private boolean closed = false;
+
         /**
          * Build a new TrailDB.
          * 
@@ -379,6 +382,10 @@ public class TrailDB {
          * @throws IllegalArgumentException If {@code uuid} is an invalid 32-byte hex string.
          */
         public TrailDBBuilder add(String uuid, long timestamp, String[] values) {
+            if (this.closed) {
+                throw new TrailDBError("Trying to add event to an already finalised database.");
+            }
+
             int n = values.length;
             if (n != this.ofields.length) {
                 // FIXME this is a hack to avoid random errors in the C lib.
@@ -410,6 +417,10 @@ public class TrailDB {
          * @throws TrailDBError if the merge fails.
          */
         public TrailDBBuilder append(TrailDB db) {
+            if (this.closed) {
+                throw new TrailDBError("Trying to append to an already finalised database.");
+            }
+
             int errCode = this.trailDBj.consAppend(this.cons, db.db);
             if (errCode != 0) {
                 throw new TrailDBError("Failed to merge dbs: " + errCode);
@@ -419,6 +430,7 @@ public class TrailDB {
         }
 
         public TrailDB build() {
+            this.closed = true; // Prevent add/append calls after building.
             if (this.trailDBj.consFinalize(this.cons) != 0) {
                 throw new TrailDBError("Failed to finalize.");
             }
@@ -426,6 +438,7 @@ public class TrailDB {
 
             this.trailDBj.consClose(this.cons);
             LOGGER.log(Level.INFO, "TrailDBBuilder closed.");
+            this.cons = null;
 
             return new TrailDB(this);
         }

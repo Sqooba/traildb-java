@@ -14,6 +14,7 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
 import io.sqooba.traildb.TrailDB;
+import io.sqooba.traildb.TrailDB.TrailDBBuilder;
 import io.sqooba.traildb.TrailDBError;
 
 public class TrailDBBuilderTest {
@@ -111,6 +112,29 @@ public class TrailDBBuilderTest {
         } finally {
             FileUtils.deleteDirectory(new File(this.path + "fail"));
         }
+    }
+
+    @Test
+    public void addingToAlreadyFinalisedDBShouldFail() {
+
+        this.expectedEx.expect(TrailDBError.class);
+        this.expectedEx.expectMessage("Trying to add event to an already finalised database.");
+
+        TrailDBBuilder builder = new TrailDB.TrailDBBuilder(this.path, new String[] { "field1", "field2" });
+        builder.build();
+        builder.add(this.cookie, 121, new String[] { "vilya", "" });
+    }
+
+    @Test
+    public void appendingToAlreadyFinalisedSBShouldFail() {
+
+        this.expectedEx.expect(TrailDBError.class);
+        this.expectedEx.expectMessage("Trying to append to an already finalised database.");
+
+        TrailDBBuilder builder = new TrailDB.TrailDBBuilder(this.path, new String[] { "field1", "field2" });
+        builder.add(this.cookie, 121, new String[] { "vilya", "" });
+        builder.build();
+        builder.append(new TrailDB(this.path));
     }
 
 }
