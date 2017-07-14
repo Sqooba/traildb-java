@@ -37,7 +37,8 @@ examples: $(EXAMPLES)
 .PHONY: clean
 clean:
 	rm -f $(TGT)/*.so $(TGT)/traildb/*.class
-	rm include/*.h
+	rm -f include/*.h
+	rm -f hs_err*
 
 .PHONY: descriptors
 descriptors:
