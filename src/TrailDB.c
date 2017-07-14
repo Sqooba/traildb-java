@@ -162,14 +162,6 @@ JNIEXPORT jobject JNICALL Java_traildb_TrailDB_getItem(JNIEnv *env, jobject obj,
 
 }
 
-JNIEXPORT jstring JNICALL Java_traildb_TrailDB_getValue(JNIEnv *env, jobject obj, jint field, jlong value) {
-
-}
-
-JNIEXPORT jstring JNICALL Java_traildb_TrailDB_getItemValue(JNIEnv *env, jobject obj, jobject item) {
-
-}
-
 JNIEXPORT void JNICALL Java_traildb_TrailDB_close(JNIEnv *env, jobject obj) {
 
 }
