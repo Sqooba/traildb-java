@@ -76,6 +76,24 @@ JNIEXPORT jlong JNICALL Java_traildb_TrailDB_numEvents(JNIEnv *env, jobject obj)
 
 }
 
+JNIEXPORT jlong JNICALL Java_traildb_TrailDB_numFields(JNIEnv *env, jobject obj) {
+	jclass cls;
+	jfieldID fid;
+
+	tdb *db;
+
+	// Retrieve db pointer
+
+	cls = (*env)->GetObjectClass(env, obj);
+	fid = (*env)->GetFieldID(env, cls, "db", "J");
+	if (fid == NULL) {
+		exit(1);
+	}
+	db = (tdb *) (*env)->GetLongField(env, obj, fid);
+
+	return tdb_num_fields(db);
+}
+
 JNIEXPORT jlong JNICALL Java_traildb_TrailDB_minTimestamp(JNIEnv *env, jobject obj) {
 
 }

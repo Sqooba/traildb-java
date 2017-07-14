@@ -37,6 +37,8 @@ public class TrailDB {
 
 	public native long numEvents();
 
+	public native long numFields();
+
 	public native long minTimestamp();
 
 	public native long maxTimestamp();

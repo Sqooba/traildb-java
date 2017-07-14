@@ -19,7 +19,7 @@ public class Example {
 			// System.out.println(uuid);
 			cur.getTrail(i);
 			while ((event = cur.next()) != null) {
-				System.out.println(event.timestamp);
+				System.out.println(event.timestamp + " " + event.getItem(0));
 			}
 		}
 	}
@@ -35,10 +35,12 @@ public class Example {
 		cons.add(cookie1, 1, new String[] {"bob", "run"});
 		cons.add(cookie2, 2, new String[] {"fred", "walk"});
 		cons.add(cookie1, 4, new String[] {"jerry", "speak"});
+		cons.add(cookie1, 5, new String[] {"ted", "fly"});
 
 		cons.finalize();
 		cons.close();
 
+		System.out.println("Finished writing");
 		read();
 	}
 }
