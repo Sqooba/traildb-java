@@ -131,7 +131,26 @@ JNIEXPORT jint JNICALL Java_traildb_TrailDB_getField(JNIEnv *env, jobject obj, j
 }
 
 JNIEXPORT jstring JNICALL Java_traildb_TrailDB_getFieldName(JNIEnv *env, jobject obj, jint field) {
+	jclass cls;
+	jfieldID fid;
 
+	const char *name;
+	tdb *db;
+
+	// Retrieve db pointer
+
+	cls = (*env)->GetObjectClass(env, obj);
+	fid = (*env)->GetFieldID(env, cls, "db", "J");
+	if (fid == NULL) {
+		exit(1);
+	}
+	db = (tdb *) (*env)->GetLongField(env, obj, fid);
+
+	// Get field name
+
+	name = tdb_get_field_name(db, field);
+
+	return (*env)->NewStringUTF(env, name);
 }
 
 JNIEXPORT jobject JNICALL Java_traildb_TrailDB_getItem(JNIEnv *env, jobject obj, jint field, jstring value) {

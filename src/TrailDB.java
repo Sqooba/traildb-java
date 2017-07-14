@@ -5,6 +5,7 @@ import traildb.TrailDBCursor;
 import traildb.TrailDBMultiCursor;
 
 import java.util.UUID;
+import java.util.HashMap;
 
 public class TrailDB {
 	public enum TDB_OPT_KEY {
@@ -20,11 +21,21 @@ public class TrailDB {
 	}
 
 	public String root;
+	public String[] fieldNames;
+	public HashMap<String, Integer> fieldMap;
+
 	private long db;
 
 	public TrailDB(String root) {
 		this.root = root;
 		init(root);
+		long n = this.numFields();
+		this.fieldNames = new String[(int) n];
+		this.fieldMap = new HashMap();
+		for (int i = 0; i < n; i++) {
+			this.fieldNames[i] = this.getFieldName(i);
+			this.fieldMap.put(this.fieldNames[i], i);
+		}
 	}
 
 	private native void init(String root);
