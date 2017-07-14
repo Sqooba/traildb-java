@@ -1,6 +1,7 @@
 package io.sqooba.traildb.test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 import java.io.File;
 import java.io.IOException;
@@ -136,7 +137,9 @@ public class TrailDBTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void openTrailDBOnNullPathShouldFail() {
-        new TrailDB(null);
+        try (TrailDB db = new TrailDB(null)) {
+            // To auto close.
+        }
     }
 
     @Test
@@ -203,6 +206,19 @@ public class TrailDBTest {
         assertEquals(1, res.getInt(0));
     }
 
+    @Test
+    public void closeShouldFreeDB() {
+        this.db.close();
+        assertNull(Deencapsulation.getField(this.db, "db"));
+    }
+
+    @Test
+    public void closeNullDBField() {
+
+        Deencapsulation.setField(this.db, "db", null);
+        this.db.close();
+    }
+
     @After
     public void tearDown() throws IOException {
 
@@ -212,5 +228,6 @@ public class TrailDBTest {
             f.delete();
         }
         FileUtils.deleteDirectory(new File(this.path));
+        this.db.close();
     }
 }
