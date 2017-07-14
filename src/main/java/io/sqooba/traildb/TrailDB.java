@@ -279,7 +279,7 @@ public class TrailDB implements AutoCloseable {
      * @return A cursor over the trail.
      * @throws TrailDBError If cursor creation failed in some way.
      */
-    public TrailDBCursor trail(long trailID) { // Python has more params.
+    public TrailDBIterator trail(long trailID) { // Python has more params.
         ByteBuffer cursor = this.trailDBj.cursorNew(this.db);
         if (cursor == null) {
             throw new TrailDBError("Memory allocation failed for cursor.");
@@ -289,7 +289,7 @@ public class TrailDB implements AutoCloseable {
             throw new TrailDBError("Failed to create cursor with code: " + errCode);
         }
         TrailDBEvent e = new TrailDBEvent(this, this.fields);
-        return new TrailDBCursor(cursor, e);
+        return new TrailDBIterator(cursor, e);
     }
 
     /**
@@ -298,8 +298,8 @@ public class TrailDB implements AutoCloseable {
      * 
      * @return A map containing a trail UUID as key and a trail cursor as value
      */
-    public Map<String, TrailDBCursor> trails() {
-        Map<String, TrailDBCursor> res = new HashMap<>();
+    public Map<String, TrailDBIterator> trails() {
+        Map<String, TrailDBIterator> res = new HashMap<>();
         for(int i = 0; i < this.length(); i++) {
             res.put(this.getUUID(i), this.trail(i));
         }
