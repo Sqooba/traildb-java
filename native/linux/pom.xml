@@ -68,6 +68,10 @@
 				<linkerStartOptions>
 				<linkerStartOption>-shared -fPIC</linkerStartOption>
 				</linkerStartOptions>
+
+				<linkerEndOptions>
+				<linkerEndOption>-ltraildb</linkerEndOption>
+				</linkerEndOptions>
 			</configuration>
 			<executions>
 			<execution>
@@ -79,6 +83,7 @@
 					<javahOutputDirectory>${project.build.directory}/custom-javah</javahOutputDirectory>
 					<workingDirectory>${basedir}</workingDirectory>
 					<javahOutputFileName>traildb-java.h</javahOutputFileName>
+					<linkerFinalName>libtraildbJavaNative</linkerFinalName>
 					<javahClassNames>
 					<javahClassName>traildb.TrailDB</javahClassName>
 					<javahClassName>traildb.TrailDBConstructor</javahClassName>

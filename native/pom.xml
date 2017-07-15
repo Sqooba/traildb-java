@@ -1,5 +1,4 @@
 <project>
-
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
@@ -9,10 +8,14 @@
 	</parent>
 
 	<artifactId>nativeParent</artifactId>
-	
+
 	<name>JNI example - native parent</name>
-	
+
 	<packaging>pom</packaging>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
 
 	<profiles>
 	<profile>
