@@ -1,6 +1,8 @@
 
 # TrailDB Java
 
+Java Bindings for [TrailDB](https://github.com/traildb/traildb)
+
 ## Installation
 
 `mvn install -P Linux`
@@ -24,9 +26,11 @@ java -Djava.library.path=`pwd`/native/linux/target/ -cp examples:native/linux/ta
 
 - [x] Set up maven or gradle or something so people can install
 
-- [ ] Benchmark relative to other languages
+- [ ] Benchmark relative to other language bindings
 
 - [ ] Cache field and method lookups
+
+- [ ] Benchmark again to evaluate efficacy of field caching
 
 - [ ] Finish implementing everything else
 
