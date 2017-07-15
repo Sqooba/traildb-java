@@ -1,3 +1,2 @@
-*.class
-*.so
+native/linux/target
 *.tdb
