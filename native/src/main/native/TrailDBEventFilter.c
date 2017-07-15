@@ -1,4 +1,4 @@
-#include "../include/TrailDBEventFilter.h"
+#include "traildb-java.h"
 
 JNIEXPORT void JNICALL Java_traildb_TrailDBEventFilter_init(JNIEnv *env, jobject obj) {
 

@@ -1,6 +1,6 @@
 #include <traildb.h>
 #include <string.h>
-#include "../include/TrailDBEvent.h"
+#include "traildb-java.h"
 
 
 JNIEXPORT jstring JNICALL Java_traildb_TrailDBEvent_native_1getItem(JNIEnv *env, jobject obj, jint index) {

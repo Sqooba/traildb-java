@@ -1,0 +1,25 @@
+<project>
+
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>adroll.traildb</groupId>
+  <artifactId>parentProject</artifactId>
+  <version>0.1</version>
+  <name>TrailDB Parent Project</name>
+  
+  <packaging>pom</packaging>
+  <modules>
+    <module>java</module>
+    <module>native</module>
+  </modules>
+
+  <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>native-maven-plugin</artifactId>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+  </build>
+</project>

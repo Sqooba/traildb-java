@@ -1,6 +1,6 @@
 #include <traildb.h>
-#include "../include/TrailDBConstructor.h"
 #include <string.h>
+#include "traildb-java.h"
 
 
 JNIEXPORT void JNICALL Java_traildb_TrailDBConstructor_init(JNIEnv *env, jobject obj, jstring root, jobjectArray fields) {

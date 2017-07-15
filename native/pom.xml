@@ -1,0 +1,31 @@
+<project>
+
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>adroll.traildb</groupId>
+		<artifactId>parentProject</artifactId>
+		<version>0.1</version>
+	</parent>
+
+	<artifactId>nativeParent</artifactId>
+	
+	<name>JNI example - native parent</name>
+	
+	<packaging>pom</packaging>
+
+	<profiles>
+	<profile>
+		<id>Linux</id>
+		<activation>
+			<property>
+				<name>platform</name>
+				<value>linux</value>
+			</property>
+		</activation>
+		<modules>
+		<module>linux</module>
+		</modules>
+	</profile>
+	</profiles>
+</project>
