@@ -1,6 +1,12 @@
 
 # TrailDB Java
 
+## Installation
+
+`mvn install -P Linux`
+
+Only Linux is supported for the time being. OS X and Windows are on the way.
+
 
 ## TODO
 
