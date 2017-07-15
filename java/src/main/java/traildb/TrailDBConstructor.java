@@ -46,6 +46,6 @@ public class TrailDBConstructor {
 	public native TDB_OPT_CONS_VALUE getOpt(TDB_OPT_CONS_KEY key);
 
 	static {
-		System.loadLibrary("TrailDBConstructor");
+		System.loadLibrary("traildbJavaNative");
 	}
 }

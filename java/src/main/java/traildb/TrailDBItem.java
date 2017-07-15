@@ -11,4 +11,8 @@ public class TrailDBItem {
 	public native void init(int field, long value);
 	public native int getField();
 	public native long getValue();
+
+	static {
+		System.loadLibrary("traildbJavaNative");
+	}
 }

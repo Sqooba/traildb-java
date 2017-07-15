@@ -15,4 +15,8 @@ public class TrailDBMultiCursor {
 	public native TrailDBMultiEvent[] nextBatch(int maxEvents);
 	
 	public native TrailDBMultiEvent peek();
+
+	static {
+		System.loadLibrary("traildbJavaNative");
+	}
 }

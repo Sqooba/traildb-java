@@ -24,6 +24,6 @@ public class TrailDBCursor {
 	public native TrailDBEvent peek();
 	
 	static {
-		System.loadLibrary("TrailDBCursor");
+		System.loadLibrary("traildbJavaNative");
 	}
 }
