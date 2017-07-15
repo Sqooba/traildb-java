@@ -1,5 +1,5 @@
 #include <traildb.h>
-#include "../include/TrailDBCursor.h"
+#include "traildb-java.h"
 
 JNIEXPORT void JNICALL Java_traildb_TrailDBCursor_free(JNIEnv *env, jobject obj) {
 
