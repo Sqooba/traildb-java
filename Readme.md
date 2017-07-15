@@ -22,7 +22,7 @@ java -Djava.library.path=`pwd`/native/linux/target/ -cp examples:native/linux/ta
 
 - [ ] Unit tests
 
-- [ ] Set up maven or gradle or something so people can install
+- [x] Set up maven or gradle or something so people can install
 
 - [ ] Benchmark relative to other languages
 
