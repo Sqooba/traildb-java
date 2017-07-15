@@ -7,6 +7,14 @@
 
 Only Linux is supported for the time being. OS X and Windows are on the way.
 
+Compile and run the example by adding the jar to your classpath and setting `java.library.path` to the object file.
+
+```
+javac -cp native/linux/target/lib/traildbJava.jar examples/Example.java
+
+java -Djava.library.path=`pwd`/native/linux/target/ -cp examples:native/linux/target/lib/traildbJava.jar Example
+```
+
 
 ## TODO
 
