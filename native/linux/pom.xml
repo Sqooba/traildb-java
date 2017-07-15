@@ -1,18 +1,18 @@
 <project>
 	<modelVersion>4.0.0</modelVersion>
-	
+
 	<parent>
 		<groupId>adroll.traildb</groupId>
 		<artifactId>nativeParent</artifactId>
 		<version>0.1</version>
 	</parent>
-		
+
 	<groupId>adroll.traildb</groupId>
 	<artifactId>traildbJavaNative</artifactId>
 	<version>0.1</version>
 	<name>JNI example native Linux</name>
 	<url>http://maven.apache.org</url>
-		
+
 	<packaging>so</packaging>
 
 	<dependencies>
@@ -68,13 +68,7 @@
 				<linkerStartOptions>
 				<linkerStartOption>-shared -fPIC</linkerStartOption>
 				</linkerStartOptions>
-
-<!-- 				<linkerEndOptions>
-				<linkerEndOption>-ltraildb</linkerEndOption>
-				</linkerEndOptions> -->
-
 			</configuration>
-					
 			<executions>
 			<execution>
 				<id>javah</id>
