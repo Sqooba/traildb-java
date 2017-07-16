@@ -10,6 +10,7 @@
 	<modules>
 		<module>java</module>
 		<module>native</module>
+		<module>it</module>
 	</modules>
 
 	<build>
@@ -41,7 +42,7 @@
 		<groupId>junit</groupId>
 		<artifactId>junit</artifactId>
 		<version>4.12</version>
-		<scope>test</scope>
+		<!-- <scope>compile</scope> -->
 	</dependency>
 	</dependencies>
 </project>
