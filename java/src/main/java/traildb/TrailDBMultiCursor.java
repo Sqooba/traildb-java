@@ -17,6 +17,6 @@ public class TrailDBMultiCursor {
 	public native TrailDBMultiEvent peek();
 
 	static {
-		System.loadLibrary("traildbJavaNative");
+		System.loadLibrary("TraildbJavaNative");
 	}
 }

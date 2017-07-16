@@ -8,7 +8,7 @@
 	</parent>
 
 	<groupId>adroll.traildb</groupId>
-	<artifactId>traildbJavaNative</artifactId>
+	<artifactId>libTraildbJavaNative</artifactId>
 	<version>0.1</version>
 	<name>JNI example native Linux</name>
 	<url>http://maven.apache.org</url>
@@ -83,7 +83,6 @@
 					<javahOutputDirectory>${project.build.directory}/custom-javah</javahOutputDirectory>
 					<workingDirectory>${basedir}</workingDirectory>
 					<javahOutputFileName>traildb-java.h</javahOutputFileName>
-					<linkerFinalName>libtraildbJavaNative</linkerFinalName>
 					<javahClassNames>
 					<javahClassName>traildb.TrailDB</javahClassName>
 					<javahClassName>traildb.TrailDBConstructor</javahClassName>

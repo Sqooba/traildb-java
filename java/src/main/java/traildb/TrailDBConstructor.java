@@ -3,6 +3,7 @@ package traildb;
 
 import java.util.UUID;
 import java.nio.ByteBuffer;
+import java.io.FileNotFoundException;
 
 
 public class TrailDBConstructor {
@@ -21,7 +22,7 @@ public class TrailDBConstructor {
 		TDB_OPT_CONS_OUTPUT_PACKAGE,
 	}
 
-	public TrailDBConstructor(String root, String[] fields) {
+	public TrailDBConstructor(String root, String[] fields) throws FileNotFoundException {
 		init(root, fields);
 	}
 	private native void init(String root, String[] fields);
@@ -46,6 +47,6 @@ public class TrailDBConstructor {
 	public native TDB_OPT_CONS_VALUE getOpt(TDB_OPT_CONS_KEY key);
 
 	static {
-		System.loadLibrary("traildbJavaNative");
+		System.loadLibrary("TraildbJavaNative");
 	}
 }

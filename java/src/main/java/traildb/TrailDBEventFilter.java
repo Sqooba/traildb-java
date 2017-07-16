@@ -36,6 +36,6 @@ public class TrailDBEventFilter {
 	public native int getEndTime(int clauseIndex, int termIndex);
 
 	static {
-		System.loadLibrary("traildbJavaNative");
+		System.loadLibrary("TraildbJavaNative");
 	}
 }

@@ -5,10 +5,11 @@ import traildb.TrailDBCursor;
 import traildb.TrailDBEvent;
 
 import java.util.UUID;
+import java.io.FileNotFoundException;
 
 public class Example {
 
-	public static void read() {
+	public static void read() throws FileNotFoundException {
 		TrailDB tdb = new TrailDB("tiny.tdb");
 		TrailDBCursor cur = tdb.cursorNew();
 		long numCookies = tdb.numTrails();

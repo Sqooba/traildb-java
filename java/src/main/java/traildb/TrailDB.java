@@ -27,7 +27,7 @@ public class TrailDB {
 
 	private long db;
 
-	public TrailDB(String root) {
+	public TrailDB(String root) throws FileNotFoundException {
 		this.root = root;
 		init(root);
 		long n = this.numFields();
@@ -92,6 +92,6 @@ public class TrailDB {
 	public native TrailDBMultiCursor multiCursorNew();
 
 	static {
-		System.loadLibrary("traildbJavaNative");
+		System.loadLibrary("TraildbJavaNative");
 	}
 }

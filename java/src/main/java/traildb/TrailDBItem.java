@@ -13,6 +13,6 @@ public class TrailDBItem {
 	public native long getValue();
 
 	static {
-		System.loadLibrary("traildbJavaNative");
+		System.loadLibrary("TraildbJavaNative");
 	}
 }

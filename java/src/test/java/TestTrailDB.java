@@ -1,13 +1,16 @@
 import junit.framework.TestCase;
+import org.junit.rules.ExpectedException;
+import org.junit.Test;
+import org.junit.Rule;
 
 import traildb.*;
 
-
 import java.util.UUID;
+import java.io.FileNotFoundException;
 
 public class TestTrailDB extends TestCase {
 
-	protected void setUp() {
+	protected void setUp() throws FileNotFoundException {
 		System.out.println(System.getProperty("java.library.path"));
 		TrailDBConstructor cons = new TrailDBConstructor("test", new String[] {"user", "action"});
 
@@ -23,7 +26,7 @@ public class TestTrailDB extends TestCase {
 		cons.close();
 	}
 
-	public void testBasic() {
+	public void testBasic() throws FileNotFoundException {
 		TrailDB tdb = new TrailDB("test.tdb");
 		TrailDBCursor cur = tdb.cursorNew();
 		long numCookies = tdb.numTrails();
@@ -33,25 +36,34 @@ public class TestTrailDB extends TestCase {
 			while ((event = cur.next()) != null) {
 				switch ((int) event.timestamp) {
 					case 1:
-						this.assertEquals(event.getItem(0), "bob");
-						this.assertEquals(event.getItem(1), "run");
+						assertEquals(event.getItem(0), "bob");
+						assertEquals(event.getItem(1), "run");
 						break;
 					case 2:
-						this.assertEquals(event.getItem(0), "fred");
-						this.assertEquals(event.getItem(1), "walk");
+						assertEquals(event.getItem(0), "fred");
+						assertEquals(event.getItem(1), "walk");
 						break;
 					case 4:
-						this.assertEquals(event.getItem(0), "jerry");
-						this.assertEquals(event.getItem(1), "speak");
+						assertEquals(event.getItem(0), "jerry");
+						assertEquals(event.getItem(1), "speak");
 						break;
 					case 5:
-						this.assertEquals(event.getItem(0), "ted");
-						this.assertEquals(event.getItem(1), "fly");
+						assertEquals(event.getItem(0), "ted");
+						assertEquals(event.getItem(1), "fly");
 						break;
 					default:
-						this.fail("Unrecognized timestamp " + event.timestamp);
+						fail("Unrecognized timestamp " + event.timestamp);
 				}
 			}
+		}
+	}
+
+	public void testExceptionFileNotFound() {
+		try {
+			TrailDB tdb = new TrailDB("wat.tdb");
+			fail("Expected TrailDB to fail but it succeeded");
+		} catch (FileNotFoundException e) {
+			return;
 		}
 	}
 }
