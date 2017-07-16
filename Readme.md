@@ -17,6 +17,79 @@ javac -cp native/linux/target/lib/traildbJava.jar examples/Example.java
 java -Djava.library.path=`pwd`/native/linux/target/ -cp examples:native/linux/target/lib/traildbJava.jar Example
 ```
 
+## Architecture
+
+
+├── java
+│   ├── pom.xml (TrailDB Java Classes)
+│   ├── src
+│   │   └── main
+│   │       └── java
+│   │           └── traildb
+│   │               ├── TrailDBConstructor.java
+│   │               ├── TrailDBCursor.java
+│   │               ├── TrailDBEventFilter.java
+│   │               ├── TrailDBEvent.java
+│   │               ├── TrailDBItem.java
+│   │               ├── TrailDB.java
+│   │               ├── TrailDBMultiCursor.java
+│   │               └── TrailDBMultiEvent.java
+│   └── target
+│        └── classes
+│        	└── traildb
+│        		├── TrailDB.class
+│   			├── TrailDBConstructor.class
+│   			├── TrailDBConstructor$TDB_OPT_CONS_KEY.class
+│   			├── TrailDBConstructor$TDB_OPT_CONS_VALUE.class
+│   			├── TrailDBCursor.class
+│   			├── TrailDBEvent.class
+│   			├── TrailDBEventFilter.class
+│   			├── TrailDBItem.class
+│   			├── TrailDBMultiCursor.class
+│   			├── TrailDBMultiEvent.class
+│   			├── TrailDB$TDB_OPT_KEY.class
+│   			└── TrailDB$TDB_OPT_VALUE.class
+├── native
+│   ├── linux
+│   │   ├── pom.xml (Linux Build)
+│   │   └── target
+│   │       ├── custom-javah
+│   │       │   └── traildb-java.h
+│   │       ├── lib
+│   │       │   └── traildbJava.jar
+│   │       ├── libTraildbJavaNative.so
+│   │       └── objs
+│   │           ├── TrailDBConstructor.o
+│   │           ├── TrailDBCursor.o
+│   │           ├── TrailDBEventFilter.o
+│   │           ├── TrailDBEvent.o
+│   │           ├── TrailDBItem.o
+│   │           ├── TrailDBMultiCursor.o
+│   │           └── TrailDB.o
+│   ├── pom.xml (Native Build)
+│   └── src
+│       └── main
+│           └── native
+│               ├── TrailDB.c
+│               ├── TrailDBConstructor.c
+│               ├── TrailDBCursor.c
+│               ├── TrailDBEvent.c
+│               ├── TrailDBEventFilter.c
+│               ├── TrailDBItem.c
+│               └── TrailDBMultiCursor.c
+└── pom.xml (TrailDB)
+
+
+1. Java sources under `java/src/main/java/traildb` are compiled using `javac` to their `.class` files under `java/target/classes/traildb`
+
+2. Java classes are jarred together into `native/<arch>/target/lib/traildbJava.jar`
+
+3. `javah` is used on the `.class` files to automatically generate the header file `native/<arch>/target/custom-javah/traildb-java.h`
+
+4. The header file is included in every c source under `native/src/main/native`. Each c source is compiled with `gcc` to their `.o` object files under `native/<arch>/target/objs`.
+
+5. Each object file is linked into a shared object file `native/<arch>/target/libTraildbJavaNative.so`. The TrailDB library is linked at this stage.
+
 
 ## TODO
 
