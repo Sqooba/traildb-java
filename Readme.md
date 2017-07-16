@@ -19,7 +19,7 @@ java -Djava.library.path=`pwd`/native/linux/target/ -cp examples:native/linux/ta
 
 ## Architecture
 
-
+```
 ├── java
 │   ├── pom.xml (TrailDB Java Classes)
 │   ├── src
@@ -78,7 +78,7 @@ java -Djava.library.path=`pwd`/native/linux/target/ -cp examples:native/linux/ta
 │               ├── TrailDBItem.c
 │               └── TrailDBMultiCursor.c
 └── pom.xml (TrailDB)
-
+```
 
 1. Java sources under `java/src/main/java/traildb` are compiled using `javac` to their `.class` files under `java/target/classes/traildb`
 
