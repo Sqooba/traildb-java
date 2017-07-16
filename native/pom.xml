@@ -9,7 +9,7 @@
 
 	<artifactId>nativeParent</artifactId>
 
-	<name>JNI example - native parent</name>
+	<name>Native Build</name>
 
 	<packaging>pom</packaging>
 

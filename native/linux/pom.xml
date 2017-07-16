@@ -10,7 +10,7 @@
 	<groupId>adroll.traildb</groupId>
 	<artifactId>libTraildbJavaNative</artifactId>
 	<version>0.1</version>
-	<name>JNI example native Linux</name>
+	<name>Linux Build</name>
 	<url>http://maven.apache.org</url>
 
 	<packaging>so</packaging>

@@ -9,7 +9,7 @@
 
 	<groupId>adroll.traildb</groupId>
 	<artifactId>traildbJava</artifactId>
-	<name>TrailDB Java</name>
+	<name>TrailDB Java Classes</name>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
