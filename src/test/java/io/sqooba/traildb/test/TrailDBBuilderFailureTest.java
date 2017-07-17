@@ -11,7 +11,7 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
 import io.sqooba.traildb.TrailDB;
-import io.sqooba.traildb.TrailDBError;
+import io.sqooba.traildb.TrailDBException;
 import io.sqooba.traildb.TrailDBNative;
 import mockit.Expectations;
 
@@ -37,7 +37,7 @@ public class TrailDBBuilderFailureTest {
     @Test
     public void consInitFailure() {
 
-        this.expectedEx.expect(TrailDBError.class);
+        this.expectedEx.expect(TrailDBException.class);
         this.expectedEx.expectMessage("Failed to allocate memory for constructor.");
 
         final TrailDBNative traildbj = TrailDBNative.INSTANCE;
@@ -54,7 +54,7 @@ public class TrailDBBuilderFailureTest {
     @Test
     public void consOpenFailure() throws Exception {
 
-        this.expectedEx.expect(TrailDBError.class);
+        this.expectedEx.expect(TrailDBException.class);
         this.expectedEx.expectMessage("Can not open constructor.");
 
         final TrailDBNative traildbj = TrailDBNative.INSTANCE;
@@ -71,7 +71,7 @@ public class TrailDBBuilderFailureTest {
     @Test
     public void consAddFailure() {
 
-        this.expectedEx.expect(TrailDBError.class);
+        this.expectedEx.expect(TrailDBException.class);
         this.expectedEx.expectMessage("Failed to add: -1");
 
         final TrailDBNative traildbj = TrailDBNative.INSTANCE;
@@ -90,7 +90,7 @@ public class TrailDBBuilderFailureTest {
     @Test
     public void consAppendFailure() {
 
-        this.expectedEx.expect(TrailDBError.class);
+        this.expectedEx.expect(TrailDBException.class);
         this.expectedEx.expectMessage("Failed to merge dbs: -1");
 
         final TrailDBNative traildbj = TrailDBNative.INSTANCE;
@@ -108,7 +108,7 @@ public class TrailDBBuilderFailureTest {
     @Test
     public void consFinaliseFailure() {
 
-        this.expectedEx.expect(TrailDBError.class);
+        this.expectedEx.expect(TrailDBException.class);
         this.expectedEx.expectMessage("Failed to finalize.");
 
         final TrailDBNative traildbj = TrailDBNative.INSTANCE;

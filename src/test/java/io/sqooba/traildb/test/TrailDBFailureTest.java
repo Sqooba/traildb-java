@@ -15,7 +15,7 @@ import org.junit.rules.ExpectedException;
 
 import io.sqooba.traildb.TrailDB;
 import io.sqooba.traildb.TrailDB.TrailDBBuilder;
-import io.sqooba.traildb.TrailDBError;
+import io.sqooba.traildb.TrailDBException;
 import io.sqooba.traildb.TrailDBNative;
 import mockit.Expectations;
 import uk.org.lidalia.slf4jtest.TestLogger;
@@ -59,7 +59,7 @@ public class TrailDBFailureTest {
 
     @Test
     public void openFailure() {
-        this.expectedEx.expect(TrailDBError.class);
+        this.expectedEx.expect(TrailDBException.class);
         this.expectedEx.expectMessage("Failed to open db.");
 
         final TrailDBNative traildbj = TrailDBNative.INSTANCE;
@@ -139,7 +139,7 @@ public class TrailDBFailureTest {
 
     @Test
     public void getUUIDFailure() {
-        this.expectedEx.expect(TrailDBError.class);
+        this.expectedEx.expect(TrailDBException.class);
         this.expectedEx.expectMessage("Invalid trail ID.");
 
         final TrailDBNative traildbj = TrailDBNative.INSTANCE;
@@ -155,7 +155,7 @@ public class TrailDBFailureTest {
 
     @Test
     public void trailCursorNewFailure() {
-        this.expectedEx.expect(TrailDBError.class);
+        this.expectedEx.expect(TrailDBException.class);
         this.expectedEx.expectMessage("Memory allocation failed for cursor.");
 
         final TrailDBNative traildbj = TrailDBNative.INSTANCE;
@@ -171,7 +171,7 @@ public class TrailDBFailureTest {
 
     @Test
     public void trailFailure() {
-        this.expectedEx.expect(TrailDBError.class);
+        this.expectedEx.expect(TrailDBException.class);
         this.expectedEx.expectMessage("Failed to create cursor with code: -1");
 
         final TrailDBNative traildbj = TrailDBNative.INSTANCE;

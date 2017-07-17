@@ -51,7 +51,7 @@ public class TrailDB implements AutoCloseable {
         this.db = db;
 
         if (this.trailDBj.open(this.db, path) != 0) {
-            throw new TrailDBError("Failed to open db.");
+            throw new TrailDBException("Failed to open db.");
         }
 
         this.numTrails = this.trailDBj.numTrails(db);
@@ -117,12 +117,12 @@ public class TrailDB implements AutoCloseable {
      * 
      * @param fieldName The field name.
      * @return The corresponding field ID.
-     * @throws TrailDBError if the specified field is not found.
+     * @throws TrailDBException if the specified field is not found.
      */
     public long getField(String fieldName) {
         long index = this.fields.indexOf(fieldName);
         if (index == -1) {
-            throw new TrailDBError("Failed to retreive field. Field not found");
+            throw new TrailDBException("Failed to retreive field. Field not found");
         }
         return index;
     }
@@ -132,12 +132,12 @@ public class TrailDB implements AutoCloseable {
      * 
      * @param field The field ID.
      * @return The number of distinct values.
-     * @throws TrailDBError if the field index is invalid ( <=0 | > number of fields).
+     * @throws TrailDBException if the field index is invalid ( <=0 | > number of fields).
      */
     public long getLexiconSize(long field) {
         long value = this.trailDBj.lexiconSize(this.db, field);
         if (value == 0) {
-            throw new TrailDBError("Invalid field index.");
+            throw new TrailDBException("Invalid field index.");
         }
         return value;
     }
@@ -147,12 +147,12 @@ public class TrailDB implements AutoCloseable {
      * 
      * @param fieldId The field ID.
      * @return The corresponding field name.
-     * @throws TrailDBError if the field id is invalid ( <=0 | > number of fields).
+     * @throws TrailDBException if the field id is invalid ( <=0 | > number of fields).
      */
     public String getFieldName(long fieldId) {
         String res = this.trailDBj.getFieldName(this.db, fieldId);
         if (res == null) {
-            throw new TrailDBError("Invalid field id.");
+            throw new TrailDBException("Invalid field id.");
         }
         return res;
     }
@@ -166,12 +166,12 @@ public class TrailDB implements AutoCloseable {
      * @param fieldID The field ID.
      * @param value The value in the field.
      * @return An item encoded in a long, which was casted from uint64_t.
-     * @throws TrailDBError if no item is found.
+     * @throws TrailDBException if no item is found.
      */
     public long getItem(long fieldID, String value) {
         long item = this.trailDBj.getItem(this.db, fieldID, value);
         if (item == 0) {
-            throw new TrailDBError("No item found.");
+            throw new TrailDBException("No item found.");
         }
         if (item < 0) {
             LOGGER.warn("Returned item overflow, deal with it carefully!");
@@ -187,17 +187,17 @@ public class TrailDB implements AutoCloseable {
      * @param field The field ID.
      * @param val The value ID.
      * @return The corresponding field value.
-     * @throws TrailDBError if the returned value is too big for Java or not found in the db.
+     * @throws TrailDBException if the returned value is too big for Java or not found in the db.
      */
     public String getValue(long field, long val) {
         ByteBuffer bb = ByteBuffer.allocate(8);
         String value = this.trailDBj.getValue(this.db, field, val, bb);
         if (value == null) {
-            throw new TrailDBError("Error reading value.");
+            throw new TrailDBException("Error reading value.");
         }
         long value_length = bb.getLong(0);
         if (value_length > Integer.MAX_VALUE) {
-            throw new TrailDBError(
+            throw new TrailDBException(
                     "Overflow, received a String value that is larger than the java String capacity.");
         }
         return value.substring(0, (int)value_length);
@@ -208,17 +208,17 @@ public class TrailDB implements AutoCloseable {
      * 
      * @param item The item.
      * @return The corresponding field value.
-     * @throws TrailDBError if the value was not found or the returned value is too big for Java.
+     * @throws TrailDBException if the value was not found or the returned value is too big for Java.
      */
     public String getItemValue(long item) {
         ByteBuffer bb = ByteBuffer.allocate(8);
         String value = this.trailDBj.getItemValue(this.db, item, bb);
         if (value == null) {
-            throw new TrailDBError("Value not found.");
+            throw new TrailDBException("Value not found.");
         }
         long value_length = bb.getLong(0);
         if (value_length > Integer.MAX_VALUE) {
-            throw new TrailDBError(
+            throw new TrailDBException(
                     "Overflow, received a String value that is larger than the java String capacity.");
         }
         return value.substring(0, (int)value_length);
@@ -229,7 +229,7 @@ public class TrailDB implements AutoCloseable {
      * 
      * @param trailID The trail ID.
      * @return A raw 16-byte UUID.
-     * @throws TrailDBError if the {@code trailID} is invalid i.e. less than 0 or greater than the number of trails.
+     * @throws TrailDBException if the {@code trailID} is invalid i.e. less than 0 or greater than the number of trails.
      * @throws IllegalArgumentException If {@code trailID} is less than 0 or >= than the number of trails.
      */
     public String getUUID(long trailID) {
@@ -239,7 +239,7 @@ public class TrailDB implements AutoCloseable {
 
         ByteBuffer uuid = this.trailDBj.getUUID(this.db, trailID);
         if (uuid == null) {
-            throw new TrailDBError("Invalid trail ID.");
+            throw new TrailDBException("Invalid trail ID.");
         }
 
         byte[] bytes = new byte[uuid.capacity()];
@@ -253,7 +253,7 @@ public class TrailDB implements AutoCloseable {
      *
      * @param uuid A raw 16-byte UUID.
      * @return The traild ID corresponding to {@code uuid}.
-     * @throws TrailDBError if the UUID was not found.
+     * @throws TrailDBException if the UUID was not found.
      * @throws IllegalArgumentException If {@code uuid} is an invalid 32-byte hex string.
      */
     public long getTrailID(String uuid) {
@@ -264,7 +264,7 @@ public class TrailDB implements AutoCloseable {
         }
         int errCode = this.trailDBj.getTrailId(this.db, rawUUID, trailID);
         if (errCode != 0) {
-            throw new TrailDBError("UUID not found. " + errCode);
+            throw new TrailDBException("UUID not found. " + errCode);
         }
         long res = trailID.getLong(0);
         if (res < 0) {
@@ -278,16 +278,16 @@ public class TrailDB implements AutoCloseable {
      * 
      * @param trailID The trail id.
      * @return A cursor over the trail.
-     * @throws TrailDBError If cursor creation failed in some way.
+     * @throws TrailDBException If cursor creation failed in some way.
      */
     public TrailDBIterator trail(long trailID) { // Python has more params.
         ByteBuffer cursor = this.trailDBj.cursorNew(this.db);
         if (cursor == null) {
-            throw new TrailDBError("Memory allocation failed for cursor.");
+            throw new TrailDBException("Memory allocation failed for cursor.");
         }
         int errCode = this.trailDBj.getTrail(cursor, trailID);
         if (errCode != 0) {
-            throw new TrailDBError("Failed to create cursor with code: " + errCode);
+            throw new TrailDBException("Failed to create cursor with code: " + errCode);
         }
         TrailDBEvent e = new TrailDBEvent(this, this.fields);
         return new TrailDBIterator(cursor, e);
@@ -345,7 +345,7 @@ public class TrailDB implements AutoCloseable {
          * @param path TrailDB output path.
          * @param ofields Names of fields.
          * @throws NullPointerException If given path is null.
-         * @throws TrailDBError If allocation fails or can not open constructor.
+         * @throws TrailDBException If allocation fails or can not open constructor.
          */
         public TrailDBBuilder(String path, String[] ofields) {
             if (path == null) {
@@ -358,10 +358,10 @@ public class TrailDB implements AutoCloseable {
             // Initialisation.
             this.cons = this.trailDBj.consInit();
             if (this.cons == null) {
-                throw new TrailDBError("Failed to allocate memory for constructor.");
+                throw new TrailDBException("Failed to allocate memory for constructor.");
             }
             if (this.trailDBj.consOpen(this.cons, path, ofields, ofields.length) != 0) {
-                throw new TrailDBError("Can not open constructor.");
+                throw new TrailDBException("Can not open constructor.");
             }
 
             this.path = path;
@@ -378,19 +378,19 @@ public class TrailDB implements AutoCloseable {
          * @param uuid UUID of the event to be added.
          * @param timestamp Event timestamp.
          * @param values Value of each field.
-         * @throws TrailDBError if number of values does not match number of fields or failed to add to the DB.
+         * @throws TrailDBException if number of values does not match number of fields or failed to add to the DB.
          * @throws IllegalArgumentException If {@code uuid} is an invalid 32-byte hex string.
          */
         public TrailDBBuilder add(String uuid, long timestamp, String[] values) {
             if (this.closed) {
-                throw new TrailDBError("Trying to add event to an already finalised database.");
+                throw new TrailDBException("Trying to add event to an already finalised database.");
             }
 
             int n = values.length;
             if (n != this.ofields.length) {
                 // FIXME this is a hack to avoid random errors in the C lib.
                 // Need to investigate add function in JNI.
-                throw new TrailDBError("Number of values does not match number of fields.");
+                throw new TrailDBException("Number of values does not match number of fields.");
             }
             long[] value_lengths = new long[n];
             for(int i = 0; i < n; i++) {
@@ -403,7 +403,7 @@ public class TrailDB implements AutoCloseable {
             }
             int errCode = this.trailDBj.consAdd(this.cons, rawUUID, timestamp, values, value_lengths);
             if (errCode != 0) {
-                throw new TrailDBError("Failed to add: " + errCode);
+                throw new TrailDBException("Failed to add: " + errCode);
             }
 
             return this;
@@ -414,16 +414,16 @@ public class TrailDB implements AutoCloseable {
          * TrailDB.
          * 
          * @param db The db to merge to this one.
-         * @throws TrailDBError if the merge fails.
+         * @throws TrailDBException if the merge fails.
          */
         public TrailDBBuilder append(TrailDB db) {
             if (this.closed) {
-                throw new TrailDBError("Trying to append to an already finalised database.");
+                throw new TrailDBException("Trying to append to an already finalised database.");
             }
 
             int errCode = this.trailDBj.consAppend(this.cons, db.db);
             if (errCode != 0) {
-                throw new TrailDBError("Failed to merge dbs: " + errCode);
+                throw new TrailDBException("Failed to merge dbs: " + errCode);
             }
 
             return this;
@@ -432,7 +432,7 @@ public class TrailDB implements AutoCloseable {
         public TrailDB build() {
             this.closed = true; // Prevent add/append calls after building.
             if (this.trailDBj.consFinalize(this.cons) != 0) {
-                throw new TrailDBError("Failed to finalize.");
+                throw new TrailDBException("Failed to finalize.");
             }
             LOGGER.info("Finalisation done.");
 

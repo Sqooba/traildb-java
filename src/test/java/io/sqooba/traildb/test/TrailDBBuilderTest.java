@@ -15,7 +15,7 @@ import org.junit.rules.ExpectedException;
 
 import io.sqooba.traildb.TrailDB;
 import io.sqooba.traildb.TrailDB.TrailDBBuilder;
-import io.sqooba.traildb.TrailDBError;
+import io.sqooba.traildb.TrailDBException;
 
 public class TrailDBBuilderTest {
 
@@ -82,7 +82,7 @@ public class TrailDBBuilderTest {
     @Test
     public void addShouldFailIfValNbrNotEqualFieldNbr() throws IOException {
 
-        this.expectedEx.expect(TrailDBError.class);
+        this.expectedEx.expect(TrailDBException.class);
         this.expectedEx.expectMessage("Number of values does not match number of fields.");
 
         new TrailDB.TrailDBBuilder(this.path, new String[] { "f1" }).add("c", 1, new String[] { "a", "b" });
@@ -114,12 +114,12 @@ public class TrailDBBuilderTest {
         FileUtils.deleteDirectory(new File(this.path + "other"));
     }
 
-    @Test(expected = TrailDBError.class)
+    @Test(expected = TrailDBException.class)
     public void appendShouldFailInCaseDifferentFields() throws IOException {
         try {
             new TrailDB.TrailDBBuilder(this.path + "fail", new String[] { "f1", "f2" })
                     .append(this.db);
-        } catch(TrailDBError e) {
+        } catch(TrailDBException e) {
             throw e;
         } finally {
             FileUtils.deleteDirectory(new File(this.path + "fail"));
@@ -129,7 +129,7 @@ public class TrailDBBuilderTest {
     @Test
     public void addingToAlreadyFinalisedDBShouldFail() {
 
-        this.expectedEx.expect(TrailDBError.class);
+        this.expectedEx.expect(TrailDBException.class);
         this.expectedEx.expectMessage("Trying to add event to an already finalised database.");
 
         TrailDBBuilder builder = new TrailDB.TrailDBBuilder(this.path, new String[] { "field1", "field2" });
@@ -140,7 +140,7 @@ public class TrailDBBuilderTest {
     @Test
     public void appendingToAlreadyFinalisedDBShouldFail() {
 
-        this.expectedEx.expect(TrailDBError.class);
+        this.expectedEx.expect(TrailDBException.class);
         this.expectedEx.expectMessage("Trying to append to an already finalised database.");
 
         TrailDBBuilder builder = new TrailDB.TrailDBBuilder(this.path, new String[] { "field1", "field2" });
