@@ -41,22 +41,25 @@ public class TrailDB implements AutoCloseable {
      * Construct a TrailDB on the given .tdb file.
      * 
      * @param path The path to the TrailDB file.
+     * @throws TrailDBException If TrailDB initialisation fails.
      */
     public TrailDB(String path) {
         if (path == null) {
             throw new IllegalArgumentException("Path must not be null.");
         }
 
-        ByteBuffer db = this.trailDBj.init();
-        this.db = db;
+        this.db = this.trailDBj.init();
+        if (this.db == null) {
+            throw new TrailDBException("Failed to allocate memory to init a new TrailDB.");
+        }
 
         if (this.trailDBj.open(this.db, path) != 0) {
             throw new TrailDBException("Failed to open db.");
         }
 
-        this.numTrails = this.trailDBj.numTrails(db);
-        this.numEvents = this.trailDBj.numEvents(db);
-        this.numFields = this.trailDBj.numFields(db);
+        this.numTrails = this.trailDBj.numTrails(this.db);
+        this.numEvents = this.trailDBj.numEvents(this.db);
+        this.numFields = this.trailDBj.numFields(this.db);
         this.fields = new ArrayList<>((int)this.numFields);
 
         for(int i = 0; i < this.numFields; i++) {
