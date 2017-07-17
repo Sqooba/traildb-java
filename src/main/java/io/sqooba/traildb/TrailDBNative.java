@@ -43,7 +43,6 @@ public enum TrailDBNative implements TrailDBInterface {
         try {
             b = Hex.decodeHex(hexUUID.toCharArray());
         } catch(DecoderException e) {
-            System.out.println("in rawuuid" + this.getClass().getName());
             LOGGER.error("Failed to convert hexstring to string.", e);
         }
         return b;
@@ -73,10 +72,9 @@ public enum TrailDBNative implements TrailDBInterface {
 
             File fileOut = File.createTempFile("traildbjava", name.substring(name.indexOf(".")), dirOut);
 
-            // FixMe: use logging instead of prints (use slf4j)
-            System.out.println("Writing lib to: " + fileOut.getAbsolutePath());
             OutputStream out = FileUtils.openOutputStream(fileOut);
             IOUtils.copy(in, out);
+            LOGGER.info("Lib copied to: " + fileOut.getAbsolutePath());
             in.close();
             out.close();
 
