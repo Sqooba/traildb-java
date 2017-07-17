@@ -84,6 +84,10 @@ public enum TrailDBNative implements TrailDBInterface {
             LOGGER.error("Failed to load library.", e);
             System.exit(-1);
         } finally {
+            // This part is nearly impossible to write good tests on because of the bytecode representation of finally
+            // blocks. Indeed, instructions in finally are duplicated many many times and some branches are not
+            // reachable if we catch a general Exception.
+            // See https://stackoverflow.com/questions/32280087/code-coverage-finally-block for example.
             if (fileOut != null) {
                 fileOut.delete();
             }
