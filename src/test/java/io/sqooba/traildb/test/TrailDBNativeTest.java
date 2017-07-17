@@ -1,6 +1,7 @@
 package io.sqooba.traildb.test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.After;
 import org.junit.Rule;
@@ -40,9 +41,9 @@ public class TrailDBNativeTest {
             public void exit(int status) {}
         };
 
-        TestLoggerFactory.clearAll();
         Deencapsulation.invoke(TrailDBNative.INSTANCE, "loadLib", "vi");
-        assertEquals(this.logger.getLoggingEvents().get(0).getMessage(), "Failed to load library.");
+        assertTrue(this.logger.getLoggingEvents().stream()
+                .anyMatch(e -> "Failed to load library.".equals(e.getMessage())));
     }
 
     @Test
