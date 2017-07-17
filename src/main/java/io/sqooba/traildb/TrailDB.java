@@ -23,7 +23,7 @@ public class TrailDB implements AutoCloseable {
     /** 8 bytes are need to represents 64 bits. */
     private static final int UINT64 = 8;
 
-    private TrailDBNative trailDBj = TrailDBNative.INSTANCE; // FixMe: prefer no singletons
+    private TrailDBNative trailDBj = TrailDBNative.INSTANCE;
 
     /** ByteBuffer holding a pointer to the traildb. */
     ByteBuffer db;
@@ -367,10 +367,6 @@ public class TrailDB implements AutoCloseable {
             this.path = path;
             this.ofields = ofields;
         }
-
-        /*
-         * FixMe public void add(Event e) { this.add(e.uuid, e.timestamp, e.values); };
-         */
 
         /**
          * Add an event to the TrailDB.
