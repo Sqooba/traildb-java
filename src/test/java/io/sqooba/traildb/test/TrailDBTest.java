@@ -19,7 +19,7 @@ import org.junit.rules.ExpectedException;
 
 import io.sqooba.traildb.TrailDB;
 import io.sqooba.traildb.TrailDBIterator;
-import io.sqooba.traildb.TrailDBError;
+import io.sqooba.traildb.TrailDBException;
 import io.sqooba.traildb.TrailDBEvent;
 import io.sqooba.traildb.TrailDBNative;
 import mockit.Deencapsulation;
@@ -163,37 +163,37 @@ public class TrailDBTest {
         this.db.getTrailID("invalidhex");
     }
 
-    @Test(expected = TrailDBError.class)
+    @Test(expected = TrailDBException.class)
     public void getTrailIDShouldFailWithWrongUUID() {
         this.db.getTrailID("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
     }
 
-    @Test(expected = TrailDBError.class)
+    @Test(expected = TrailDBException.class)
     public void getFieldShouldFailOnNonExistentField() {
         this.db.getField("wrongfield");
     }
 
-    @Test(expected = TrailDBError.class)
+    @Test(expected = TrailDBException.class)
     public void getLexiconSizeShouldFailOnWrongFieldIndex() {
         this.db.getLexiconSize(-1);
     }
 
-    @Test(expected = TrailDBError.class)
+    @Test(expected = TrailDBException.class)
     public void getFieldNameShouldFailOnInvalidFieldId() {
         this.db.getFieldName(-1);
     }
 
-    @Test(expected = TrailDBError.class)
+    @Test(expected = TrailDBException.class)
     public void getItemShouldFailIfNoItemFound() {
         this.db.getItem(-1, "wrong");
     }
 
-    @Test(expected = TrailDBError.class)
+    @Test(expected = TrailDBException.class)
     public void getValueShouldFailIfValueNotFound() {
         this.db.getValue(-1, -1);
     }
 
-    @Test(expected = TrailDBError.class)
+    @Test(expected = TrailDBException.class)
     public void getItemValueShouldFailIfValueNotFound() {
         this.db.getItemValue(-1);
     }
