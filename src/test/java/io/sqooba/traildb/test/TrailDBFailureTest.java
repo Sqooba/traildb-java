@@ -58,6 +58,24 @@ public class TrailDBFailureTest {
     }
 
     @Test
+    public void initFailure() {
+        this.expectedEx.expect(TrailDBException.class);
+        this.expectedEx.expectMessage("Failed to allocate memory to init a new TrailDB.");
+
+        final TrailDBNative traildbj = TrailDBNative.INSTANCE;
+        new Expectations(traildbj) {
+
+            {
+                traildbj.init();
+                this.result = null;
+            }
+        };
+        try (TrailDB db = new TrailDB(this.path)) {
+            // Auto close.
+        }
+    }
+
+    @Test
     public void openFailure() {
         this.expectedEx.expect(TrailDBException.class);
         this.expectedEx.expectMessage("Failed to open db.");
