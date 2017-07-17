@@ -15,8 +15,6 @@ public class TrailDBIterator implements Iterable<TrailDBEvent>, AutoCloseable {
 
     private ByteBuffer cursor;
     private TrailDBEvent event;
-    // FixMe test parallel cursors
-    // rename in tdbiterator
 
     protected TrailDBIterator(ByteBuffer cursor, TrailDBEvent event) {
         this.event = event;

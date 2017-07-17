@@ -1,16 +1,8 @@
 package io.sqooba.traildb.test;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.util.logging.Handler;
-import java.util.logging.Logger;
-import java.util.logging.StreamHandler;
-
-import org.junit.Before;
+import org.junit.After;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -19,31 +11,19 @@ import io.sqooba.traildb.TrailDBNative;
 import mockit.Deencapsulation;
 import mockit.Mock;
 import mockit.MockUp;
+import uk.org.lidalia.slf4jtest.TestLogger;
+import uk.org.lidalia.slf4jtest.TestLoggerFactory;
 
 public class TrailDBNativeTest {
 
-    // This is used to verify that particular messages have been logged when running the tests.
-    // Code copied from: http://blog.diabol.se/?p=474
-    private static Logger log = Logger.getLogger(TrailDBNative.class.getName());
-    private static OutputStream logCapturingStream;
-    private static StreamHandler customLogHandler;
-
-    private String getTestCapturedLog() throws IOException {
-        customLogHandler.flush();
-        return logCapturingStream.toString();
-    }
+    private final TestLogger logger = TestLoggerFactory.getTestLogger(TrailDBNative.class);
 
     @Rule
     public ExpectedException expectedEx = ExpectedException.none();
 
-    @Before
-    public void setUp() throws IOException {
-
-        // Set up logging capture.
-        logCapturingStream = new ByteArrayOutputStream();
-        Handler[] handlers = log.getParent().getHandlers();
-        customLogHandler = new StreamHandler(logCapturingStream, handlers[0].getFormatter());
-        log.addHandler(customLogHandler);
+    @After
+    public void tearDown() {
+        TestLoggerFactory.clear();
     }
 
     @Test
@@ -52,7 +32,7 @@ public class TrailDBNativeTest {
     }
 
     @Test
-    public void loadLibFail() throws IOException {
+    public void loadLibFail() {
 
         new MockUp<System>() {
 
@@ -60,9 +40,9 @@ public class TrailDBNativeTest {
             public void exit(int status) {}
         };
 
+        TestLoggerFactory.clearAll();
         Deencapsulation.invoke(TrailDBNative.INSTANCE, "loadLib", "vi");
-        String capturedLog = getTestCapturedLog();
-        assertTrue(capturedLog.contains("Failed to load library."));
+        assertEquals(this.logger.getLoggingEvents().get(0).getMessage(), "Failed to load library.");
     }
 
     @Test
