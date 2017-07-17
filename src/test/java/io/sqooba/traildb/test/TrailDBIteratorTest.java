@@ -3,6 +3,11 @@ package io.sqooba.traildb.test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
+import java.io.File;
+import java.io.IOException;
+
+import org.apache.commons.io.FileUtils;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -22,6 +27,17 @@ public class TrailDBIteratorTest {
         this.db = new TrailDB.TrailDBBuilder(this.path, new String[] { "field1", "field2" })
                 .add(this.cookie, 120, new String[] { "a", "hinata" })
                 .build();
+    }
+
+    @After
+    public void tearDown() throws IOException {
+
+        // Clear the TrailDB files/directories created for the tests.
+        File f = new File(this.path + ".tdb");
+        if (f.exists() && !f.isDirectory()) {
+            f.delete();
+        }
+        FileUtils.deleteDirectory(new File(this.path));
     }
 
     @Test
