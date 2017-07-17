@@ -58,19 +58,18 @@ public enum TrailDBNative implements TrailDBInterface {
      * Extract the library from the jar/project, copy it outside so we can load it because this is not possible from
      * inside the jar.
      *
-     * FixMe: Check how it's done in Snappy
-     *
      * @param name The name of the library, without prefix/suffix.
      */
     private static void loadLib(String name) {
         name = System.mapLibraryName(name);
+        File fileOut = null;
         try {
             InputStream in = TrailDBNative.class.getResourceAsStream("/" + name);
 
             File dirOut = new File("TrailDBWrapper/");
             dirOut.mkdir();
 
-            File fileOut = File.createTempFile("traildbjava", name.substring(name.indexOf(".")), dirOut);
+            fileOut = File.createTempFile("traildbjava", name.substring(name.indexOf(".")), dirOut);
 
             OutputStream out = FileUtils.openOutputStream(fileOut);
             IOUtils.copy(in, out);
@@ -84,6 +83,14 @@ public enum TrailDBNative implements TrailDBInterface {
         } catch(Exception e) {
             LOGGER.error("Failed to load library.", e);
             System.exit(-1);
+        } finally {
+            // This part is nearly impossible to write good tests on because of the bytecode representation of finally
+            // blocks. Indeed, instructions in finally are duplicated many many times and some branches are not
+            // reachable if we catch a general Exception.
+            // See https://stackoverflow.com/questions/32280087/code-coverage-finally-block for example.
+            if (fileOut != null) {
+                fileOut.delete();
+            }
         }
     }
 

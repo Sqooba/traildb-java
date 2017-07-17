@@ -3,6 +3,11 @@ package io.sqooba.traildb.test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+
+import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Rule;
 import org.junit.Test;
@@ -19,6 +24,8 @@ public class TrailDBNativeTest {
 
     private final TestLogger logger = TestLoggerFactory.getTestLogger(TrailDBNative.class);
 
+    private TrailDBNative traildb = TrailDBNative.INSTANCE;
+
     @Rule
     public ExpectedException expectedEx = ExpectedException.none();
 
@@ -29,11 +36,11 @@ public class TrailDBNativeTest {
 
     @Test
     public void constantEnumName() {
-        assertEquals(TrailDBNative.INSTANCE, TrailDBNative.valueOf("INSTANCE"));
+        assertEquals(this.traildb, TrailDBNative.valueOf("INSTANCE"));
     }
 
     @Test
-    public void loadLibFail() {
+    public void loadLibFailWithExceptionNullFileOut() {
 
         new MockUp<System>() {
 
@@ -41,13 +48,43 @@ public class TrailDBNativeTest {
             public void exit(int status) {}
         };
 
-        Deencapsulation.invoke(TrailDBNative.INSTANCE, "loadLib", "vi");
+        new MockUp<File>() {
+
+            @Mock
+            public File createTempFile(String prefix, String suffix, File directory) throws IOException {
+                throw new IOException();
+            }
+        };
+
+        Deencapsulation.invoke(this.traildb, "loadLib", "traildbjava");
+        assertTrue(this.logger.getLoggingEvents().stream()
+                .anyMatch(e -> "Failed to load library.".equals(e.getMessage())));
+    }
+
+    @Test
+    public void loadLibFailWithExceptionNotNullFileOut() {
+
+        new MockUp<System>() {
+
+            @Mock
+            public void exit(int status) {}
+        };
+
+        new MockUp<FileUtils>() {
+
+            @Mock
+            public FileOutputStream openOutputStream(File file) throws IOException {
+                throw new IOException();
+            }
+        };
+
+        Deencapsulation.invoke(this.traildb, "loadLib", "traildbjava");
         assertTrue(this.logger.getLoggingEvents().stream()
                 .anyMatch(e -> "Failed to load library.".equals(e.getMessage())));
     }
 
     @Test
     public void errorStrShouldReturnCorrectMessage() {
-        assertEquals("TDB_ERR_INVALID_TRAIL_ID", TrailDBNative.INSTANCE.errorStr(-6));
+        assertEquals("TDB_ERR_INVALID_TRAIL_ID", this.traildb.errorStr(-6));
     }
 }
