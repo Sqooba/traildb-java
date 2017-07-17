@@ -23,43 +23,39 @@ If you have the Sqooba Central Repo in your pom.xml, the project is available wi
 ## Minimal example
 
 ```java
-import io.sqooba.traildbj.TrailDBj.TrailDB;
-import io.sqooba.traildbj.TrailDBj.TrailDBConstructor;
+import java.io.IOException;
+import java.util.Map;
 
 public class Example {
 
     public static void main(String args[]) throws IOException {
-    
+
         // 32-byte hex String.
         // The cookie will be used as the trail's uuid.
         String cookie = "12345678123456781234567812345678";
-        
+
         // Name of the db, without .tdb.
         String path = "testdb";
-    
-        // Construct a TrailDB.
-        TrailDBConstructor cons = new TrailDBConstructor(path, new String[] { "field1", "field2" });
-        
-        // Adding events.
-        cons.add(cookie, 120, new String[] { "a", "b" });
-        cons.add(cookie, 121, new String[] { "c", "d" });
-        
-        // Writing db to a file.
-        TrailDB db = cons.finalise();
-        
-        // Iterate over whole db using cursor.
-        Map<String, TrailDBCursor> map = db.trails();
-        
-        for(Map.Entry<String, TrailDBCursor> entry : map.entrySet()) {
-            for(Event event : entry.getValue()) {
+
+        // Building a new TrailDB. Finalization taken care of by .build().
+        TrailDB db = new TrailDB.TrailDBBuilder(path, new String[] { "field1", "field2" })
+                .add(cookie, 120, new String[] { "a", "b" })
+                .add(cookie, 121, new String[] { "c", "d" })
+                .build();
+
+        // Iterate over whole db using iterator.
+        Map<String, TrailDBIterator> map = db.trails();
+
+        for(Map.Entry<String, TrailDBIterator> entry : map.entrySet()) {
+            for(TrailDBEvent event : entry.getValue()) {
                 System.out.println(entry.getKey() + " " + event);
             }
         }
-        
+
         // Iterate over single trail.
-        TrailDBCursor trail = db.trail(0);
-        
-        for(Event event : trail) {
+        TrailDBIterator trail = db.trail(0);
+
+        for(TrailDBEvent event : trail) {
             System.out.println(event);
         }
     }
