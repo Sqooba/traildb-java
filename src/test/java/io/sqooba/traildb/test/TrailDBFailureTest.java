@@ -1,6 +1,6 @@
 package io.sqooba.traildb.test;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
@@ -86,8 +86,8 @@ public class TrailDBFailureTest {
             }
         };
         this.db.getMinTimestamp();
-        assertEquals(this.logger.getLoggingEvents().get(0).getMessage(),
-                "long overflow, received a negtive value for min timestamp.");
+        assertTrue(this.logger.getLoggingEvents().stream()
+                .anyMatch(e -> "long overflow, received a negtive value for min timestamp.".equals(e.getMessage())));
     }
 
     @Test
@@ -101,8 +101,8 @@ public class TrailDBFailureTest {
             }
         };
         this.db.getMaxTimestamp();
-        assertEquals(this.logger.getLoggingEvents().get(0).getMessage(),
-                "long overflow, received a negtive value for max timestamp.");
+        assertTrue(this.logger.getLoggingEvents().stream()
+                .anyMatch(e -> "long overflow, received a negtive value for max timestamp.".equals(e.getMessage())));
     }
 
     @Test
@@ -116,7 +116,8 @@ public class TrailDBFailureTest {
             }
         };
         this.db.getVersion();
-        assertEquals(this.logger.getLoggingEvents().get(0).getMessage(), "version overflow.");
+        assertTrue(this.logger.getLoggingEvents().stream()
+                .anyMatch(e -> "version overflow.".equals(e.getMessage())));
     }
 
     @Test
@@ -132,8 +133,8 @@ public class TrailDBFailureTest {
         };
 
         this.db.getItem(0, "bla");
-        assertEquals(this.logger.getLoggingEvents().get(0).getMessage(),
-                "Returned item overflow, deal with it carefully!");
+        assertTrue(this.logger.getLoggingEvents().stream()
+                .anyMatch(e -> "Returned item overflow, deal with it carefully!".equals(e.getMessage())));
     }
 
     @Test
