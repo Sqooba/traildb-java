@@ -23,6 +23,8 @@ import uk.org.lidalia.slf4jtest.TestLoggerFactory;
 
 public class TrailDBFailureTest {
 
+    private TrailDBNative traildb = TrailDBNative.INSTANCE;
+
     private TrailDB db;
     private String path = "testdb";
     private String cookie = "12345678123456781234567812345678";
@@ -62,7 +64,7 @@ public class TrailDBFailureTest {
         this.expectedEx.expect(TrailDBException.class);
         this.expectedEx.expectMessage("Failed to allocate memory to init a new TrailDB.");
 
-        final TrailDBNative traildbj = TrailDBNative.INSTANCE;
+        final TrailDBNative traildbj = this.traildb;
         new Expectations(traildbj) {
 
             {
@@ -80,7 +82,7 @@ public class TrailDBFailureTest {
         this.expectedEx.expect(TrailDBException.class);
         this.expectedEx.expectMessage("Failed to open db.");
 
-        final TrailDBNative traildbj = TrailDBNative.INSTANCE;
+        final TrailDBNative traildbj = this.traildb;
         new Expectations(traildbj) {
 
             {
@@ -95,7 +97,7 @@ public class TrailDBFailureTest {
 
     @Test
     public void minTimestampOverflow() throws IOException {
-        final TrailDBNative traildbj = TrailDBNative.INSTANCE;
+        final TrailDBNative traildbj = this.traildb;
         new Expectations(traildbj) {
 
             {
@@ -110,7 +112,7 @@ public class TrailDBFailureTest {
 
     @Test
     public void maxTimestampOverflow() throws IOException {
-        final TrailDBNative traildbj = TrailDBNative.INSTANCE;
+        final TrailDBNative traildbj = this.traildb;
         new Expectations(traildbj) {
 
             {
@@ -125,7 +127,7 @@ public class TrailDBFailureTest {
 
     @Test
     public void versionOverflow() throws IOException {
-        final TrailDBNative traildbj = TrailDBNative.INSTANCE;
+        final TrailDBNative traildbj = this.traildb;
         new Expectations(traildbj) {
 
             {
@@ -141,7 +143,7 @@ public class TrailDBFailureTest {
     @Test
     public void getItemFailure() throws IOException {
 
-        final TrailDBNative traildbj = TrailDBNative.INSTANCE;
+        final TrailDBNative traildbj = this.traildb;
         new Expectations(traildbj) {
 
             {
@@ -160,7 +162,7 @@ public class TrailDBFailureTest {
         this.expectedEx.expect(TrailDBException.class);
         this.expectedEx.expectMessage("Invalid trail ID.");
 
-        final TrailDBNative traildbj = TrailDBNative.INSTANCE;
+        final TrailDBNative traildbj = this.traildb;
         new Expectations(traildbj) {
 
             {
@@ -176,7 +178,7 @@ public class TrailDBFailureTest {
         this.expectedEx.expect(TrailDBException.class);
         this.expectedEx.expectMessage("Memory allocation failed for cursor.");
 
-        final TrailDBNative traildbj = TrailDBNative.INSTANCE;
+        final TrailDBNative traildbj = this.traildb;
         new Expectations(traildbj) {
 
             {
@@ -192,7 +194,7 @@ public class TrailDBFailureTest {
         this.expectedEx.expect(TrailDBException.class);
         this.expectedEx.expectMessage("Failed to create cursor with code: -1");
 
-        final TrailDBNative traildbj = TrailDBNative.INSTANCE;
+        final TrailDBNative traildbj = this.traildb;
         new Expectations(traildbj) {
 
             {
