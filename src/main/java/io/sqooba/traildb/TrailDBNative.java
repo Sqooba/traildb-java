@@ -58,8 +58,6 @@ public enum TrailDBNative implements TrailDBInterface {
      * Extract the library from the jar/project, copy it outside so we can load it because this is not possible from
      * inside the jar.
      *
-     * FixMe: Check how it's done in Snappy
-     *
      * @param name The name of the library, without prefix/suffix.
      */
     private static void loadLib(String name) {
