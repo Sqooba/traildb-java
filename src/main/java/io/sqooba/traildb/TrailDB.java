@@ -6,8 +6,9 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Class used to query an existing TrailDB.
@@ -17,7 +18,7 @@ import java.util.logging.Logger;
  */
 public class TrailDB implements AutoCloseable {
 
-    private static final Logger LOGGER = Logger.getLogger(TrailDB.class.getName());
+    private static final Logger LOGGER = LoggerFactory.getLogger(TrailDB.class);
 
     /** 8 bytes are need to represents 64 bits. */
     private static final int UINT64 = 8;
@@ -80,7 +81,7 @@ public class TrailDB implements AutoCloseable {
     public long getMinTimestamp() {
         long min = this.trailDBj.minTimestamp(this.db);
         if (min < 0) {
-            LOGGER.log(Level.WARNING, "long overflow, received a negtive value for min timestamp.");
+            LOGGER.warn("long overflow, received a negtive value for min timestamp.");
         }
         return min;
     }
@@ -93,7 +94,7 @@ public class TrailDB implements AutoCloseable {
     public long getMaxTimestamp() {
         long max = this.trailDBj.maxTimestamp(this.db);
         if (max < 0) {
-            LOGGER.log(Level.WARNING, "long overflow, received a negtive value for max timestamp.");
+            LOGGER.warn("long overflow, received a negtive value for max timestamp.");
         }
         return max;
     }
@@ -106,7 +107,7 @@ public class TrailDB implements AutoCloseable {
     public long getVersion() {
         long version = this.trailDBj.version(this.db);
         if (version < 0) {
-            LOGGER.log(Level.WARNING, "version overflow.");
+            LOGGER.warn("version overflow.");
         }
         return version;
     }
@@ -173,7 +174,7 @@ public class TrailDB implements AutoCloseable {
             throw new TrailDBError("No item found.");
         }
         if (item < 0) {
-            LOGGER.warning("Returned item overflow, deal with it carefully!");
+            LOGGER.warn("Returned item overflow, deal with it carefully!");
         }
         return item;
     }
@@ -267,7 +268,7 @@ public class TrailDB implements AutoCloseable {
         }
         long res = trailID.getLong(0);
         if (res < 0) {
-            LOGGER.warning("Received trail ID overflow: " + res);
+            LOGGER.warn("Received trail ID overflow: " + res);
         }
         return res;
     }
@@ -322,7 +323,7 @@ public class TrailDB implements AutoCloseable {
      */
     public static class TrailDBBuilder {
 
-        private static final Logger LOGGER = Logger.getLogger(TrailDBBuilder.class.getName());
+        private static final Logger LOGGER = LoggerFactory.getLogger(TrailDBBuilder.class);
 
         private TrailDBNative trailDBj = TrailDBNative.INSTANCE;
 
@@ -433,10 +434,10 @@ public class TrailDB implements AutoCloseable {
             if (this.trailDBj.consFinalize(this.cons) != 0) {
                 throw new TrailDBError("Failed to finalize.");
             }
-            LOGGER.log(Level.INFO, "Finalisation done.");
+            LOGGER.info("Finalisation done.");
 
             this.trailDBj.consClose(this.cons);
-            LOGGER.log(Level.INFO, "TrailDBBuilder closed.");
+            LOGGER.info("TrailDBBuilder closed.");
             this.cons = null;
 
             return new TrailDB(this);

@@ -4,13 +4,13 @@ import java.io.File;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This class is used to perform native call to the TrailDB C library. Base on the available Python bindings.
@@ -43,12 +43,12 @@ public enum TrailDBNative implements TrailDBInterface {
         try {
             b = Hex.decodeHex(hexUUID.toCharArray());
         } catch(DecoderException e) {
-            LOGGER.log(Level.SEVERE, "Failed to convert hexstring to string.", e);
+            LOGGER.error("Failed to convert hexstring to string.", e);
         }
         return b;
     }
 
-    private static final Logger LOGGER = Logger.getLogger(TrailDBNative.class.getName());
+    private static final Logger LOGGER = LoggerFactory.getLogger(TrailDBNative.class.getName());
 
     static {
         loadLib("traildbjava");
@@ -72,10 +72,9 @@ public enum TrailDBNative implements TrailDBInterface {
 
             File fileOut = File.createTempFile("traildbjava", name.substring(name.indexOf(".")), dirOut);
 
-            // FixMe: use logging instead of prints (use slf4j)
-            System.out.println("Writing lib to: " + fileOut.getAbsolutePath());
             OutputStream out = FileUtils.openOutputStream(fileOut);
             IOUtils.copy(in, out);
+            LOGGER.info("Lib copied to: " + fileOut.getAbsolutePath());
             in.close();
             out.close();
 
@@ -83,7 +82,7 @@ public enum TrailDBNative implements TrailDBInterface {
 
             System.load(fileOut.getAbsolutePath());
         } catch(Exception e) {
-            LOGGER.log(Level.SEVERE, "Failed to load library.", e);
+            LOGGER.error("Failed to load library.", e);
             System.exit(-1);
         }
     }

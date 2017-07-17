@@ -1,15 +1,10 @@
 package io.sqooba.traildb.test;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertEquals;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.nio.ByteBuffer;
-import java.util.logging.Handler;
-import java.util.logging.Logger;
-import java.util.logging.StreamHandler;
 
 import org.apache.commons.io.FileUtils;
 import org.junit.After;
@@ -23,6 +18,8 @@ import io.sqooba.traildb.TrailDB.TrailDBBuilder;
 import io.sqooba.traildb.TrailDBError;
 import io.sqooba.traildb.TrailDBNative;
 import mockit.Expectations;
+import uk.org.lidalia.slf4jtest.TestLogger;
+import uk.org.lidalia.slf4jtest.TestLoggerFactory;
 
 public class TrailDBFailureTest {
 
@@ -31,27 +28,13 @@ public class TrailDBFailureTest {
     private String cookie = "12345678123456781234567812345678";
     private String otherCookie = "12121212121212121212121212121212";
 
-    // http://blog.diabol.se/?p=474
-    private static Logger log = Logger.getLogger(TrailDB.class.getName());
-    private static OutputStream logCapturingStream;
-    private static StreamHandler customLogHandler;
-
-    private String getTestCapturedLog() throws IOException {
-        customLogHandler.flush();
-        return logCapturingStream.toString();
-    }
+    private final TestLogger logger = TestLoggerFactory.getTestLogger(TrailDB.class);
 
     @Rule
     public ExpectedException expectedEx = ExpectedException.none();
 
     @Before
     public void setUp() throws IOException {
-
-        // Set up logging capture.
-        logCapturingStream = new ByteArrayOutputStream();
-        Handler[] handlers = log.getParent().getHandlers();
-        customLogHandler = new StreamHandler(logCapturingStream, handlers[0].getFormatter());
-        log.addHandler(customLogHandler);
 
         // Initialise a TrailDB with some TrailDBEvents.
         TrailDBBuilder builder = new TrailDBBuilder(this.path, new String[] { "field1", "field2" });
@@ -71,6 +54,7 @@ public class TrailDBFailureTest {
             f.delete();
         }
         FileUtils.deleteDirectory(new File(this.path));
+        TestLoggerFactory.clear();
     }
 
     @Test
@@ -102,8 +86,8 @@ public class TrailDBFailureTest {
             }
         };
         this.db.getMinTimestamp();
-        String capturedLog = getTestCapturedLog();
-        assertTrue(capturedLog.contains("long overflow, received a negtive value for min timestamp."));
+        assertEquals(this.logger.getLoggingEvents().get(0).getMessage(),
+                "long overflow, received a negtive value for min timestamp.");
     }
 
     @Test
@@ -117,8 +101,8 @@ public class TrailDBFailureTest {
             }
         };
         this.db.getMaxTimestamp();
-        String capturedLog = getTestCapturedLog();
-        assertTrue(capturedLog.contains("long overflow, received a negtive value for max timestamp."));
+        assertEquals(this.logger.getLoggingEvents().get(0).getMessage(),
+                "long overflow, received a negtive value for max timestamp.");
     }
 
     @Test
@@ -132,8 +116,7 @@ public class TrailDBFailureTest {
             }
         };
         this.db.getVersion();
-        String capturedLog = getTestCapturedLog();
-        assertTrue(capturedLog.contains("version overflow."));
+        assertEquals(this.logger.getLoggingEvents().get(0).getMessage(), "version overflow.");
     }
 
     @Test
@@ -149,8 +132,8 @@ public class TrailDBFailureTest {
         };
 
         this.db.getItem(0, "bla");
-        String capturedLog = getTestCapturedLog();
-        assertTrue(capturedLog.contains("Returned item overflow, deal with it carefully!"));
+        assertEquals(this.logger.getLoggingEvents().get(0).getMessage(),
+                "Returned item overflow, deal with it carefully!");
     }
 
     @Test
