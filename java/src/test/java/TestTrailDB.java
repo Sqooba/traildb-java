@@ -58,6 +58,44 @@ public class TestTrailDB extends TestCase {
 		}
 	}
 
+	public void testPeek() throws FileNotFoundException {
+		TrailDB tdb = new TrailDB("test.tdb");
+		TrailDBCursor cur = tdb.cursorNew();
+		long numCookies = tdb.numTrails();
+		TrailDBEvent event;
+		int foundEvents = 0;
+		for (int i=0; i < numCookies; i++) {
+			cur.getTrail(i);
+			while ((event = cur.next()) != null) {
+				foundEvents++;
+				cur.peek();
+				switch ((int) event.timestamp) {
+					case 1:
+						assertEquals(event.getItem(0), "bob");
+						assertEquals(event.getItem(1), "run");
+						break;
+					case 2:
+						assertEquals(event.getItem(0), "fred");
+						assertEquals(event.getItem(1), "walk");
+						break;
+					case 4:
+						assertEquals(event.getItem(0), "jerry");
+						assertEquals(event.getItem(1), "speak");
+						break;
+					case 5:
+						assertEquals(event.getItem(0), "ted");
+						assertEquals(event.getItem(1), "fly");
+						break;
+					default:
+						fail("Unrecognized timestamp " + event.timestamp);
+				}
+				event = cur.peek();
+			}
+		}
+		assertEquals(foundEvents, 4);
+	}
+
+
 	public void testExceptionFileNotFound() {
 		try {
 			TrailDB tdb = new TrailDB("wat.tdb");
