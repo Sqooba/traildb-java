@@ -20,7 +20,9 @@ If you have the Sqooba Central Repo in your pom.xml, the project is available wi
 </dependency>
 ```
 
-## Minimal example
+## Minimal examples
+
+### Java
 
 ```java
 import java.io.IOException;
@@ -61,6 +63,74 @@ public class Example {
     }
 }
 ```
+
+### Scala
+
+Here is an example with the use of the TrailDBBuilder.
+
+```scala
+import io.sqooba.traildb.TrailDB
+import io.sqooba.traildb.TrailDB.TrailDBBuilder
+import io.sqooba.traildb.TrailDBIterator
+
+import scala.collection.JavaConversions._
+
+object BuilderExample {
+  def main(args: Array[String]): Unit = {
+    val path: String = "testdb";
+    val cookie: String = "12345678123456781234567812345678";
+    val fields: Array[String] = Array("action", "description");
+
+    // Builder for new TrailDB.
+    var builder: TrailDBBuilder = new TrailDB.TrailDBBuilder(path, fields);
+
+    // Add events to builder.
+    for (i <- 0 to 10) {
+      builder.add(cookie, i + 120, Array("button" + i, "dummy description"));
+    }
+
+    // Build the new TrailDB
+    val db:TrailDB = builder.build();
+    
+    // Get iterator over the trail.
+    val trail:TrailDBIterator = db.trail(0);
+    
+    // Print events on the trail.
+    for(e <- trail) println(e);
+  }
+}
+
+```
+
+Other example with directly opening an existing db.
+
+```scala
+import io.sqooba.traildb.TrailDB
+import io.sqooba.traildb.TrailDBEvent
+import io.sqooba.traildb.TrailDBIterator
+import scala.collection.JavaConversions._
+
+object ExistingExample {
+  def main(args: Array[String]): Unit = {
+    // Suppose there exists a testdb.tdb file previously created.
+    val path: String = "testdb";
+
+    // Create a TrailDB on an existing tdb file.
+    val db: TrailDB = new TrailDB(path);
+
+    // Get iterator over each trail.
+    val trails = db.trails();
+
+    // Print all events of all trails.
+    for (entry <- trails) {
+      for (event: TrailDBEvent <- entry._2) {
+        println(entry._1 + " -> " + event);
+      }
+    }
+  }
+}
+```
+
 
 ## Bound methods
 
