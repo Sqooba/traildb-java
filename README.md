@@ -119,7 +119,7 @@ object ExistingExample {
     val db: TrailDB = new TrailDB(path);
 
     // Get iterator over each trail.
-    val trails: java.util.Map[String, TrailDBIterator] = db.trails();
+    val trails = db.trails();
 
     // Print all events of all trails.
     for (entry <- trails) {
