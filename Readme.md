@@ -190,7 +190,7 @@ java -Djava.library.path=`pwd`/native/linux/target/ -cp examples:native/linux/ta
 
 - [x] next
 
-- [ ] peek
+- [x] peek
 
 
 #### TrailDBEvent
