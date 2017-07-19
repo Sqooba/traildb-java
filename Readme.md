@@ -118,7 +118,7 @@ java -Djava.library.path=`pwd`/native/linux/target/ -cp examples:native/linux/ta
 
 - [x] add
 
-- [ ] append
+- [x] append
 
 - [x] finalize
 
