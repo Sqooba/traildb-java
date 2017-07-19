@@ -1,6 +1,8 @@
 
 package traildb;
 
+import traildb.TrailDB;
+
 import java.util.UUID;
 import java.nio.ByteBuffer;
 import java.io.FileNotFoundException;
@@ -41,6 +43,7 @@ public class TrailDBConstructor {
 		return ByteBuffer.allocate(16).putLong(hi).putLong(lo).array();
 	}
 
+	public native void append(TrailDB tdb);
 	public native void finalize();
 	public native void close();
 	public native void setOpt(TDB_OPT_CONS_KEY key, TDB_OPT_CONS_VALUE value);

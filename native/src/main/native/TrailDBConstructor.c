@@ -165,6 +165,45 @@ JNIEXPORT void JNICALL Java_traildb_TrailDBConstructor_native_1add(JNIEnv *env, 
 	free(tgt_values);
 }
 
+JNIEXPORT void JNICALL Java_traildb_TrailDBConstructor_append(JNIEnv *env, jobject obj, jobject tdbArg) {
+	jclass cls;
+	jfieldID fid;
+	jclass exc;
+
+	tdb *db;
+	tdb_cons *cons;
+	tdb_error err;
+
+	// Retrieve cons pointer
+
+	cls = (*env)->GetObjectClass(env, obj);
+	fid = (*env)->GetFieldID(env, cls, "cons", "J");
+	if (fid == NULL) {
+		exit(1);
+	}
+	cons = (tdb_cons *) (*env)->GetLongField(env, obj, fid);
+
+	// Retrieve db pointer
+
+	cls = (*env)->GetObjectClass(env, tdbArg);
+	fid = (*env)->GetFieldID(env, cls, "db", "J");
+	if (fid == NULL) {
+		exit(1);
+	}
+	db = (tdb *) (*env)->GetLongField(env, tdbArg, fid);
+
+	// Call constructor append
+
+	if ((err = tdb_cons_append(cons, db))) {
+		exc = (*env)->FindClass(env, "java/lang/IllegalArgumentException");
+		if (exc == NULL) {
+			/* Could not find the exception - We are in so much trouble right now */
+			exit(1);
+		}
+		(*env)->ThrowNew(env, exc, tdb_error_str(err));
+	}
+}
+
 JNIEXPORT void JNICALL Java_traildb_TrailDBConstructor_close(JNIEnv *env, jobject obj) {
 	jclass cls;
 	jfieldID fid;
