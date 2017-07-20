@@ -23,8 +23,12 @@ If you have the Sqooba Central Repo in your pom.xml, the project is available wi
 
 ### How to build it
 
-If you want to build from the sources, 
-// TODO
+If you want to build from the sources, clone the project from the repository and then launch
+ the following Maven command from the project root directory:
+ 
+```
+mvn clean install
+```
 
 ## Minimal examples
 
@@ -136,72 +140,6 @@ object ExistingExample {
   }
 }
 ```
-
-
-## Bound methods
-
-TODO: remove the tables
-
-The full list of methods can be found on the [C API web page](http://traildb.io/docs/api/)
-
-### Construct a new TrailDB
-
-| Method            | Bound | Exposed |
-|-------------------|--------|---------|
-| tdb_cons_init     | Yes    | No      |
-| tdb_cons_open     | Yes    | No      |
-| tdb_cons_close    | Yes    | No      |
-| tdb_cons_add      | Yes    | Yes     |
-| tdb_cons_set_opt  | No     | No      |
-| tdb_cons_get_opt  | No     | No      |
-| tdb_cons_finalize | Yes    | Yes     |
-
-### Open a TrailDB and access metadata
-
-| Method            | Bound | Exposed |
-|-------------------|--------|---------|
-| tdb_init          | Yes    | No      |
-| tdb_open          | Yes    | No      |
-| tdb_close         | Yes    | No      |
-| tdb_dontneed      | No     | No      |
-| tdb_willneed      | No     | No      |
-| tdb_num_trails    | Yes    | Yes     |
-| tdb_num_events    | Yes    | No      |
-| tdb_num_fields    | Yes    | No      |
-| tdb_min_timestamp | Yes    | Yes     |
-| tdb_max_timestamp | Yes    | Yes     |
-| tdb_version       | Yes    | Yes     |
-| tdb_error_str     | Yes    | No      |
-
-### Setting Options
-
-Nothing.
-
-### Working with items, fields and values
-
-| Method             | Bound | Exposed |
-|--------------------|--------|---------|
-| tdb_item_field     | No     | No      |
-| tdb_item_val       | No     | No      |
-| tdb_make_item      | No     | No      |
-| tdb_item_is32      | No     | No      |
-| tdb_lexicon_size   | Yes    | Yes     |
-| tdb_get_field      | Yes    | Yes     |
-| tdb_get_field_name | Yes    | Yes     |
-| tdb_get_item       | Yes    | Yes     |
-| tdb_get_value      | Yes    | Yes     |
-| tdb_get_item_value | Yes    | Yes     |
-
-### Working with UUIDs
-
-| Method           | Bound | Exposed |
-|------------------|--------|---------|
-| tdb_get_uuid     | Yes    | Yes     |
-| tdb_get_trail_id | Yes    | Yes     |
-| tdb_uuid_raw     | Yes    | Yes     |
-| tdb_uuid_hex     | Yes    | Yes     |
-
-### More to come in the future
 
 ## Limitations
 
