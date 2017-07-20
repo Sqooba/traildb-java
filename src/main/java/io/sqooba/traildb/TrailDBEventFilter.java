@@ -2,14 +2,13 @@ package io.sqooba.traildb;
 
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class TrailDBEventFilter {
 
     private TrailDBNative trailDB = TrailDBNative.INSTANCE;
 
-    private final List<List<String[]>> clauses;
+    private final List<TrailDBFilterClause> clauses;
     private final TrailDB db;
     ByteBuffer filter;
 
@@ -33,26 +32,34 @@ public class TrailDBEventFilter {
                 }
             }
 
-            List<String[]> currentClause = this.clauses.get(i); // List of terms. A term is a String[].
+            TrailDBFilterClause currentClause = this.clauses.get(i); // List of terms. A term is a String[].
+
+            // Add terms filtering.
             int termLen = 0;
             String field = "";
             String value = "";
             int isNegative = 0;
-            for(String[] term : currentClause) {
+            for(String[] term : currentClause.getTerms()) {
                 termLen = term.length;
-                for(int j = 0; j < termLen; j++) { // Done 2 or 3 times.
-                    field = term[0];
-                    value = term[1];
-                    if (termLen == 3) { // This means there is a negation maybe.
-                        isNegative = "true".equals(term[2]) ? 1 : 0;
-                    }
+                field = term[0];
+                value = term[1];
+                if (termLen == 3) { // This means there is a negation maybe.
+                    isNegative = "true".equals(term[2]) ? 1 : 0;
+                }
 
-                    long item = this.db.getItem(this.db.getField(field), value); // TODO put try catch
+                long item = this.db.getItem(this.db.getField(field), value); // TODO put try catch
 
-                    int errCode = this.trailDB.eventFilterAddTerm(this.filter, item, isNegative);
-                    if (errCode != 0) {
-                        throw new TrailDBException("Failed to add term.");
-                    }
+                int errCode = this.trailDB.eventFilterAddTerm(this.filter, item, isNegative);
+                if (errCode != 0) {
+                    throw new TrailDBException("Failed to add term.");
+                }
+            }
+
+            // Add time range filtering.
+            for(Long[] timeRange : currentClause.getTimeRanges()) {
+                int errCode = this.trailDB.eventFilterAddTimeRange(this.filter, timeRange[0], timeRange[1]);
+                if (errCode != 0) {
+                    throw new TrailDBException("Failed to add time range.");
                 }
             }
 
@@ -69,15 +76,15 @@ public class TrailDBEventFilter {
 
         private TrailDB db;
 
-        private List<List<String[]>> clauses;
+        private List<TrailDBFilterClause> clauses;
 
         public TrailDBEventFilterBuilder(TrailDB db) {
             this.db = db;
             this.clauses = new ArrayList<>();
         }
 
-        public TrailDBEventFilterBuilder addClause(String[]... clause) {
-            this.clauses.add(Arrays.asList(clause));
+        public TrailDBEventFilterBuilder addClause(TrailDBFilterClause clause) {
+            this.clauses.add(clause);
             return this;
         }
 

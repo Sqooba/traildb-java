@@ -223,6 +223,12 @@ public enum TrailDBNative implements TrailDBInterface {
     /** tdb_error tdb_event_filter_add_term(struct tdb_event_filter *filter, tdb_item term, int is_negative) */
     private native int tdbEventFilterAddTerm(ByteBuffer filter, long term, int isNegative);
 
+    /**
+     * tdb_error tdb_event_filter_add_time_range(struct tdb_event_filter *filter, uint64_t start_time, uint64_t
+     * end_time)
+     */
+    private native int tdbEventFilterAddTimeRange(ByteBuffer filter, long startTime, long endTime);
+
     /** tdb_error tdb_event_filter_new_clause(struct tdb_event_filter *filter) */
     private native int tdbEventFilterNewClause(ByteBuffer filter);
 
@@ -389,6 +395,11 @@ public enum TrailDBNative implements TrailDBInterface {
     @Override
     public int eventFilterAddTerm(ByteBuffer filter, long term, int isNegative) {
         return tdbEventFilterAddTerm(filter, term, isNegative);
+    }
+
+    @Override
+    public int eventFilterAddTimeRange(ByteBuffer filter, long startTime, long endTime) {
+        return tdbEventFilterAddTimeRange(filter, startTime, endTime);
     }
 
     @Override

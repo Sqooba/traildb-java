@@ -91,5 +91,7 @@ public interface TrailDBInterface {
 
     public int eventFilterAddTerm(ByteBuffer filter, long term, int isNegative);
 
+    public int eventFilterAddTimeRange(ByteBuffer filter, long startTime, long endTime);
+
     public int eventFilterNewClause(ByteBuffer filter);
 }
