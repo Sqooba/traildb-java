@@ -143,4 +143,11 @@ object ExistingExample {
 
 ## Limitations
 
-Since TrailDB is only available for Linux and Mac OS's, the same limitation applies here, i.e. not working for Windows machines. Furthermore, TrailDB uses 64 bits numbers to encode its items, making the library unusable on 32 bits machines.
+### Operating Systems: no Windows
+
+Since TrailDB is only available for Linux and Mac OS's, the same limitation applies here, 
+i.e. not working for Windows machines. 
+
+### Architecture: 64 bits only
+
+Furthermore, TrailDB uses 64 bits numbers to encode its items, making the library unusable on 32 bits machines.
