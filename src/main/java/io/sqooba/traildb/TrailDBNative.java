@@ -66,10 +66,7 @@ public enum TrailDBNative implements TrailDBInterface {
         try {
             InputStream in = TrailDBNative.class.getResourceAsStream("/" + name);
 
-            File dirOut = new File("TrailDBWrapper/");
-            dirOut.mkdir();
-
-            fileOut = File.createTempFile("traildbjava", name.substring(name.indexOf(".")), dirOut);
+            fileOut = File.createTempFile("traildbjava", name.substring(name.indexOf(".")));
 
             OutputStream out = FileUtils.openOutputStream(fileOut);
             IOUtils.copy(in, out);

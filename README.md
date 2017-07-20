@@ -1,8 +1,9 @@
 Java bindings for TrailDB
 ====
 
-This repository's goal is to provide Java bindings for [TrailDB](http://traildb.io), an efficient tool for storing and querying series of events, 
-based on the Python bindings available [here](https://github.com/traildb/traildb-python)
+This repository's goal is to provide Java bindings for [TrailDB](http://traildb.io),
+ an efficient tool for storing and querying series of events,
+ based on the Python bindings available [here](https://github.com/traildb/traildb-python)
 
 ## Getting started
 
@@ -15,10 +16,15 @@ If you have the Sqooba Central Repo in your pom.xml, the project is available wi
 ```
 <dependency>
     <groupId>io.sqooba</groupId>
-    <artifactId>TrailDBj</artifactId>
+    <artifactId>traildb</artifactId>
     <version>0.1</version>
 </dependency>
 ```
+
+### How to build it
+
+If you want to build from the sources, 
+// TODO
 
 ## Minimal examples
 
@@ -134,6 +140,8 @@ object ExistingExample {
 
 ## Bound methods
 
+TODO: remove the tables
+
 The full list of methods can be found on the [C API web page](http://traildb.io/docs/api/)
 
 ### Construct a new TrailDB
@@ -194,3 +202,9 @@ Nothing.
 | tdb_uuid_hex     | Yes    | Yes     |
 
 ### More to come in the future
+
+## Limitations
+
+TODO
+
+- no 32 bits

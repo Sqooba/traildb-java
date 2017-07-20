@@ -74,6 +74,9 @@
 					<name>platform</name>
 					<value>nix</value>
 				</property>
+				<os>
+<!--TODO: please activate automagically based on os-->
+				</os>
 			</activation>
 			<properties>
 				<os_name>linux</os_name>
@@ -220,7 +223,7 @@
 
 					<linkerEndOptions>
 						<linkerEndOption>${link_end}
-							${project.basedir}/src/main/resources/${lib_name}</linkerEndOption>
+							${project.basedir}/target/classes/${lib_name}</linkerEndOption>
 					</linkerEndOptions>
 				</configuration>
 
