@@ -32,7 +32,7 @@ public class TrailDBEventFilter {
                 }
             }
 
-            TrailDBFilterClause currentClause = this.clauses.get(i); // List of terms. A term is a String[].
+            TrailDBFilterClause currentClause = this.clauses.get(i);
 
             // Add terms filtering.
             int termLen = 0;

@@ -10,8 +10,16 @@ public class TrailDBFilterClause {
     private List<Long[]> timeRanges;
 
     public TrailDBFilterClause(List<String[]> terms, List<Long[]> timeRanges) {
-        this.terms = terms;
-        this.timeRanges = timeRanges;
+        if (terms == null) {
+            this.terms = new ArrayList<>();
+        } else {
+            this.terms = terms;
+        }
+        if (timeRanges == null) {
+            this.timeRanges = new ArrayList<>();
+        } else {
+            this.timeRanges = timeRanges;
+        }
     }
 
     public TrailDBFilterClause() {
@@ -32,7 +40,7 @@ public class TrailDBFilterClause {
     }
 
     public List<Long[]> getTimeRanges() {
-        return Collections.unmodifiableList(this.timeRanges);
+        return this.timeRanges;
     }
 
 }

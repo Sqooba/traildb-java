@@ -552,6 +552,19 @@ JNIEXPORT jint JNICALL Java_io_sqooba_traildb_TrailDBNative_tdbEventFilterAddTer
 
 }
 
+JNIEXPORT jint JNICALL Java_io_sqooba_traildb_TrailDBNative_tdbEventFilterAddTimeRange
+  (JNIEnv *env, jobject thisObject, jobject jfilter, jlong jstartTime, jlong jendTime) {
+
+	// Convert arguments.
+	struct tdb_event_filter *filter = (tdb_event_filter*) env->GetDirectBufferAddress(jfilter);
+	uint64_t start_time = (uint64_t)jstartTime;
+	uint64_t end_time = (uint64_t)jendTime;
+
+	// Call lib.
+	return tdb_event_filter_add_time_range(filter, start_time, end_time);
+
+}
+
 JNIEXPORT jint JNICALL Java_io_sqooba_traildb_TrailDBNative_tdbEventFilterNewClause
   (JNIEnv *env, jobject thisObject, jobject jfilter) {
 

@@ -273,6 +273,14 @@ JNIEXPORT jint JNICALL Java_io_sqooba_traildb_TrailDBNative_tdbEventFilterAddTer
 
 /*
  * Class:     io_sqooba_traildb_TrailDBNative
+ * Method:    tdbEventFilterAddTimeRange
+ * Signature: (Ljava/nio/ByteBuffer;JJ)I
+ */
+JNIEXPORT jint JNICALL Java_io_sqooba_traildb_TrailDBNative_tdbEventFilterAddTimeRange
+  (JNIEnv *, jobject, jobject, jlong, jlong);
+
+/*
+ * Class:     io_sqooba_traildb_TrailDBNative
  * Method:    tdbEventFilterNewClause
  * Signature: (Ljava/nio/ByteBuffer;)I
  */
