@@ -84,6 +84,20 @@ public class TrailDBNativeTest {
     }
 
     @Test
+    public void loadLibFailWithInvalidPath() {
+
+        new MockUp<System>() {
+
+            @Mock
+            public void exit(int status) {}
+        };
+
+        Deencapsulation.invoke(this.traildb, "loadLib", "vvv");
+        assertTrue(this.logger.getLoggingEvents().stream()
+                .anyMatch(e -> "Failed to load library.".equals(e.getMessage())));
+    }
+
+    @Test
     public void errorStrShouldReturnCorrectMessage() {
         assertEquals("TDB_ERR_INVALID_TRAIL_ID", this.traildb.errorStr(-6));
     }
