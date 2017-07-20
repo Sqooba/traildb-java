@@ -2,13 +2,14 @@ package io.sqooba.traildb;
 
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class TrailDBEventFilter {
 
     private TrailDBNative trailDB = TrailDBNative.INSTANCE;
 
-    private final List<String[]> clauses;
+    private final List<List<String[]>> clauses;
     private final TrailDB db;
     ByteBuffer filter;
 
@@ -32,23 +33,26 @@ public class TrailDBEventFilter {
                 }
             }
 
-            String[] currentClause = this.clauses.get(i);
-            int len = currentClause.length;
+            List<String[]> currentClause = this.clauses.get(i); // List of terms. A term is a String[].
+            int termLen = 0;
             String field = "";
             String value = "";
             int isNegative = 0;
-            for(int j = 0; j < len; j++) { // Done 2 or 3 times.
-                field = currentClause[0];
-                value = currentClause[1];
-                if (len == 3) { // This means there is a negation maybe.
-                    isNegative = "true".equals(currentClause[2]) ? 1 : 0;
-                }
+            for(String[] term : currentClause) {
+                termLen = term.length;
+                for(int j = 0; j < termLen; j++) { // Done 2 or 3 times.
+                    field = term[0];
+                    value = term[1];
+                    if (termLen == 3) { // This means there is a negation maybe.
+                        isNegative = "true".equals(term[2]) ? 1 : 0;
+                    }
 
-                long item = this.db.getItem(this.db.getField(field), value); // TODO put try catch
+                    long item = this.db.getItem(this.db.getField(field), value); // TODO put try catch
 
-                int errCode = this.trailDB.eventFilterAddTerm(this.filter, item, isNegative);
-                if (errCode != 0) {
-                    throw new TrailDBException("Failed to add term.");
+                    int errCode = this.trailDB.eventFilterAddTerm(this.filter, item, isNegative);
+                    if (errCode != 0) {
+                        throw new TrailDBException("Failed to add term.");
+                    }
                 }
             }
 
@@ -65,15 +69,15 @@ public class TrailDBEventFilter {
 
         private TrailDB db;
 
-        private List<String[]> clauses;
+        private List<List<String[]>> clauses;
 
         public TrailDBEventFilterBuilder(TrailDB db) {
             this.db = db;
             this.clauses = new ArrayList<>();
         }
 
-        public TrailDBEventFilterBuilder addClause(String[] clause) {
-            this.clauses.add(clause);
+        public TrailDBEventFilterBuilder addClause(String[]... clause) {
+            this.clauses.add(Arrays.asList(clause));
             return this;
         }
 
