@@ -70,12 +70,8 @@
 			<id>Linux</id>
 			<activation>
 				<activeByDefault>true</activeByDefault>
-				<property>
-					<name>platform</name>
-					<value>nix</value>
-				</property>
 				<os>
-<!--TODO: please activate automagically based on os-->
+					<family>unix</family>
 				</os>
 			</activation>
 			<properties>
@@ -91,10 +87,9 @@
 		<profile>
 			<id>Mac</id>
 			<activation>
-				<property>
-					<name>platform</name>
-					<value>osx</value>
-				</property>
+				<os>
+					<family>mac</family>
+				</os>
 			</activation>
 			<properties>
 				<os_name>osx</os_name>
