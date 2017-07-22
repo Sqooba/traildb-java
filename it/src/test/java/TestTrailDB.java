@@ -1,7 +1,4 @@
 import junit.framework.TestCase;
-import org.junit.rules.ExpectedException;
-import org.junit.Test;
-import org.junit.Rule;
 
 import traildb.*;
 
@@ -51,6 +48,10 @@ public class TestTrailDB extends TestCase {
 						assertEquals(event.getItem(0), "ted");
 						assertEquals(event.getItem(1), "fly");
 						break;
+					case 6:
+						assertEquals(event.getItem(0), "doug");
+						assertEquals(event.getItem(1), "dab");
+						break;
 					default:
 						fail("Unrecognized timestamp " + event.timestamp);
 				}
@@ -69,7 +70,7 @@ public class TestTrailDB extends TestCase {
 			cur.getTrail(i);
 			while ((event = cur.next()) != null) {
 				cur.peek();
-				if (foundEvents != 0) {
+				if (peekEvent != null) {
 					assertEquals(event.getItem(0), peekEvent.getItem(0));
 					assertEquals(event.getItem(1), peekEvent.getItem(1));
 				}
