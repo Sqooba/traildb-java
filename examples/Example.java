@@ -10,28 +10,27 @@ import java.io.FileNotFoundException;
 public class Example {
 
 	public static void read() throws FileNotFoundException {
+		System.out.println("Begin Test");
 		TrailDB tdb = new TrailDB("tiny.tdb");
 		TrailDBCursor cur = tdb.cursorNew();
-		long numCookies = tdb.numTrails();
-		UUID uuid;
-		TrailDBEvent event;
-		for (int i=0; i < numCookies; i++) {
-			// uuid = tdb.getUUID(i);
-			// System.out.println(uuid);
-			cur.getTrail(i);
-			while ((event = cur.next()) != null) {
-				System.out.println(event.timestamp + " " + event.getItem(0));
-			}
-		}
+		TrailDBEvent e1;
+		TrailDBEvent e2;
+
+		cur.getTrail(0);
+
+		e1 = cur.next();
+
+		cur.getTrail(1);
+
+		e2 = cur.next();
+		System.out.println("End Test");
 	}
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws FileNotFoundException {
 		TrailDBConstructor cons = new TrailDBConstructor("tiny", new String[] {"user", "action"});
 
 		UUID cookie1 = UUID.randomUUID();
 		UUID cookie2 = UUID.randomUUID();
-
-		System.out.println(cookie1 + " " + cookie2);
 
 		cons.add(cookie1, 1, new String[] {"bob", "run"});
 		cons.add(cookie2, 2, new String[] {"fred", "walk"});
