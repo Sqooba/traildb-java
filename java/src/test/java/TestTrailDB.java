@@ -11,7 +11,6 @@ import java.io.FileNotFoundException;
 public class TestTrailDB extends TestCase {
 
 	protected void setUp() throws FileNotFoundException {
-		System.out.println(System.getProperty("java.library.path"));
 		TrailDBConstructor cons = new TrailDBConstructor("test", new String[] {"user", "action"});
 
 		UUID cookie1 = UUID.randomUUID();
@@ -21,6 +20,7 @@ public class TestTrailDB extends TestCase {
 		cons.add(cookie2, 2, new String[] {"fred", "walk"});
 		cons.add(cookie1, 4, new String[] {"jerry", "speak"});
 		cons.add(cookie1, 5, new String[] {"ted", "fly"});
+		cons.add(cookie2, 6, new String[] {"doug", "dab"});
 
 		cons.finalize();
 		cons.close();
@@ -63,12 +63,18 @@ public class TestTrailDB extends TestCase {
 		TrailDBCursor cur = tdb.cursorNew();
 		long numCookies = tdb.numTrails();
 		TrailDBEvent event;
+		TrailDBEvent peekEvent = null;
 		int foundEvents = 0;
 		for (int i=0; i < numCookies; i++) {
 			cur.getTrail(i);
 			while ((event = cur.next()) != null) {
-				foundEvents++;
 				cur.peek();
+				if (foundEvents != 0) {
+					assertEquals(event.getItem(0), peekEvent.getItem(0));
+					assertEquals(event.getItem(1), peekEvent.getItem(1));
+				}
+				foundEvents++;
+
 				switch ((int) event.timestamp) {
 					case 1:
 						assertEquals(event.getItem(0), "bob");
@@ -86,13 +92,17 @@ public class TestTrailDB extends TestCase {
 						assertEquals(event.getItem(0), "ted");
 						assertEquals(event.getItem(1), "fly");
 						break;
+					case 6:
+						assertEquals(event.getItem(0), "doug");
+						assertEquals(event.getItem(1), "dab");
+						break;
 					default:
 						fail("Unrecognized timestamp " + event.timestamp);
 				}
-				event = cur.peek();
+				peekEvent = cur.peek();
 			}
 		}
-		assertEquals(foundEvents, 4);
+		assertEquals(foundEvents, 5);
 	}
 
 
