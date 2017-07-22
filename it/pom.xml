@@ -23,9 +23,6 @@
 			<configuration>
 				<source>1.6</source>
 				<target>1.6</target>
-				<testCompilerArguments>
-					<classpath>${project.parent.basedir}/native/linux/target/lib/traildbJava.jar</classpath>
-				</testCompilerArguments>
 			</configuration>
 		</plugin>
 		<plugin>
@@ -33,10 +30,6 @@
 			<version>2.19.1</version>
 			<configuration>
 				<argLine>-Djava.library.path=${project.parent.basedir}/native/linux/target</argLine>
-				<additionalClasspathElements>
-				<additionalClasspathElement>${project.parent.basedir}/native/linux/target/lib/traildbJava.jar</additionalClasspathElement>
-				</additionalClasspathElements>
-				<classesDirectory>${project.parent.basedir}/native/linux/target/lib/traildbJava.jar</classesDirectory>
 			</configuration>
 		</plugin>
 		</plugins>
@@ -47,6 +40,12 @@
 		<groupId>junit</groupId>
 		<artifactId>junit</artifactId>
 		<version>4.11</version>
+		<scope>test</scope>
+	</dependency>
+	<dependency>
+		<groupId>adroll.traildb</groupId>
+		<artifactId>traildbJava</artifactId>
+		<version>0.1</version>
 		<scope>test</scope>
 	</dependency>
 	</dependencies>
