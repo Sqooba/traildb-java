@@ -91,11 +91,16 @@ java -Djava.library.path=`pwd`/native/linux/target/ -cp examples:native/linux/ta
 5. Each object file is linked into a shared object file `native/<arch>/target/libTraildbJavaNative.so`. The TrailDB library is linked at this stage.
 
 
+## Deployment
+
+Tests are run inside a docker container which can be found at `aholyoke/traildb-java:latest`. This image already has TrailDB installed. `make deploy` can be used to redeploy the image to Docker Hub. CircleCI will use this image to build and run tests.
+
+
 ## TODO
 
 - [x] Implement exception raising
 
-- [ ] Unit tests
+- [x] Unit tests
 
 - [x] Set up maven or gradle or something so people can install
 
