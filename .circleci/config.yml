@@ -7,7 +7,7 @@ jobs:
   build:
     docker:
       # specify the version you desire here
-      - image: circleci/openjdk:8-jdk
+      - image: aholyoke/traildb-java:circlebuild
       
       # Specify service dependencies here if necessary
       # CircleCI maintains a library of pre-built images
@@ -38,3 +38,10 @@ jobs:
       # run tests!
       - run: mvn verify -P Linux
 
+dependencies:
+  pre:
+    - sudo apt-get install libarchive-dev libjudy-dev pkg-config
+    - git clone git@github.com:traildb/traildb.git traildb
+    - cd traildb
+    - ./waf configure
+    - ./waf install
