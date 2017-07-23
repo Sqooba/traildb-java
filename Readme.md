@@ -1,5 +1,5 @@
 
-# TrailDB Java
+# TrailDB Java [![CircleCI](https://circleci.com/gh/aholyoke/traildb-java/tree/master.svg?style=shield)](https://circleci.com/gh/aholyoke/traildb-java/tree/master)
 
 Java Bindings for [TrailDB](https://github.com/traildb/traildb)
 
