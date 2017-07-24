@@ -104,7 +104,9 @@ Tests are run inside a docker container which can be found at `aholyoke/traildb-
 
 - [x] Set up maven or gradle or something so people can install
 
-- [ ] Benchmark relative to other language bindings
+- [x] Benchmark relative to other language bindings
+
+- [ ] Audit multithreaded support
 
 - [ ] Cache field and method lookups
 
