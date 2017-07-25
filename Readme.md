@@ -108,9 +108,9 @@ Tests are run inside a docker container which can be found at `aholyoke/traildb-
 
 - [ ] Audit multithreaded support
 
-- [ ] Cache field and method lookups
+- [x] Cache field and method lookups
 
-- [ ] Benchmark again to evaluate efficacy of field caching
+- [x] Benchmark again to evaluate efficacy of field caching
 
 - [ ] Finish implementing everything else
 
