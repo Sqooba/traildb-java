@@ -4,7 +4,7 @@ import traildb.*;
 import java.io.FileNotFoundException;
 
 public class Wikipedia {
-	public static long SESSION_LIMIT = 3600;
+	public static long SESSION_LIMIT = 30 * 60;
 	public static void sessions(TrailDB tdb) {
 		TrailDBCursor cursor = tdb.cursorNew();
 		long n = tdb.numTrails();
@@ -31,7 +31,7 @@ public class Wikipedia {
 	}
 
 	public static void main(String[] args) throws FileNotFoundException {
-		TrailDB tdb = new TrailDB("wikipedia-history.tdb");
+		TrailDB tdb = new TrailDB("wikipedia-history-small.tdb");
 		sessions(tdb);
 	}
 }
