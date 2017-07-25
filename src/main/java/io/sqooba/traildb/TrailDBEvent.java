@@ -39,6 +39,19 @@ public class TrailDBEvent {
     }
 
     /**
+     * Copy constructor used by TrailDBIterator.next.
+     * 
+     * @param toClone The TrailDBEvent to clone.
+     */
+    protected TrailDBEvent(TrailDBEvent toClone) {
+        this(toClone.trailDB, toClone.fieldNames);
+        this.build(toClone.timestamp, toClone.numItems);
+        for(long item : toClone.items) {
+            this.addItem(item);
+        }
+    }
+
+    /**
      * Get the timestamp of this event.
      * 
      * @return The timestamp of this event.
