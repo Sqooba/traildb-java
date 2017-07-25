@@ -47,9 +47,6 @@ JNIEXPORT void JNICALL Java_traildb_TrailDBCursor_unsetEventFilter(JNIEnv *env, 
 }
 
 JNIEXPORT jobject JNICALL Java_traildb_TrailDBCursor_next(JNIEnv *env, jobject obj) {
-	jclass cls;
-	jfieldID fid;
-	jmethodID cid;
 	jobject event_obj;
 
 	tdb_cursor *cur;
