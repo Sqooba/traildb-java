@@ -26,12 +26,7 @@ JNIEXPORT void JNICALL Java_traildb_TrailDBCursor_getTrail(JNIEnv *env, jobject 
 
 	// Retrieve cursor pointer
 
-	cls = (*env)->GetObjectClass(env, obj);
-	fid = (*env)->GetFieldID(env, cls, "cur", "J");
-	if (fid == NULL) {
-		exit(1);
-	}
-	cur = (tdb_cursor *) (*env)->GetLongField(env, obj, fid);
+	cur = (tdb_cursor *) (*env)->GetLongField(env, obj, FID_traildb_TrailDBCursor_cur);
 
 	// Get trail from cursor
 
