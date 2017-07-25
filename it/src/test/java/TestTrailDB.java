@@ -106,7 +106,6 @@ public class TestTrailDB extends TestCase {
 		assertEquals(foundEvents, 5);
 	}
 
-
 	public void testExceptionFileNotFound() {
 		try {
 			TrailDB tdb = new TrailDB("wat.tdb");

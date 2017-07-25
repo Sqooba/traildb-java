@@ -22,8 +22,11 @@ public class TrailDBCursor {
 	public native TrailDBEvent next();
 
 	public native TrailDBEvent peek();
+
+	private static native void initIDs();
 	
 	static {
 		System.loadLibrary("TraildbJavaNative");
+		initIDs();
 	}
 }

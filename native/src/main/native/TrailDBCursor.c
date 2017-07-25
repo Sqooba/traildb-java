@@ -1,6 +1,18 @@
 #include <traildb.h>
 #include "traildb-java.h"
 
+jfieldID FID_traildb_TrailDBCursor_db;
+jfieldID FID_traildb_TrailDBCursor_cur;
+
+jclass CID_traildb_TrailDBEvent;
+jmethodID MID_traildb_TrailDBEvent_Constructor;
+
+jfieldID FID_traildb_TrailDBEvent_timestamp;
+jfieldID FID_traildb_TrailDBEvent_numItems;
+jfieldID FID_traildb_TrailDBEvent_items;
+jfieldID FID_traildb_TrailDBEvent_db;
+
+
 JNIEXPORT void JNICALL Java_traildb_TrailDBCursor_free(JNIEnv *env, jobject obj) {
 
 }
@@ -212,4 +224,16 @@ JNIEXPORT jobject JNICALL Java_traildb_TrailDBCursor_peek(JNIEnv *env, jobject o
 	(*env)->SetLongField(env, event_obj, fid, (long) db);
 
 	return event_obj;
+}
+
+JNIEXPORT void JNICALL Java_traildb_TrailDBCursor_initIDs(JNIEnv *env, jclass cls) {
+	FID_traildb_TrailDBCursor_db = (*env)->GetFieldID(env, cls, "db", "J");
+	FID_traildb_TrailDBCursor_cur = (*env)->GetFieldID(env, cls, "cur", "J");
+
+	CID_traildb_TrailDBEvent = (*env)->FindClass(env, "traildb/TrailDBEvent");
+	MID_traildb_TrailDBEvent_Constructor = (*env)->GetMethodID(env, CID_traildb_TrailDBEvent, "<init>", "()V");
+	FID_traildb_TrailDBEvent_timestamp = (*env)->GetFieldID(env, CID_traildb_TrailDBEvent, "timestamp", "J");
+	FID_traildb_TrailDBEvent_numItems = (*env)->GetFieldID(env, CID_traildb_TrailDBEvent, "numItems", "J");
+	FID_traildb_TrailDBEvent_items = (*env)->GetFieldID(env, CID_traildb_TrailDBEvent, "items", "J");
+	FID_traildb_TrailDBEvent_db = (*env)->GetFieldID(env, CID_traildb_TrailDBEvent, "db", "J");
 }
