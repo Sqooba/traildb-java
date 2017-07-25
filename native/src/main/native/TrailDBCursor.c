@@ -4,6 +4,7 @@
 jfieldID FID_traildb_TrailDBCursor_db;
 jfieldID FID_traildb_TrailDBCursor_cur;
 
+
 jclass CID_traildb_TrailDBEvent;
 jmethodID MID_traildb_TrailDBEvent_Constructor;
 
@@ -62,20 +63,11 @@ JNIEXPORT jobject JNICALL Java_traildb_TrailDBCursor_next(JNIEnv *env, jobject o
 
 	// Retrieve db pointer
 
-	cls = (*env)->GetObjectClass(env, obj);
-	fid = (*env)->GetFieldID(env, cls, "db", "J");
-	if (fid == NULL) {
-		exit(1);
-	}
-	db = (tdb *) (*env)->GetLongField(env, obj, fid);
+	db = (tdb *) (*env)->GetLongField(env, obj, FID_traildb_TrailDBCursor_db);
 
 	// Retrieve cursor pointer
 
-	fid = (*env)->GetFieldID(env, cls, "cur", "J");
-	if (fid == NULL) {
-		exit(1);
-	}
-	cur = (tdb_cursor *) (*env)->GetLongField(env, obj, fid);
+	cur = (tdb_cursor *) (*env)->GetLongField(env, obj, FID_traildb_TrailDBCursor_cur);
 
 	// Get event
 
@@ -87,53 +79,25 @@ JNIEXPORT jobject JNICALL Java_traildb_TrailDBCursor_next(JNIEnv *env, jobject o
 		return NULL;
 	}
 
-	// Get class of TrailDBEvent
+	// Create TrailDBEvent
 
-	cls = (*env)->FindClass(env, "traildb/TrailDBEvent");
-	if (cls == NULL) {
-		exit(1);
-	}
-
-	// event_obj = new TrailDBEvent();
-	// Get method id of TrailDBEvent constructor
-
-	cid = (*env)->GetMethodID(env, cls, "<init>", "()V");
-
-	// Create event
-
-	event_obj = (*env)->NewObject(env, cls, cid);
+	event_obj = (*env)->NewObject(env, CID_traildb_TrailDBEvent, MID_traildb_TrailDBEvent_Constructor);
 
 	// Store timestamp
 
-	fid = (*env)->GetFieldID(env, cls, "timestamp", "J");
-	if (fid == NULL) {
-		exit(1);
-	}
-	(*env)->SetLongField(env, event_obj, fid, (long) event->timestamp);
+	(*env)->SetLongField(env, event_obj, FID_traildb_TrailDBEvent_timestamp, (long) event->timestamp);
 
-	// Store number of item
+	// Store number of items
 
-	fid = (*env)->GetFieldID(env, cls, "numItems", "J");
-	if (fid == NULL) {
-		exit(1);
-	}
-	(*env)->SetLongField(env, event_obj, fid, (long) event->num_items);
+	(*env)->SetLongField(env, event_obj, FID_traildb_TrailDBEvent_numItems, (long) event->num_items);
 
 	// Store items pointer
 
-	fid = (*env)->GetFieldID(env, cls, "items", "J");
-	if (fid == NULL) {
-		exit(1);
-	}
-	(*env)->SetLongField(env, event_obj, fid, (long) event->items);
+	(*env)->SetLongField(env, event_obj, FID_traildb_TrailDBEvent_items, (long) event->items);
 
 	// Store db pointer on event
 
-	fid = (*env)->GetFieldID(env, cls, "db", "J");
-	if (fid == NULL) {
-		exit(1);
-	}
-	(*env)->SetLongField(env, event_obj, fid, (long) db);
+	(*env)->SetLongField(env, event_obj, FID_traildb_TrailDBEvent_db, (long) db);
 
 	return event_obj;
 }
@@ -230,7 +194,10 @@ JNIEXPORT void JNICALL Java_traildb_TrailDBCursor_initIDs(JNIEnv *env, jclass cl
 	FID_traildb_TrailDBCursor_db = (*env)->GetFieldID(env, cls, "db", "J");
 	FID_traildb_TrailDBCursor_cur = (*env)->GetFieldID(env, cls, "cur", "J");
 
-	CID_traildb_TrailDBEvent = (*env)->FindClass(env, "traildb/TrailDBEvent");
+	jclass traildb_TrailDBEvent = (*env)->FindClass(env, "traildb/TrailDBEvent");
+	CID_traildb_TrailDBEvent = (jclass) (*env)->NewGlobalRef(env, traildb_TrailDBEvent);
+	(*env)->DeleteLocalRef(env, traildb_TrailDBEvent);
+
 	MID_traildb_TrailDBEvent_Constructor = (*env)->GetMethodID(env, CID_traildb_TrailDBEvent, "<init>", "()V");
 	FID_traildb_TrailDBEvent_timestamp = (*env)->GetFieldID(env, CID_traildb_TrailDBEvent, "timestamp", "J");
 	FID_traildb_TrailDBEvent_numItems = (*env)->GetFieldID(env, CID_traildb_TrailDBEvent, "numItems", "J");
