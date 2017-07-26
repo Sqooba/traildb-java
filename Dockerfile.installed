@@ -1,0 +1,9 @@
+# Comes with traildb-java installed
+
+FROM aholyoke/traildb-java
+
+USER circleci:circleci
+
+COPY --user=circleci . /home/circleci/traildb-java
+
+RUN cd /home/circleci/traildb-java

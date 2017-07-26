@@ -1,3 +1,5 @@
+# Base image to test building traildb-java
+
 FROM circleci/openjdk
 
 RUN sudo apt-get install -y \
