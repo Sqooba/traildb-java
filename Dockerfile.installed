@@ -4,6 +4,6 @@ FROM aholyoke/traildb-java
 
 USER circleci:circleci
 
-COPY --user=circleci . /home/circleci/traildb-java
+COPY . /home/circleci/traildb-java
 
-RUN cd /home/circleci/traildb-java
+RUN cd /home/circleci/ && sudo chown circleci:circleci -R traildb-java && cd traildb-java && mvn install -P Linux
