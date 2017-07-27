@@ -230,7 +230,3 @@ JNIEXPORT jobject JNICALL Java_traildb_TrailDB_cursorNew(JNIEnv *env, jobject ob
 
 	return cursor_obj;
 }
-
-JNIEXPORT jobject JNICALL Java_traildb_TrailDB_multiCursorNew(JNIEnv *env, jobject obj) {
-
-}
