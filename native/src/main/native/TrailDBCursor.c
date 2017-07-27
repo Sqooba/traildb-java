@@ -2,15 +2,19 @@
 #include "traildb-java.h"
 
 jfieldID FID_traildb_TrailDBCursor_db;
+
 jfieldID FID_traildb_TrailDBCursor_cur;
 
-
 jclass CID_traildb_TrailDBEvent;
+
 jmethodID MID_traildb_TrailDBEvent_Constructor;
 
 jfieldID FID_traildb_TrailDBEvent_timestamp;
+
 jfieldID FID_traildb_TrailDBEvent_numItems;
+
 jfieldID FID_traildb_TrailDBEvent_items;
+
 jfieldID FID_traildb_TrailDBEvent_db;
 
 
