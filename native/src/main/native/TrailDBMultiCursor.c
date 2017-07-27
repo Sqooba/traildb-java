@@ -1,5 +1,43 @@
+#include <traildb.h>
 #include "traildb-java.h"
 
+jfieldID FID_traildb_TrailDBMultiCursor_cur;
+
+jfieldID FID_traildb_TrailDBCursor_cur;
+
+/*
+ * Class:     traildb_TrailDBMultiCursor
+ * Method:    init
+ * Signature: ([Ltraildb/TrailDBCursor;)V
+ */
+JNIEXPORT void JNICALL Java_traildb_TrailDBMultiCursor_init(JNIEnv *env, jobject obj, jobjectArray cursors) {
+	jobject cursor_obj;
+
+	tdb_multi_cursor *multi_cur;
+	tdb_cursor **tgt_cursors;
+
+	int num_cursors = (*env)->GetArrayLength(env, cursors);
+
+	tgt_cursors = malloc(num_cursors * sizeof(long));
+
+	for (int i = 0; i < num_cursors; i++) {
+		cursor_obj = (*env)->GetObjectArrayElement(env, cursors, i);
+		tgt_cursors[i] = (tdb_cursor *) (*env)->GetLongField(env, cursor_obj, FID_traildb_TrailDBCursor_cur);
+	}
+
+	multi_cur = tdb_multi_cursor_new(tgt_cursors, num_cursors);
+
+	// free tgt_cursors;
+
+	(*env)->SetLongField(env, obj, FID_traildb_TrailDBMultiCursor_cur, (long) multi_cur);
+
+}
+
+/*
+ * Class:     traildb_TrailDBMultiCursor
+ * Method:    free
+ * Signature: ()V
+ */
 JNIEXPORT void JNICALL Java_traildb_TrailDBMultiCursor_free(JNIEnv *env, jobject obj) {
 
 }
@@ -38,4 +76,17 @@ JNIEXPORT jobjectArray JNICALL Java_traildb_TrailDBMultiCursor_nextBatch(JNIEnv 
  */
 JNIEXPORT jobject JNICALL Java_traildb_TrailDBMultiCursor_peek(JNIEnv *env, jobject obj) {
 
+}
+
+/*
+ * Class:     traildb_TrailDBMultiCursor
+ * Method:    initIDs
+ * Signature: ()V
+ */
+JNIEXPORT void JNICALL Java_traildb_TrailDBMultiCursor_initIDs(JNIEnv *env, jclass cls) {
+	FID_traildb_TrailDBMultiCursor_cur = (*env)->GetFieldID(env, cls, "cur", "J");
+
+	jclass traildb_TrailDBCursor = (*env)->FindClass(env, "traildb/TrailDBCursor");
+
+	FID_traildb_TrailDBCursor_cur = (*env)->GetFieldID(env, traildb_TrailDBCursor, "cur", "J");
 }
