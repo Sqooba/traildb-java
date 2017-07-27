@@ -89,8 +89,6 @@ public class TrailDB {
 
 	public native TrailDBCursor cursorNew();
 
-	public native TrailDBMultiCursor multiCursorNew();
-
 	static {
 		System.loadLibrary("TraildbJavaNative");
 	}
