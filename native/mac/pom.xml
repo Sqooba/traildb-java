@@ -1,0 +1,103 @@
+<project>
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>adroll.traildb</groupId>
+		<artifactId>nativeParent</artifactId>
+		<version>0.1</version>
+	</parent>
+
+	<groupId>adroll.traildb</groupId>
+	<artifactId>libTraildbJavaNative</artifactId>
+	<version>0.1</version>
+	<name>Mac Build</name>
+	<url>http://maven.apache.org</url>
+
+	<packaging>jnilib</packaging>
+
+	<dependencies>
+		<dependency>
+			<groupId>adroll.traildb</groupId>
+			<artifactId>traildbJava</artifactId>
+			<version>0.1</version>
+			<type>jar</type>
+			<scope>compile</scope>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<plugins>
+		<plugin>
+			<artifactId>maven-compiler-plugin</artifactId>
+			<version>3.6.1</version>
+			<configuration>
+				<source>1.6</source>
+				<target>1.6</target>
+			</configuration>
+		</plugin>
+		<plugin>
+			<groupId>org.codehaus.mojo</groupId>
+			<artifactId>native-maven-plugin</artifactId>
+			<version>1.0-alpha-8</version>
+			<extensions>true</extensions>
+			<configuration>
+				<!--  trigger javah -->
+				<javahOS>darwin</javahOS>
+				<compilerProvider>generic-classic</compilerProvider>
+				<compilerExecutable>cc</compilerExecutable>
+				<linkerExecutable>cc</linkerExecutable>
+				<sources>
+				<source>
+					<directory>../src/main/native</directory>
+					<fileNames>
+					<fileName>TrailDB.c</fileName>
+					<fileName>TrailDBConstructor.c</fileName>
+					<fileName>TrailDBCursor.c</fileName>
+					<fileName>TrailDBEvent.c</fileName>
+					<fileName>TrailDBEventFilter.c</fileName>
+					<fileName>TrailDBItem.c</fileName>
+					<fileName>TrailDBMultiCursor.c</fileName>
+					</fileNames>
+				</source>
+				</sources>
+
+				<compilerStartOptions>
+				<compilerStartOption>-shared -fPIC</compilerStartOption>
+				</compilerStartOptions>
+
+				<linkerStartOptions>
+				<linkerStartOption>-shared -fPIC</linkerStartOption>
+				</linkerStartOptions>
+
+				<linkerEndOptions>
+				<linkerEndOption>-ltraildb</linkerEndOption>
+				</linkerEndOptions>
+			</configuration>
+			<executions>
+			<execution>
+				<id>javah</id>
+				<phase>generate-sources</phase>
+				<configuration>
+					<javahProvider>default</javahProvider>
+					<javahOutputDirectory>${project.build.directory}/custom-javah</javahOutputDirectory>
+					<workingDirectory>${basedir}</workingDirectory>
+					<javahOutputFileName>traildb-java.h</javahOutputFileName>
+					<javahClassNames>
+					<javahClassName>traildb.TrailDB</javahClassName>
+					<javahClassName>traildb.TrailDBConstructor</javahClassName>
+					<javahClassName>traildb.TrailDBCursor</javahClassName>
+					<javahClassName>traildb.TrailDBEvent</javahClassName>
+					<javahClassName>traildb.TrailDBEventFilter</javahClassName>
+					<javahClassName>traildb.TrailDBItem</javahClassName>
+					<javahClassName>traildb.TrailDBMultiCursor</javahClassName>
+					</javahClassNames>
+				</configuration>
+				<goals>
+				<goal>javah</goal>
+				</goals>
+			</execution>
+			</executions>
+		</plugin>
+		</plugins>
+	</build>
+</project>
