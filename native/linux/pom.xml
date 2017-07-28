@@ -78,7 +78,6 @@
 				<id>javah</id>
 				<phase>generate-sources</phase>
 				<configuration>
-					<javahOS>Linux</javahOS>
 					<javahProvider>default</javahProvider>
 					<javahOutputDirectory>${project.build.directory}/custom-javah</javahOutputDirectory>
 					<workingDirectory>${basedir}</workingDirectory>
