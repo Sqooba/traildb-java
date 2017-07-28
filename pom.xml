@@ -48,9 +48,6 @@
 			<properties>
 				<platform>linux</platform>
 			</properties>
-			<modules>
-				<module>native/linux</module>
-			</modules>
 		</profile>
 		<profile>
 			<id>Mac</id>
@@ -63,9 +60,6 @@
 			<properties>
 				<platform>mac</platform>
 			</properties>
-			<modules>
-				<module>native/mac</module>
-			</modules>
 		</profile>
 	</profiles>
 </project>
