@@ -125,7 +125,7 @@ JNIEXPORT void JNICALL Java_traildb_TrailDBConstructor_native_1add(JNIEnv *env, 
 
 	// Marshall UUID to byte array
 
-	(*env)->GetByteArrayRegion(env, uuid, 0, 16, tgt_uuid);
+	(*env)->GetByteArrayRegion(env, uuid, 0, 16, (jbyte *) tgt_uuid);
 
 	// Retrieve cons pointer
 
