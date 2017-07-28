@@ -7,7 +7,13 @@ Java Bindings for [TrailDB](https://github.com/traildb/traildb)
 
 `mvn install -P Linux`
 
-Only Linux is supported for the time being. OS X and Windows are on the way.
+or
+
+`mvn install -P Mac`
+
+Only Linux and OS X are supported for the time being. Windows is on the way.
+
+## Run
 
 Compile and run the example by adding the jar to your classpath and setting `java.library.path` to the object file.
 
@@ -82,21 +88,23 @@ java -Djava.library.path=`pwd`/native/linux/target/ -cp examples:native/linux/ta
 
 1. Java sources under `java/src/main/java/traildb` are compiled using `javac` to their `.class` files under `java/target/classes/traildb`
 
-2. Java classes are jarred together into `native/<arch>/target/lib/traildbJava.jar`
+2. Java classes are jarred together into `native/<platform>/target/lib/traildbJava.jar`
 
-3. `javah` is used on the `.class` files to automatically generate the header file `native/<arch>/target/custom-javah/traildb-java.h`
+3. `javah` is used on the `.class` files to automatically generate the header file `native/<platform>/target/custom-javah/traildb-java.h`
 
-4. The header file is included in every c source under `native/src/main/native`. Each c source is compiled with `gcc` to their `.o` object files under `native/<arch>/target/objs`.
+4. The header file is included in every c source under `native/src/main/native`. Each c source is compiled with `gcc` to their `.o` object files under `native/<platform>/target/objs`.
 
-5. Each object file is linked into a shared object file `native/<arch>/target/libTraildbJavaNative.so`. The TrailDB library is linked at this stage.
-
-
-## Deployment
-
-Tests are run inside a docker container which can be found at `aholyoke/traildb-java:latest`. This image already has TrailDB installed. `make deploy` can be used to redeploy the image to Docker Hub. CircleCI will use this image to build and run tests.
+5. Each object file is linked into a shared object file `native/<platform>/target/libTraildbJavaNative.so`. The TrailDB library is linked at this stage.
 
 
-## TODO
+## Images
+
+* The base image is defined in `Dockerfile`. It is an ubuntu image with the jdk and traildb installed. It can be built using `make build`
+
+* The installed image is defined in `Dockerfile.installed`. It is the base image with traildb-java bindings installed. It can be built using `make install`
+
+
+## Development
 
 - [x] Implement exception raising
 
@@ -106,7 +114,7 @@ Tests are run inside a docker container which can be found at `aholyoke/traildb-
 
 - [x] Benchmark relative to other language bindings
 
-- [ ] Audit multithreaded support
+- [x] Audit multithreaded support
 
 - [x] Cache field and method lookups
 
