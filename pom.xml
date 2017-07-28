@@ -36,4 +36,30 @@
 			</plugins>
 		</pluginManagement>
 	</build>
+	<profiles>
+		<profile>
+			<id>Linux</id>
+			<activation>
+				<property>
+					<name>platform</name>
+					<value>linux</value>
+				</property>
+			</activation>
+			<properties>
+				<platform>linux</platform>
+			</properties>
+		</profile>
+		<profile>
+			<id>Mac</id>
+			<activation>
+				<property>
+					<name>platform</name>
+					<value>mac</value>
+				</property>
+			</activation>
+			<properties>
+				<platform>mac</platform>
+			</properties>
+		</profile>
+	</profiles>
 </project>

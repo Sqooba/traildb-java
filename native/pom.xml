@@ -16,7 +16,6 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
-
 	<profiles>
 	<profile>
 		<id>Linux</id>
@@ -27,7 +26,19 @@
 			</property>
 		</activation>
 		<modules>
-		<module>linux</module>
+			<module>linux</module>
+		</modules>
+	</profile>
+	<profile>
+		<id>Mac</id>
+		<activation>
+			<property>
+				<name>platform</name>
+				<value>mac</value>
+			</property>
+		</activation>
+		<modules>
+			<module>mac</module>
 		</modules>
 	</profile>
 	</profiles>
