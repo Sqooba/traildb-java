@@ -38,7 +38,7 @@ public class TrailDBIterator implements Iterable<TrailDBEvent>, AutoCloseable {
                 if (!TrailDBIterator.this.event.isBuilt()) {
                     TrailDBNative.INSTANCE.cursorNext(TrailDBIterator.this.cursor, TrailDBIterator.this.event);
                 }
-                return new TrailDBEvent(TrailDBIterator.this.event);
+                return TrailDBIterator.this.event;
             }
 
             @Override
@@ -51,5 +51,9 @@ public class TrailDBIterator implements Iterable<TrailDBEvent>, AutoCloseable {
                 throw new UnsupportedOperationException();
             }
         };
+    }
+
+    public TrailDBEvent getCurrentEvent() {
+        return new TrailDBEvent(TrailDBIterator.this.event);
     }
 }
