@@ -21,7 +21,7 @@ JNIEXPORT void JNICALL Java_traildb_TrailDB_init(JNIEnv *env, jobject obj, jstri
 
 	// Open tdb
 
-	if (err = tdb_open(db, tgt_root)) {
+	if ((err = tdb_open(db, tgt_root))) {
 		exc = (*env)->FindClass(env, "java/io/FileNotFoundException");
 		if (exc == NULL) {
 			/* Could not find the exception - We are in so much trouble right now */
