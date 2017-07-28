@@ -62,7 +62,7 @@
 				</sources>
 
 				<compilerStartOptions>
-				<compilerStartOption>-shared -fPIC</compilerStartOption>
+				<compilerStartOption></compilerStartOption>
 				</compilerStartOptions>
 
 				<linkerStartOptions>
