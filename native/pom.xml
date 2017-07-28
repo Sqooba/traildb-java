@@ -16,19 +16,4 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
-
-	<profiles>
-	<profile>
-		<id>Linux</id>
-		<activation>
-			<property>
-				<name>platform</name>
-				<value>linux</value>
-			</property>
-		</activation>
-		<modules>
-		<module>linux</module>
-		</modules>
-	</profile>
-	</profiles>
 </project>
