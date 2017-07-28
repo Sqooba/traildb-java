@@ -5,6 +5,10 @@ all: build deploy
 build:
 	docker build -t traildb-java .
 
+.PHONY: install
+install:
+	docker build -t traildb-java -f Dockerfile.installed .
+
 .PHONY: run
 run:
 	docker run -it traildb-java bash
