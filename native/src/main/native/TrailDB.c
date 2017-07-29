@@ -75,7 +75,18 @@ JNIEXPORT jlong JNICALL Java_traildb_TrailDB_numTrails(JNIEnv *env, jobject obj)
 }
 
 JNIEXPORT jlong JNICALL Java_traildb_TrailDB_numEvents(JNIEnv *env, jobject obj) {
+	const tdb *db;
+	uint64_t num_events;
 
+	// Retrieve db pointer
+
+	db = (tdb *) (*env)->GetLongField(env, obj, FID_traildb_TrailDB_db);
+
+	// Get number of events
+
+	num_events = tdb_num_events(db);
+
+	return num_events;
 }
 
 JNIEXPORT jlong JNICALL Java_traildb_TrailDB_numFields(JNIEnv *env, jobject obj) {
