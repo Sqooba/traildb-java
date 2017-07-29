@@ -89,7 +89,10 @@ public class TrailDB {
 
 	public native TrailDBCursor cursorNew();
 
+	private static native void initIDs();
+
 	static {
 		System.loadLibrary("TraildbJavaNative");
+		initIDs();
 	}
 }
