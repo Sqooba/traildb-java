@@ -172,7 +172,7 @@ Tests are run inside a docker container which can be found at `aholyoke/traildb-
 
 - [ ] getItem
 
-- [ ] close
+- [x] close
 
 - [ ] getUUID
 
