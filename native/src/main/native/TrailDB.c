@@ -166,7 +166,13 @@ JNIEXPORT jobject JNICALL Java_traildb_TrailDB_getItem(JNIEnv *env, jobject obj,
 }
 
 JNIEXPORT void JNICALL Java_traildb_TrailDB_close(JNIEnv *env, jobject obj) {
+	tdb *db;
 
+	// Retrieve db pointer
+
+	db = (tdb *) (*env)->GetLongField(env, obj, FID_traildb_TrailDB_db);
+
+	tdb_close(db);
 }
 
 JNIEXPORT jobject JNICALL Java_traildb_TrailDB_getUUID(JNIEnv *env, jobject obj, jint trail_id) {
