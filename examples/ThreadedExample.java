@@ -33,6 +33,7 @@ class Parallel implements Runnable {
 			totalSessions += numSessions;
 			totalEvents += numEvents;
 		}
+		cursor.free();
 		System.out.println("Session Limit: " + sessionLimit + " Trails: " + n + " Sessions: " + totalSessions + " Events: " + totalEvents);
 	}
 }
