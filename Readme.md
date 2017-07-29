@@ -146,7 +146,7 @@ Tests are run inside a docker container which can be found at `aholyoke/traildb-
 
 - [x] numTrails
 
-- [ ] numEvents
+- [x] numEvents
 
 - [x] numFields
 
@@ -185,11 +185,11 @@ Tests are run inside a docker container which can be found at `aholyoke/traildb-
 
 #### TrailDBCursor
 
-- [ ] free
+- [x] free
 
 - [x] getTrail
 
-- [ ] getTrailLength
+- [x] getTrailLength
 
 - [ ] setEventFilter
 
