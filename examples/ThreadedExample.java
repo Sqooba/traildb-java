@@ -34,18 +34,28 @@ class Parallel implements Runnable {
 			totalEvents += numEvents;
 		}
 		cursor.free();
+
 		System.out.println("Session Limit: " + sessionLimit + " Trails: " + n + " Sessions: " + totalSessions + " Events: " + totalEvents);
 	}
 }
 
 class ThreadedExample {
 
-	public static void main(String[] args) throws FileNotFoundException {
+	public static void main(String[] args) throws FileNotFoundException, InterruptedException {
 		TrailDB tdb = new TrailDB("wikipedia-history-small.tdb");
+		int n = 8;
+		Thread[] threads = new Thread[n];
 
-		for (int i = 0; i < 8; i++) {
+		for (int i = 0; i < n; i++) {
 			Thread thread = new Thread(new Parallel(tdb, 60 * (i + 1)), "" + i);
+			threads[i] = thread;
 			thread.start();
 		}
+		for (int i = 0; i < n; i++) {
+			threads[i].join();
+		}
+
+		System.out.println("Closing tdb");
+		tdb.close();
 	}
 }
