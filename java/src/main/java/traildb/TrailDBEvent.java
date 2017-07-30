@@ -16,7 +16,7 @@ public class TrailDBEvent {
 		return native_getItem(i);
 	}
 
-	public native String native_getItem(int i);
+	private native String native_getItem(int i);
 
 	static {
 		System.loadLibrary("TraildbJavaNative");
