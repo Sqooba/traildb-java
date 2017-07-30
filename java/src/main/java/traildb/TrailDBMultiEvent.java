@@ -5,5 +5,5 @@ import traildb.TrailDBEvent;
 
 public class TrailDBMultiEvent {
 	public TrailDBEvent event;
-	long cursor_idx;
+	public long cursorIndex;
 }
