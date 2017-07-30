@@ -76,7 +76,56 @@ JNIEXPORT void JNICALL Java_traildb_TrailDBMultiCursor_reset(JNIEnv *env, jobjec
  * Signature: ()Ltraildb/TrailDBMultiEvent;
  */
 JNIEXPORT jobject JNICALL Java_traildb_TrailDBMultiCursor_next(JNIEnv *env, jobject obj) {
+	jobject event_obj;
+	jobject multi_event_obj;
 
+	tdb_multi_cursor *multi_cur;
+	const tdb_multi_event *multi_event;
+	const tdb_event *event;
+
+	// Get cur pointer
+
+	multi_cur = (tdb_multi_cursor *) (*env)->GetLongField(env, obj, FID_traildb_TrailDBMultiCursor_cur);
+
+	// Call multi cursor next
+
+	multi_event = tdb_multi_cursor_next(multi_cur);
+
+	if (multi_event == NULL) {
+	  return NULL;
+	}
+
+	event = multi_event->event;
+
+	// Create TrailDBEvent
+
+	event_obj = (*env)->NewObject(env, CID_traildb_TrailDBEvent, MID_traildb_TrailDBEvent_Constructor);
+
+	// Store timestamp
+
+	(*env)->SetLongField(env, event_obj, FID_traildb_TrailDBEvent_timestamp, (long) event->timestamp);
+
+	// Store number of items
+
+	(*env)->SetLongField(env, event_obj, FID_traildb_TrailDBEvent_numItems, (long) event->num_items);
+
+	// Store items pointer
+
+	(*env)->SetLongField(env, event_obj, FID_traildb_TrailDBEvent_items, (long) event->items);
+
+	// Store db pointer on event
+
+	(*env)->SetLongField(env, event_obj, FID_traildb_TrailDBEvent_db, (long) multi_event->db);
+
+	// Create TrailDBMultiEvent
+
+	multi_event_obj = (*env)->NewObject(env, CID_traildb_TrailDBMultiEvent, MID_traildb_TrailDBMultiEvent_Constructor);
+
+	// Store event in multi event
+
+	(*env)->SetObjectField(env, multi_event_obj, FID_traildb_TrailDBMultiEvent_event, event_obj);
+
+	return multi_event_obj;
 }
 
 /*
