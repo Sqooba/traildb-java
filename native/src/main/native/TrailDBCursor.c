@@ -19,7 +19,15 @@ jfieldID FID_traildb_TrailDBEvent_db;
 
 
 JNIEXPORT void JNICALL Java_traildb_TrailDBCursor_free(JNIEnv *env, jobject obj) {
+	tdb_cursor *cursor;
 
+	// Retrieve cursor pointer
+
+	cursor = (tdb_cursor *) (*env)->GetLongField(env, obj, FID_traildb_TrailDBCursor_cur);
+
+	// Free cursor
+
+	tdb_cursor_free(cursor);
 }
 
 JNIEXPORT void JNICALL Java_traildb_TrailDBCursor_getTrail(JNIEnv *env, jobject obj, jlong trail_id) {
@@ -32,11 +40,21 @@ JNIEXPORT void JNICALL Java_traildb_TrailDBCursor_getTrail(JNIEnv *env, jobject 
 	// Get trail from cursor
 
 	tdb_get_trail(cur, trail_id);
-
 }
 
 JNIEXPORT jlong JNICALL Java_traildb_TrailDBCursor_getTrailLength(JNIEnv *env, jobject obj) {
+	tdb_cursor *cursor;
+	uint64_t length;
 
+	// Retrieve cursor pointer
+
+	cursor = (tdb_cursor *) (*env)->GetLongField(env, obj, FID_traildb_TrailDBCursor_cur);
+
+	// Get trail length
+
+	length = tdb_get_trail_length(cursor);
+
+	return length;
 }
 
 JNIEXPORT void JNICALL Java_traildb_TrailDBCursor_setEventFilter(JNIEnv *env, jobject obj, jobject filter) {

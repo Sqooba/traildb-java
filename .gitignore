@@ -1,3 +1,7 @@
 native/linux/target
+native/mac/target
+it/target
+java/target
 *.tdb
 *.iml
+*.class

@@ -154,7 +154,7 @@ java -Djava.library.path=`pwd`/native/linux/target/ -cp examples:native/linux/ta
 
 - [x] numTrails
 
-- [ ] numEvents
+- [x] numEvents
 
 - [x] numFields
 
@@ -180,7 +180,7 @@ java -Djava.library.path=`pwd`/native/linux/target/ -cp examples:native/linux/ta
 
 - [ ] getItem
 
-- [ ] close
+- [x] close
 
 - [ ] getUUID
 
@@ -193,11 +193,11 @@ java -Djava.library.path=`pwd`/native/linux/target/ -cp examples:native/linux/ta
 
 #### TrailDBCursor
 
-- [ ] free
+- [x] free
 
 - [x] getTrail
 
-- [ ] getTrailLength
+- [x] getTrailLength
 
 - [ ] setEventFilter
 
