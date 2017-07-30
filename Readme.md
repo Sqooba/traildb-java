@@ -188,8 +188,6 @@ java -Djava.library.path=`pwd`/native/linux/target/ -cp examples:native/linux/ta
 
 - [x] cursorNew
 
-- [ ] multiCursorNew
-
 
 #### TrailDBCursor
 
@@ -242,7 +240,7 @@ java -Djava.library.path=`pwd`/native/linux/target/ -cp examples:native/linux/ta
 
 - [ ] reset
 
-- [ ] next
+- [x] next
 
 - [ ] nextBatch
 
