@@ -18,7 +18,7 @@ JNIEXPORT void JNICALL Java_traildb_TrailDBMultiCursor_init(JNIEnv *env, jobject
 
 	int num_cursors = (*env)->GetArrayLength(env, cursors);
 
-	tgt_cursors = malloc(num_cursors * sizeof(long));
+	tgt_cursors = malloc(num_cursors * sizeof(tdb_cursor *));
 
 	for (int i = 0; i < num_cursors; i++) {
 		cursor_obj = (*env)->GetObjectArrayElement(env, cursors, i);
