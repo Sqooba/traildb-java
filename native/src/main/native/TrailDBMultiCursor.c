@@ -1,9 +1,28 @@
 #include <traildb.h>
 #include "traildb-java.h"
 
+
+jclass CID_traildb_TrailDBMultiEvent;
+
+jclass CID_traildb_TrailDBEvent;
+
+jmethodID MID_traildb_TrailDBMultiEvent_Constructor;
+
+jmethodID MID_traildb_TrailDBEvent_Constructor;
+
 jfieldID FID_traildb_TrailDBMultiCursor_cur;
 
 jfieldID FID_traildb_TrailDBCursor_cur;
+
+jfieldID FID_traildb_TrailDBMultiEvent_event;
+
+jfieldID FID_traildb_TrailDBEvent_timestamp;
+
+jfieldID FID_traildb_TrailDBEvent_numItems;
+
+jfieldID FID_traildb_TrailDBEvent_items;
+
+jfieldID FID_traildb_TrailDBEvent_db;
 
 /*
  * Class:     traildb_TrailDBMultiCursor
@@ -84,9 +103,35 @@ JNIEXPORT jobject JNICALL Java_traildb_TrailDBMultiCursor_peek(JNIEnv *env, jobj
  * Signature: ()V
  */
 JNIEXPORT void JNICALL Java_traildb_TrailDBMultiCursor_initIDs(JNIEnv *env, jclass cls) {
-	FID_traildb_TrailDBMultiCursor_cur = (*env)->GetFieldID(env, cls, "cur", "J");
+	jclass traildb_TrailDBMultiEvent = (*env)->FindClass(env, "traildb/TrailDBMultiEvent");
+
+	jclass traildb_TrailDBEvent = (*env)->FindClass(env, "traildb/TrailDBEvent");
 
 	jclass traildb_TrailDBCursor = (*env)->FindClass(env, "traildb/TrailDBCursor");
 
+	CID_traildb_TrailDBMultiEvent = (jclass) (*env)->NewGlobalRef(env, traildb_TrailDBMultiEvent);
+
+	CID_traildb_TrailDBEvent = (jclass) (*env)->NewGlobalRef(env, traildb_TrailDBEvent);
+
+	MID_traildb_TrailDBMultiEvent_Constructor = (*env)->GetMethodID(env, CID_traildb_TrailDBMultiEvent, "<init>", "()V");
+
+	MID_traildb_TrailDBEvent_Constructor = (*env)->GetMethodID(env, CID_traildb_TrailDBEvent, "<init>", "()V");
+
+	FID_traildb_TrailDBMultiCursor_cur = (*env)->GetFieldID(env, cls, "cur", "J");
+
 	FID_traildb_TrailDBCursor_cur = (*env)->GetFieldID(env, traildb_TrailDBCursor, "cur", "J");
+
+	FID_traildb_TrailDBMultiEvent_event = (*env)->GetFieldID(env, CID_traildb_TrailDBMultiEvent, "event", "Ltraildb/TrailDBEvent;");
+
+	FID_traildb_TrailDBEvent_timestamp = (*env)->GetFieldID(env, CID_traildb_TrailDBEvent, "timestamp", "J");
+
+	FID_traildb_TrailDBEvent_numItems = (*env)->GetFieldID(env, CID_traildb_TrailDBEvent, "numItems", "J");
+
+	FID_traildb_TrailDBEvent_items = (*env)->GetFieldID(env, CID_traildb_TrailDBEvent, "items", "J");
+
+	FID_traildb_TrailDBEvent_db = (*env)->GetFieldID(env, CID_traildb_TrailDBEvent, "db", "J");
+
+	(*env)->DeleteLocalRef(env, traildb_TrailDBMultiEvent);
+
+	(*env)->DeleteLocalRef(env, traildb_TrailDBEvent);
 }
