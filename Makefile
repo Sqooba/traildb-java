@@ -1,5 +1,6 @@
 
-all: build deploy
+.PHONY: all
+all: deploy_base deploy_installed
 
 .PHONY: build
 build:
@@ -13,7 +14,12 @@ install:
 run:
 	docker run -it traildb-java bash
 
-.PHONY: deploy
-deploy:
-	docker tag traildb-java aholyoke/traildb-java:latest
-	sudo docker push aholyoke/traildb-java
+.PHONY: deploy_base
+deploy_base: build
+	docker tag traildb-java aholyoke/traildb-java:base
+	docker push aholyoke/traildb-java
+
+.PHONY: deploy_installed
+deploy_installed: install
+	docker tag traildb-java aholyoke/traildb-java:installed
+	docker push aholyoke/traildb-java
