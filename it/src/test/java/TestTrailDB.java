@@ -25,7 +25,7 @@ public class TestTrailDB extends TestCase {
 
 	public void testBasic() throws FileNotFoundException {
 		TrailDB tdb = new TrailDB("test.tdb");
-		TrailDBCursor cur = tdb.cursorNew();
+		TrailDBCursor cur = new TrailDBCursor(tdb);
 		long numCookies = tdb.numTrails();
 		TrailDBEvent event;
 		for (int i=0; i < numCookies; i++) {
@@ -61,7 +61,7 @@ public class TestTrailDB extends TestCase {
 
 	public void testPeek() throws FileNotFoundException {
 		TrailDB tdb = new TrailDB("test.tdb");
-		TrailDBCursor cur = tdb.cursorNew();
+		TrailDBCursor cur = new TrailDBCursor(tdb);
 		long numCookies = tdb.numTrails();
 		TrailDBEvent event;
 		TrailDBEvent peekEvent = null;
