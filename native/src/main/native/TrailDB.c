@@ -3,8 +3,6 @@
 
 jclass CID_traildb_TrailDBCursor;
 
-jmethodID MID_traildb_TrailDBCursor_Constructor;
-
 jfieldID FID_traildb_TrailDB_db;
 
 jfieldID FID_traildb_TrailDBCursor_cur;
@@ -183,38 +181,6 @@ JNIEXPORT void JNICALL Java_traildb_TrailDB_getTrailId(JNIEnv *env, jobject obj,
 
 }
 
-JNIEXPORT jobject JNICALL Java_traildb_TrailDB_cursorNew(JNIEnv *env, jobject obj) {
-	jclass cls;
-	jfieldID fid;
-	jmethodID cid;
-	jobject cursor_obj;
-
-	const tdb *db;
-	const tdb_cursor *cur;
-
-	// Retrieve db pointer
-
-	db = (tdb *) (*env)->GetLongField(env, obj, FID_traildb_TrailDB_db);
-
-	// Make new cursor
-
-	cur = tdb_cursor_new(db);
-
-	// Create TrailDBCursor
-
-	cursor_obj = (*env)->NewObject(env, CID_traildb_TrailDBCursor, MID_traildb_TrailDBCursor_Constructor);
-
-	// Store cur pointer on cursor (cursor_obj.cur = cur)
-
-	(*env)->SetLongField(env, cursor_obj, FID_traildb_TrailDBCursor_cur, (long) cur);
-
-	// Store db pointer on cursor (cursor_obj.db = db)
-
-	(*env)->SetLongField(env, cursor_obj, FID_traildb_TrailDBCursor_db, (long) db);
-
-	return cursor_obj;
-}
-
 /*
  * Class:     traildb_TrailDB
  * Method:    initIDs
@@ -224,8 +190,6 @@ JNIEXPORT void JNICALL Java_traildb_TrailDB_initIDs(JNIEnv *env, jclass cls) {
 	jclass traildb_TrailDBCursor = (*env)->FindClass(env, "traildb/TrailDBCursor");
 
 	CID_traildb_TrailDBCursor = (jclass) (*env)->NewGlobalRef(env, traildb_TrailDBCursor);
-
-	MID_traildb_TrailDBCursor_Constructor = (*env)->GetMethodID(env, CID_traildb_TrailDBCursor, "<init>", "()V");
 
 	FID_traildb_TrailDB_db = (*env)->GetFieldID(env, cls, "db", "J");
 
