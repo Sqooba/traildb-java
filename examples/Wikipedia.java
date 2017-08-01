@@ -7,7 +7,7 @@ public class Wikipedia {
 	public static long SESSION_LIMIT = 30 * 60;
 	public static void sessions(TrailDB tdb) {
 		System.out.print("Number of events: " + tdb.numEvents());
-		TrailDBCursor cursor = tdb.cursorNew();
+		TrailDBCursor cursor = new TrailDBCursor(tdb);
 		long n = tdb.numTrails();
 		long totalSessions = 0;
 		long totalEvents = 0;

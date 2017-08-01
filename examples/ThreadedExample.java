@@ -12,7 +12,7 @@ class Parallel implements Runnable {
 	}
 	public void run() {
 		System.out.println("Session Limit: " + sessionLimit);
-		TrailDBCursor cursor = tdb.cursorNew();
+		TrailDBCursor cursor = new TrailDBCursor(tdb);
 		long n = tdb.numTrails();
 		long totalSessions = 0;
 		long totalEvents = 0;

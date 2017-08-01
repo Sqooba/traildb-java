@@ -12,7 +12,7 @@ public class Example {
 	public static void read() throws FileNotFoundException {
 		System.out.println("Begin Test");
 		TrailDB tdb = new TrailDB("tiny.tdb");
-		TrailDBCursor cur = tdb.cursorNew();
+		TrailDBCursor cur = new TrailDBCursor(tdb);
 		TrailDBEvent e1;
 		TrailDBEvent e2;
 
