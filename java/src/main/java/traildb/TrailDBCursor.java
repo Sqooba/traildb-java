@@ -9,6 +9,12 @@ public class TrailDBCursor {
 
 	private long db;
 
+	public TrailDBCursor(TrailDB tdb) {
+		init(tdb);
+	}
+
+	private native void init(TrailDB tdb);
+
 	public native void free();
 
 	public native void getTrail(long trailId);

@@ -27,8 +27,8 @@ public class MultiCursors {
 		System.out.println("Reading");
 		TrailDB tdb1 = new TrailDB("tiny1.tdb");
 		TrailDB tdb2 = new TrailDB("tiny2.tdb");
-		TrailDBCursor c1 = tdb1.cursorNew();
-		TrailDBCursor c2 = tdb2.cursorNew();
+		TrailDBCursor c1 = new TrailDBCursor(tdb1);
+		TrailDBCursor c2 = new TrailDBCursor(tdb2);
 		c1.getTrail(0);
 		c2.getTrail(1);
 

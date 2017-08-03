@@ -85,10 +85,6 @@ public class TrailDB {
 
 	public native void getTrailId(UUID uuid);
 
-	// Cursors
-
-	public native TrailDBCursor cursorNew();
-
 	private static native void initIDs();
 
 	static {
