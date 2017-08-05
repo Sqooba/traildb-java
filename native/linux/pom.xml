@@ -55,7 +55,6 @@
 					<fileName>TrailDBTrail.c</fileName>
 					<fileName>TrailDBMultiTrail.c</fileName>
 					<fileName>TrailDBEventFilter.c</fileName>
-					<fileName>TrailDBItem.c</fileName>
 					</fileNames>
 				</source>
 				</sources>
@@ -87,7 +86,6 @@
 					<javahClassName>traildb.TrailDBTrail</javahClassName>
 					<javahClassName>traildb.TrailDBMultiTrail</javahClassName>
 					<javahClassName>traildb.TrailDBEventFilter</javahClassName>
-					<javahClassName>traildb.TrailDBItem</javahClassName>
 					</javahClassNames>
 				</configuration>
 				<goals>
