@@ -1,8 +1,5 @@
 package traildb;
 
-import traildb.TrailDBEventFilter;
-import traildb.TrailDBEvent;
-
 public class TrailDBCursor {
 
 	private long cur;
@@ -25,9 +22,9 @@ public class TrailDBCursor {
 
 	public native void unsetEventFilter();
 
-	public native TrailDBEvent next();
+	public native TrailDBTrail next();
 
-	public native TrailDBEvent peek();
+	public native TrailDBTrail peek();
 
 	private static native void initIDs();
 	
