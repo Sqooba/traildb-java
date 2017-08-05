@@ -2,7 +2,8 @@ package traildb;
 
 import traildb.TrailDBItem;
 
-public class TrailDBEvent {
+public class TrailDBTrail
+{
 	public long timestamp;
 	public long numItems;
 
