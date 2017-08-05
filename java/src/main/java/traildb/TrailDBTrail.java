@@ -1,15 +1,28 @@
 package traildb;
 
-import traildb.TrailDBItem;
-
 public class TrailDBTrail
 {
-	public long timestamp;
-	public long numItems;
+	private long timestamp;
 
-	private long items; // Points to beginning of items
+	private long numItems;
+
+	private long items;
+
 	private long db;
 
+	private long cur;
+
+	public TrailDBTrail(TrailDB tdb, long trailId) {
+		init(tdb, trailId);
+	}
+
+	private native void init(TrailDB tdb, long trailId);
+
+	/**
+	 * Get item i that trail is cursor is currently pointing at
+	 * @param i index of item to get
+	 * @return The item value
+	 */
 	public String getItem(int i) {
 		if (i >= numItems || i < 0) {
 			throw new IndexOutOfBoundsException("getItem(" + i + ") but numItems in event is" + numItems);
@@ -18,6 +31,29 @@ public class TrailDBTrail
 	}
 
 	private native String native_getItem(int i);
+
+
+	/**
+	 * Set the cursor to a new trailId
+	 * @param trailId
+	 */
+	public native void getTrail(long trailId);
+
+	/**
+	 * Get the length of the trail. This exhausts the trail
+	 * @return
+	 */
+	public native long getTrailLength();
+
+	public native void setEventFilter(TrailDBEventFilter filter);
+
+	public native void unsetEventFilter();
+
+	public native TrailDBTrail next();
+
+	public native TrailDBTrail peek();
+
+	private static native void initIDs();
 
 	static {
 		System.loadLibrary("TraildbJavaNative");
