@@ -1,13 +1,8 @@
 #include <traildb.h>
 #include "traildb-java.h"
 
-jclass CID_traildb_TrailDBCursor;
 
 jfieldID FID_traildb_TrailDB_db;
-
-jfieldID FID_traildb_TrailDBCursor_cur;
-
-jfieldID FID_traildb_TrailDBCursor_db;
 
 
 JNIEXPORT void JNICALL Java_traildb_TrailDB_init(JNIEnv *env, jobject obj, jstring root) {
@@ -187,15 +182,7 @@ JNIEXPORT void JNICALL Java_traildb_TrailDB_getTrailId(JNIEnv *env, jobject obj,
  * Signature: ()V
  */
 JNIEXPORT void JNICALL Java_traildb_TrailDB_initIDs(JNIEnv *env, jclass cls) {
-	jclass traildb_TrailDBCursor = (*env)->FindClass(env, "traildb/TrailDBCursor");
-
-	CID_traildb_TrailDBCursor = (jclass) (*env)->NewGlobalRef(env, traildb_TrailDBCursor);
 
 	FID_traildb_TrailDB_db = (*env)->GetFieldID(env, cls, "db", "J");
 
-	FID_traildb_TrailDBCursor_cur = (*env)->GetFieldID(env, CID_traildb_TrailDBCursor, "cur", "J");
-
-	FID_traildb_TrailDBCursor_db  = (*env)->GetFieldID(env, CID_traildb_TrailDBCursor, "db", "J");
-
-	(*env)->DeleteLocalRef(env, traildb_TrailDBCursor);
 }
