@@ -53,6 +53,20 @@ public class TrailDBTrail
 
 	public native TrailDBTrail peek();
 
+	public long getTimestamp() {
+		if (items == 0) {
+			throw new IllegalStateException("Cursor is not pointing at an event");
+		}
+		return timestamp;
+	}
+
+	public long getNumItems() {
+		if (items == 0) {
+			throw new IllegalStateException("Cursor is not pointing at an event");
+		}
+		return numItems;
+	}
+
 	private static native void initIDs();
 
 	static {
