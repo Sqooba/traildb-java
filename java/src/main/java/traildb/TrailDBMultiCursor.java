@@ -1,7 +1,5 @@
 package traildb;
 
-import traildb.TrailDBMultiEvent;
-
 public class TrailDBMultiCursor {
 
 	private long cur;
@@ -15,11 +13,11 @@ public class TrailDBMultiCursor {
 
 	public native void reset();
 
-	public native TrailDBMultiEvent next();
+	public native TrailDBMultiTrail next();
 
-	public native TrailDBMultiEvent[] nextBatch(int maxEvents);
+	public native TrailDBMultiTrail[] nextBatch(int maxEvents);
 	
-	public native TrailDBMultiEvent peek();
+	public native TrailDBMultiTrail peek();
 
 	private static native void initIDs();
 
