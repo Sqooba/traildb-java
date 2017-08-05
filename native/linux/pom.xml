@@ -52,11 +52,10 @@
 					<fileNames>
 					<fileName>TrailDB.c</fileName>
 					<fileName>TrailDBConstructor.c</fileName>
-					<fileName>TrailDBCursor.c</fileName>
 					<fileName>TrailDBTrail.c</fileName>
+					<fileName>TrailDBMultiTrail.c</fileName>
 					<fileName>TrailDBEventFilter.c</fileName>
 					<fileName>TrailDBItem.c</fileName>
-					<fileName>TrailDBMultiCursor.c</fileName>
 					</fileNames>
 				</source>
 				</sources>
@@ -85,11 +84,10 @@
 					<javahClassNames>
 					<javahClassName>traildb.TrailDB</javahClassName>
 					<javahClassName>traildb.TrailDBConstructor</javahClassName>
-					<javahClassName>traildb.TrailDBCursor</javahClassName>
 					<javahClassName>traildb.TrailDBTrail</javahClassName>
+					<javahClassName>traildb.TrailDBMultiTrail</javahClassName>
 					<javahClassName>traildb.TrailDBEventFilter</javahClassName>
 					<javahClassName>traildb.TrailDBItem</javahClassName>
-					<javahClassName>traildb.TrailDBMultiCursor</javahClassName>
 					</javahClassNames>
 				</configuration>
 				<goals>
