@@ -62,7 +62,7 @@
 				</sources>
 
 				<compilerStartOptions>
-				<compilerStartOption></compilerStartOption>
+				<compilerStartOption>-I/usr/local/Cellar/traildb/0.6/include</compilerStartOption>
 				</compilerStartOptions>
 
 				<linkerStartOptions>
