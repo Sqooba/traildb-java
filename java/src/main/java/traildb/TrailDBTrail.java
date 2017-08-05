@@ -57,5 +57,6 @@ public class TrailDBTrail
 
 	static {
 		System.loadLibrary("TraildbJavaNative");
+		initIDs();
 	}
 }
