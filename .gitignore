@@ -5,3 +5,4 @@ java/target
 *.tdb
 *.iml
 *.class
+.DS_Store
