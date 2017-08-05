@@ -1,6 +1,7 @@
 package traildb;
 
-public class TrailDBMultiEvent {
+public class TrailDBMultiTrail
+{
 	public TrailDBTrail event;
 	public long cursorIndex;
 }
