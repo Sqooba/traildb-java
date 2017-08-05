@@ -1,11 +1,10 @@
 package traildb;
 
-import traildb.TrailDBItem;
-
 public class TrailDBEventFilter {
 	public TrailDBEventFilter() {
 		init();
 	}
+
 	private native void init();
 
 	public static native TrailDBEventFilter matchNone();
@@ -14,7 +13,7 @@ public class TrailDBEventFilter {
 
 	public native void free();
 
-	public native void addTerm(TrailDBItem item, boolean negative);
+	// public native void addTerm(TrailDBItem item, boolean negative); TODO: Fix this
 
 	public native void addTimeRange(int startTime, int endTime);
 
@@ -28,8 +27,6 @@ public class TrailDBEventFilter {
 
 	// TODO: Cache these results at the Java layer
 	public native boolean isNegative(int clauseIndex, int termIndex);
-
-	public native TrailDBItem getItem(int clauseIndex, int termIndex);
 
 	public native int getStartTime(int clauseIndex, int termIndex);
 

@@ -71,8 +71,6 @@ public class TrailDB {
 
 	public native String getFieldName(int field);
 
-	public native TrailDBItem getItem(int field, String value);
-
 	public native void close();
 
 	// UUID's
