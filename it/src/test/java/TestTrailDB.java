@@ -25,35 +25,34 @@ public class TestTrailDB extends TestCase {
 
 	public void testBasic() throws FileNotFoundException {
 		TrailDB tdb = new TrailDB("test.tdb");
-		TrailDBCursor cur = new TrailDBCursor(tdb);
+		TrailDBTrail trail = new TrailDBTrail(tdb, 0);
 		long numCookies = tdb.numTrails();
-		TrailDBEvent event;
 		for (int i=0; i < numCookies; i++) {
-			cur.getTrail(i);
-			while ((event = cur.next()) != null) {
-				switch ((int) event.timestamp) {
+			trail.getTrail(i);
+			while (trail.next() != null) {
+				switch ((int) trail.getTimestamp()) {
 					case 1:
-						assertEquals(event.getItem(0), "bob");
-						assertEquals(event.getItem(1), "run");
+						assertEquals(trail.getItem(0), "bob");
+						assertEquals(trail.getItem(1), "run");
 						break;
 					case 2:
-						assertEquals(event.getItem(0), "fred");
-						assertEquals(event.getItem(1), "walk");
+						assertEquals(trail.getItem(0), "fred");
+						assertEquals(trail.getItem(1), "walk");
 						break;
 					case 4:
-						assertEquals(event.getItem(0), "jerry");
-						assertEquals(event.getItem(1), "speak");
+						assertEquals(trail.getItem(0), "jerry");
+						assertEquals(trail.getItem(1), "speak");
 						break;
 					case 5:
-						assertEquals(event.getItem(0), "ted");
-						assertEquals(event.getItem(1), "fly");
+						assertEquals(trail.getItem(0), "ted");
+						assertEquals(trail.getItem(1), "fly");
 						break;
 					case 6:
-						assertEquals(event.getItem(0), "doug");
-						assertEquals(event.getItem(1), "dab");
+						assertEquals(trail.getItem(0), "doug");
+						assertEquals(trail.getItem(1), "dab");
 						break;
 					default:
-						fail("Unrecognized timestamp " + event.timestamp);
+						fail("Unrecognized timestamp " + trail.getTimestamp());
 				}
 			}
 		}
@@ -61,46 +60,50 @@ public class TestTrailDB extends TestCase {
 
 	public void testPeek() throws FileNotFoundException {
 		TrailDB tdb = new TrailDB("test.tdb");
-		TrailDBCursor cur = new TrailDBCursor(tdb);
+		TrailDBTrail trail = new TrailDBTrail(tdb, 0);
 		long numCookies = tdb.numTrails();
-		TrailDBEvent event;
-		TrailDBEvent peekEvent = null;
 		int foundEvents = 0;
+		String[] peekValues = new String[] {"", ""};
+
 		for (int i=0; i < numCookies; i++) {
-			cur.getTrail(i);
-			while ((event = cur.next()) != null) {
-				cur.peek();
-				if (peekEvent != null) {
-					assertEquals(event.getItem(0), peekEvent.getItem(0));
-					assertEquals(event.getItem(1), peekEvent.getItem(1));
+			trail.getTrail(i);
+			while (trail.next() != null) {
+				if (peekValues[0] != "") {
+					assertEquals(trail.getItem(0), peekValues[0]);
+					assertEquals(trail.getItem(1), peekValues[1]);
 				}
 				foundEvents++;
 
-				switch ((int) event.timestamp) {
+				switch ((int) trail.getTimestamp()) {
 					case 1:
-						assertEquals(event.getItem(0), "bob");
-						assertEquals(event.getItem(1), "run");
+						assertEquals(trail.getItem(0), "bob");
+						assertEquals(trail.getItem(1), "run");
 						break;
 					case 2:
-						assertEquals(event.getItem(0), "fred");
-						assertEquals(event.getItem(1), "walk");
+						assertEquals(trail.getItem(0), "fred");
+						assertEquals(trail.getItem(1), "walk");
 						break;
 					case 4:
-						assertEquals(event.getItem(0), "jerry");
-						assertEquals(event.getItem(1), "speak");
+						assertEquals(trail.getItem(0), "jerry");
+						assertEquals(trail.getItem(1), "speak");
 						break;
 					case 5:
-						assertEquals(event.getItem(0), "ted");
-						assertEquals(event.getItem(1), "fly");
+						assertEquals(trail.getItem(0), "ted");
+						assertEquals(trail.getItem(1), "fly");
 						break;
 					case 6:
-						assertEquals(event.getItem(0), "doug");
-						assertEquals(event.getItem(1), "dab");
+						assertEquals(trail.getItem(0), "doug");
+						assertEquals(trail.getItem(1), "dab");
 						break;
 					default:
-						fail("Unrecognized timestamp " + event.timestamp);
+						fail("Unrecognized timestamp " + trail.getTimestamp());
 				}
-				peekEvent = cur.peek();
+
+				if (trail.peek() != null) {
+					peekValues = new String[] { trail.getItem(0), trail.getItem(1) };
+				} else {
+					peekValues = new String[] {"", ""};
+				}
 			}
 		}
 		assertEquals(foundEvents, 5);
