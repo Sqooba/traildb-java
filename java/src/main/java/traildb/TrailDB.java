@@ -1,9 +1,5 @@
 package traildb;
 
-import traildb.TrailDBItem;
-import traildb.TrailDBCursor;
-import traildb.TrailDBMultiCursor;
-
 import java.util.UUID;
 import java.util.HashMap;
 import java.io.FileNotFoundException;
