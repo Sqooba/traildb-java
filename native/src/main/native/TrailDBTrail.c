@@ -31,13 +31,17 @@ JNIEXPORT void JNICALL Java_traildb_TrailDBTrail_init(JNIEnv * env, jobject obj,
 
 	tdb_get_trail(cur, trail_id);
 
-	// Store cur pointer on cursor (obj.cur = cur)
+	// Store cur pointer on trail (obj.cur = cur)
 
 	(*env)->SetLongField(env, obj, FID_traildb_TrailDBTrail_cur, (long) cur);
 
-	// Store db pointer on cursor (obj.db = db)
+	// Store db pointer on trail (obj.db = db)
 
 	(*env)->SetLongField(env, obj, FID_traildb_TrailDBTrail_db, (long) db);
+
+	// Initialize items to NULL because we haven't called next yet
+
+	(*env)->SetLongField(env, obj, FID_traildb_TrailDBTrail_items, 0L);
 }
 
 JNIEXPORT jstring JNICALL Java_traildb_TrailDBTrail_native_1getItem(JNIEnv *env, jobject obj, jint index) {
@@ -124,7 +128,7 @@ JNIEXPORT jobject JNICALL Java_traildb_TrailDBTrail_next(JNIEnv *env, jobject ob
 	if (event == NULL) {
 	  (*env)->SetLongField(env, obj, FID_traildb_TrailDBTrail_timestamp, 0L);
 	  (*env)->SetLongField(env, obj, FID_traildb_TrailDBTrail_numItems, 0L);
-	  (*env)->SetLongField(env, obj, FID_traildb_TrailDBTrail_items, NULL);
+	  (*env)->SetLongField(env, obj, FID_traildb_TrailDBTrail_items, 0L);
 
 		return NULL;
 	}
