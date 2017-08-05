@@ -15,7 +15,7 @@ jfieldID FID_traildb_TrailDBTrail_numItems;
 jfieldID FID_traildb_TrailDBTrail_items;
 
 
-JNIEXPORT void JNICALL Java_traildb_TrailDBTrail_init(JNIEnv * env, jobject obj, jobject tdb_obj, jlong traild_id) {
+JNIEXPORT void JNICALL Java_traildb_TrailDBTrail_init(JNIEnv * env, jobject obj, jobject tdb_obj, jlong trail_id) {
 	const tdb *db;
 	const tdb_cursor *cur;
 
@@ -165,7 +165,7 @@ JNIEXPORT jobject JNICALL Java_traildb_TrailDBTrail_peek(JNIEnv *env, jobject ob
 	if (event == NULL) {
 	  (*env)->SetLongField(env, obj, FID_traildb_TrailDBTrail_timestamp, 0L);
 	  (*env)->SetLongField(env, obj, FID_traildb_TrailDBTrail_numItems, 0L);
-	  (*env)->SetLongField(env, obj, FID_traildb_TrailDBTrail_items, NULL);
+	  (*env)->SetLongField(env, obj, FID_traildb_TrailDBTrail_items, 0L);
 
 		return NULL;
 	}
