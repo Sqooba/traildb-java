@@ -17,7 +17,7 @@ jfieldID FID_traildb_TrailDBTrail_items;
 
 JNIEXPORT void JNICALL Java_traildb_TrailDBTrail_init(JNIEnv * env, jobject obj, jobject tdb_obj, jlong trail_id) {
 	const tdb *db;
-	const tdb_cursor *cur;
+	tdb_cursor *cur;
 
 	// Retrieve db pointer
 
