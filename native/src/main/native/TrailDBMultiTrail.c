@@ -47,6 +47,42 @@ JNIEXPORT void JNICALL Java_traildb_TrailDBMultiTrail_init(JNIEnv *env, jobject 
 	(*env)->SetLongField(env, obj, FID_traildb_TrailDBMultiTrail_items, 0L);
 }
 
+
+/*
+ * Class:     traildb_TrailDBMultiTrail
+ * Method:    native_getItem
+ * Signature: (I)Ljava/lang/String;
+ */
+JNIEXPORT jstring JNICALL Java_traildb_TrailDBMultiTrail_native_1getItem(JNIEnv *env, jobject obj, jint index) {
+  const tdb *db;
+	const tdb_item *items;
+	const char *value;
+	char *tgt_value;
+	uint64_t value_length;
+
+	// Retrieve items pointer
+
+	items = (tdb_item *) (*env)->GetLongField(env, obj, FID_traildb_TrailDBMultiTrail_items);
+
+	// Retrieve db pointer
+
+	db = (tdb *) (*env)->GetLongField(env, obj, FID_traildb_TrailDBMultiTrail_db);
+
+	// Get the value of the item
+
+	value = tdb_get_item_value(db, items[index], &value_length);
+
+	// Convert buffer to null-terminated string
+
+	tgt_value = malloc(value_length * sizeof(char) + 1);
+
+	strncpy(tgt_value, value, value_length);
+
+	tgt_value[value_length] = '\0';
+
+	return (*env)->NewStringUTF(env, tgt_value);
+}
+
 /*
  * Class:     traildb_TrailDBMultiTrail
  * Method:    free
