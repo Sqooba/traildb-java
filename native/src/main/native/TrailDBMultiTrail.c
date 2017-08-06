@@ -146,9 +146,9 @@ JNIEXPORT jobject JNICALL Java_traildb_TrailDBMultiTrail_next(JNIEnv *env, jobje
 
 	(*env)->SetLongField(env, obj, FID_traildb_TrailDBMultiTrail_db, (long) multi_event->db);
 
-  // Store cursor index
+	// Store cursor index
 
-  (*env)->SetLongField(env, obj, FID_traildb_TrailDBMultiTrail_cursorIndex, (long) multi_event->cursor_idx);
+	(*env)->SetLongField(env, obj, FID_traildb_TrailDBMultiTrail_cursorIndex, (long) multi_event->cursor_idx);
 
 	return obj;
 }
