@@ -1,6 +1,7 @@
 package traildb;
 
 import java.util.UUID;
+import java.nio.ByteBuffer;
 import java.util.HashMap;
 import java.io.FileNotFoundException;
 
@@ -77,7 +78,19 @@ public class TrailDB {
 
 	public native UUID getUUID(int trailId);
 
-	public native void getTrailId(UUID uuid);
+	public long getTrailId(UUID uuid) {
+		byte uuidBytes[] = new byte[16];
+		uuidBytes = uuidToBytes(uuid);
+		return native_getTrailId(uuidBytes);
+	}
+
+	private native long native_getTrailId(byte[] bytes);
+
+	private static byte[] uuidToBytes(UUID uuid) {
+		long hi = uuid.getMostSignificantBits();
+		long lo = uuid.getLeastSignificantBits();
+		return ByteBuffer.allocate(16).putLong(hi).putLong(lo).array();
+	}
 
 	private static native void initIDs();
 

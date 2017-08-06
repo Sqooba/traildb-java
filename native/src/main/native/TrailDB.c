@@ -172,8 +172,23 @@ JNIEXPORT jobject JNICALL Java_traildb_TrailDB_getUUID(JNIEnv *env, jobject obj,
 
 }
 
-JNIEXPORT void JNICALL Java_traildb_TrailDB_getTrailId(JNIEnv *env, jobject obj, jobject uuid) {
+JNIEXPORT jlong JNICALL Java_traildb_TrailDB_native_1getTrailId(JNIEnv *env, jobject obj, jbyteArray uuid) {
+  tdb_error err;
+  const tdb *db;
+  const uint8_t tgt_uuid[16];
+  uint64_t trail_id;
 
+  // Retrieve db pointer
+
+  db = (tdb *) (*env)->GetLongField(env, obj, FID_traildb_TrailDB_db);
+
+  // Marshall UUID to byte array
+
+  (*env)->GetByteArrayRegion(env, uuid, 0, 16, (jbyte *) tgt_uuid);
+
+  err = tdb_get_trail_id(db, tgt_uuid, &trail_id);
+
+  return trail_id;
 }
 
 /*
