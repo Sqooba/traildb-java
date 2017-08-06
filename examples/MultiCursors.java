@@ -25,8 +25,8 @@ public class MultiCursors {
 		System.out.println("Reading");
 		TrailDB tdb1 = new TrailDB("tiny1.tdb");
 		TrailDB tdb2 = new TrailDB("tiny2.tdb");
-		TrailDBTrail trail1 = new TrailDBTrail(tdb1, 0);
-		TrailDBTrail trail2 = new TrailDBTrail(tdb2, 1);
+		TrailDBTrail trail1 = new TrailDBTrail(tdb1, tdb1.getTrailId(cookies[0]));
+		TrailDBTrail trail2 = new TrailDBTrail(tdb2, tdb2.getTrailId(cookies[0]));
 
 		TrailDBTrail[] trails = new TrailDBTrail[] {trail1, trail2};
 
@@ -34,7 +34,7 @@ public class MultiCursors {
 
 		while (multi.next() != null) {
 			System.out.println(multi.getTimestamp());
-//			System.out.println(multi.getItem(0));
+			System.out.println(multi.getItem(0));
 		}
 	}
 

@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 
 public class Wikipedia {
 	public static long SESSION_LIMIT = 30 * 60;
+
 	public static void sessions(TrailDB tdb) {
 		System.out.println("Number of events: " + tdb.numEvents());
 		TrailDBTrail trail = new TrailDBTrail(tdb, 0);
@@ -12,10 +13,8 @@ public class Wikipedia {
 		long totalSessions = 0;
 		long totalEvents = 0;
 
-		for (long i = 0; i < numTrails; i++) {
-			trail.getTrail(i);
-			trail.peek();
-
+		do {
+			trail.next();
 			long prevTime = trail.getTimestamp();
 			long numSessions = 1;
 			long numEvents = 1;
@@ -27,6 +26,10 @@ public class Wikipedia {
 			}
 			totalSessions += numSessions;
 			totalEvents += numEvents;
+		} while (trail.nextTrail());
+
+		for (long i = 0; i < numTrails; i++) {
+
 		}
 		System.out.println("Trails: " + numTrails + " Sessions: " + totalSessions + " Events: " + totalEvents);
 	}
