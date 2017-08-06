@@ -84,6 +84,10 @@ JNIEXPORT void JNICALL Java_traildb_TrailDBTrail_native_1getTrail(JNIEnv *env, j
 	// Get trail from cursor
 
 	tdb_get_trail(cur, trail_id);
+
+	// Initialize items to NULL because we haven't called next yet
+
+	(*env)->SetLongField(env, obj, FID_traildb_TrailDBTrail_items, 0L);
 }
 
 JNIEXPORT jlong JNICALL Java_traildb_TrailDBTrail_getTrailLength(JNIEnv *env, jobject obj) {
