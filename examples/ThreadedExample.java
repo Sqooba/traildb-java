@@ -12,30 +12,28 @@ class Parallel implements Runnable {
 	}
 	public void run() {
 		System.out.println("Session Limit: " + sessionLimit);
-		TrailDBCursor cursor = new TrailDBCursor(tdb);
-		long n = tdb.numTrails();
+		TrailDBTrail trail = new TrailDBTrail(tdb, 0);
+		long numTrails = tdb.numTrails();
 		long totalSessions = 0;
 		long totalEvents = 0;
 
-		for (long i = 0; i < n; i++) {
-			TrailDBEvent event;
-			cursor.getTrail(i);
-			event = cursor.next();
-			long prevTime = event.timestamp;
+		for (long i = 0; i < numTrails; i++) {
+			trail.getTrail(i);
+			trail.peek();
+			long prevTime = trail.getTimestamp();
 			long numSessions = 1;
 			long numEvents = 1;
-			while ((event = cursor.next()) != null) {
-				if (event.timestamp - prevTime > sessionLimit)
+			while (trail.next() != null) {
+				if (trail.getTimestamp() - prevTime > sessionLimit)
 					numSessions++;
-				prevTime = event.timestamp;
+				prevTime = trail.getTimestamp();
 				numEvents++;
 			}
 			totalSessions += numSessions;
 			totalEvents += numEvents;
 		}
-		cursor.free();
 
-		System.out.println("Session Limit: " + sessionLimit + " Trails: " + n + " Sessions: " + totalSessions + " Events: " + totalEvents);
+		System.out.println("Session Limit: " + sessionLimit + " Trails: " + numTrails + " Sessions: " + totalSessions + " Events: " + totalEvents);
 	}
 }
 

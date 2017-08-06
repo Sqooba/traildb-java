@@ -1,9 +1,5 @@
 package traildb;
 
-import traildb.TrailDBItem;
-import traildb.TrailDBCursor;
-import traildb.TrailDBMultiCursor;
-
 import java.util.UUID;
 import java.util.HashMap;
 import java.io.FileNotFoundException;
@@ -74,8 +70,6 @@ public class TrailDB {
 	public native int getField(String fieldName);
 
 	public native String getFieldName(int field);
-
-	public native TrailDBItem getItem(int field, String value);
 
 	public native void close();
 

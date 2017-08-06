@@ -1,8 +1,7 @@
 
 import traildb.TrailDB;
 import traildb.TrailDBConstructor;
-import traildb.TrailDBCursor;
-import traildb.TrailDBEvent;
+import traildb.TrailDBTrail;
 
 import java.util.UUID;
 import java.io.FileNotFoundException;
@@ -12,17 +11,14 @@ public class Example {
 	public static void read() throws FileNotFoundException {
 		System.out.println("Begin Test");
 		TrailDB tdb = new TrailDB("tiny.tdb");
-		TrailDBCursor cur = new TrailDBCursor(tdb);
-		TrailDBEvent e1;
-		TrailDBEvent e2;
-
-		cur.getTrail(0);
-
-		e1 = cur.next();
-
-		cur.getTrail(1);
-
-		e2 = cur.next();
+		System.out.println("Open Trail");
+		TrailDBTrail trail = new TrailDBTrail(tdb, 0);
+		System.out.println("Calling next");
+		trail.next();
+		System.out.println("Getting timestamp");
+		System.out.println(trail.getTimestamp());
+		System.out.println("Getting item 0");
+		System.out.println(trail.getItem(0));
 		System.out.println("End Test");
 	}
 

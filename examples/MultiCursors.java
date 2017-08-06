@@ -1,10 +1,8 @@
 
 import traildb.TrailDB;
 import traildb.TrailDBConstructor;
-import traildb.TrailDBCursor;
-import traildb.TrailDBEvent;
-import traildb.TrailDBMultiCursor;
-import traildb.TrailDBMultiEvent;
+import traildb.TrailDBTrail;
+import traildb.TrailDBMultiTrail;
 
 import java.util.UUID;
 import java.io.FileNotFoundException;
@@ -23,22 +21,20 @@ class Event {
 
 public class MultiCursors {
 
-	public static void read() throws FileNotFoundException {
+	public static void read(UUID[] cookies) throws FileNotFoundException {
 		System.out.println("Reading");
 		TrailDB tdb1 = new TrailDB("tiny1.tdb");
 		TrailDB tdb2 = new TrailDB("tiny2.tdb");
-		TrailDBCursor c1 = new TrailDBCursor(tdb1);
-		TrailDBCursor c2 = new TrailDBCursor(tdb2);
-		c1.getTrail(0);
-		c2.getTrail(1);
+		TrailDBTrail trail1 = new TrailDBTrail(tdb1, 0);
+		TrailDBTrail trail2 = new TrailDBTrail(tdb2, 1);
 
-		TrailDBCursor[] cursors = new TrailDBCursor[] {c1, c2};
+		TrailDBTrail[] trails = new TrailDBTrail[] {trail1, trail2};
 
-		TrailDBMultiCursor multi = new TrailDBMultiCursor(cursors);
-		TrailDBMultiEvent mevent;
+		TrailDBMultiTrail multi = new TrailDBMultiTrail(trails);
 
-		while ((mevent = multi.next()) != null) {
-			System.out.println(mevent.event.timestamp);
+		while (multi.next() != null) {
+			System.out.println(multi.getTimestamp());
+//			System.out.println(multi.getItem(0));
 		}
 	}
 
@@ -73,6 +69,6 @@ public class MultiCursors {
 		});
 
 		System.out.println("Finished writing");
-		read();
+		read(new UUID[] {cookie1, cookie2});
 	}
 }
