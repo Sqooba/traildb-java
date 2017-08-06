@@ -168,7 +168,49 @@ JNIEXPORT jobjectArray JNICALL Java_traildb_TrailDBMultiTrail_nextBatch(JNIEnv *
  * Signature: ()Ltraildb/TrailDBMultiTrail;
  */
 JNIEXPORT jobject JNICALL Java_traildb_TrailDBMultiTrail_peek(JNIEnv *env, jobject obj) {
+	tdb_multi_cursor *multi_cur;
+	const tdb_multi_event *multi_event;
+	const tdb_event *event;
 
+	// Get cur pointer
+
+	multi_cur = (tdb_multi_cursor *) (*env)->GetLongField(env, obj, FID_traildb_TrailDBMultiTrail_cur);
+
+	// Call multi cursor next
+
+	multi_event = tdb_multi_cursor_peek(multi_cur);
+
+	if (multi_event == NULL) {
+		(*env)->SetLongField(env, obj, FID_traildb_TrailDBMultiTrail_timestamp, 0L);
+		(*env)->SetLongField(env, obj, FID_traildb_TrailDBMultiTrail_numItems, 0L);
+		(*env)->SetLongField(env, obj, FID_traildb_TrailDBMultiTrail_items, 0L);
+
+		return NULL;
+	}
+
+	event = multi_event->event;
+
+	// Store timestamp
+
+	(*env)->SetLongField(env, obj, FID_traildb_TrailDBMultiTrail_timestamp, (long) event->timestamp);
+
+	// Store number of items
+
+	(*env)->SetLongField(env, obj, FID_traildb_TrailDBMultiTrail_numItems, (long) event->num_items);
+
+	// Store items pointer
+
+	(*env)->SetLongField(env, obj, FID_traildb_TrailDBMultiTrail_items, (long) event->items);
+
+	// Store db pointer
+
+	(*env)->SetLongField(env, obj, FID_traildb_TrailDBMultiTrail_db, (long) multi_event->db);
+
+	// Store cursor index
+
+	(*env)->SetLongField(env, obj, FID_traildb_TrailDBMultiTrail_cursorIndex, (long) multi_event->cursor_idx);
+
+	return obj;
 }
 
 /*
