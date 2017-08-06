@@ -74,7 +74,7 @@ JNIEXPORT jstring JNICALL Java_traildb_TrailDBTrail_native_1getItem(JNIEnv *env,
 	return (*env)->NewStringUTF(env, tgt_value);
 }
 
-JNIEXPORT void JNICALL Java_traildb_TrailDBTrail_getTrail(JNIEnv *env, jobject obj, jlong trail_id) {
+JNIEXPORT void JNICALL Java_traildb_TrailDBTrail_native_1getTrail(JNIEnv *env, jobject obj, jlong trail_id) {
 	tdb_cursor *cur;
 
 	// Retrieve cursor pointer

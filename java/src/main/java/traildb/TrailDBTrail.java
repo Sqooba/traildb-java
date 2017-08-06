@@ -12,7 +12,13 @@ public class TrailDBTrail
 
 	private long cur;
 
+	private long currentTrail;
+
+	private long numTrails;
+
 	public TrailDBTrail(TrailDB tdb, long trailId) {
+		currentTrail = trailId;
+		numTrails = tdb.numTrails();
 		init(tdb, trailId);
 	}
 
@@ -37,7 +43,31 @@ public class TrailDBTrail
 	 * Set the cursor to a new trailId
 	 * @param trailId
 	 */
-	public native void getTrail(long trailId);
+	public void getTrail(long trailId) {
+		currentTrail = trailId;
+		native_getTrail(trailId);
+	}
+
+	private native void native_getTrail(long trailId);
+
+	/**
+	 * Set the cursor to the next trail.
+	 * This is useful for processing all trails
+	 * eg.
+	 * do {
+	 *   <process trail>
+	 * } while (trail.nextTrail());
+	 *
+	 * @return succeded in getting another trail
+	 */
+	public boolean nextTrail() {
+		currentTrail++;
+		if (currentTrail >= numTrails) {
+			return false;
+		}
+		native_getTrail(currentTrail);
+		return true;
+	}
 
 	/**
 	 * Get the length of the trail. This exhausts the trail
@@ -60,6 +90,10 @@ public class TrailDBTrail
 		return timestamp;
 	}
 
+	/**
+	 * Get number of items the event has
+	 * @return number of items
+	 */
 	public long getNumItems() {
 		if (items == 0) {
 			throw new IllegalStateException("Cursor is not pointing at an event");
