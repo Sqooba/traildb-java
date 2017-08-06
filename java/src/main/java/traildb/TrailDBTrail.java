@@ -19,13 +19,13 @@ public class TrailDBTrail
 	private native void init(TrailDB tdb, long trailId);
 
 	/**
-	 * Get item i that trail is cursor is currently pointing at
+	 * Get item i that trail cursor is currently pointing at
 	 * @param i index of item to get
 	 * @return The item value
 	 */
 	public String getItem(int i) {
 		if (i >= numItems || i < 0) {
-			throw new IndexOutOfBoundsException("getItem(" + i + ") but numItems in event is" + numItems);
+			throw new IndexOutOfBoundsException("getItem(" + i + ") but numItems in event is " + numItems);
 		}
 		return native_getItem(i);
 	}
