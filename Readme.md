@@ -39,8 +39,8 @@ java -Djava.library.path=`pwd`/native/linux/target/ -cp examples:native/linux/ta
 │   │               └── TrailDBEventFilter.java      │
 │   └── target                                       │
 │       └── classes                                  │
-│        	  └── traildb                           <──┘
-│              	├── TrailDB.class                 ─────┐
+│           └── traildb                           <──┘
+│               ├── TrailDB.class                 ─────┐
 │               ├── TrailDBConstructor.class      ───┐ │
 │               ├── TrailDBTrail.class               │ │
 │               ├── TrailDBMultiTrail.class          │ │
