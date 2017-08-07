@@ -31,58 +31,44 @@ java -Djava.library.path=`pwd`/native/linux/target/ -cp examples:native/linux/ta
 │   ├── src
 │   │   └── main
 │   │       └── java
-│   │           └── traildb
-│   │               ├── TrailDBConstructor.java
-│   │               ├── TrailDBCursor.java
-│   │               ├── TrailDBEventFilter.java
-│   │               ├── TrailDBEvent.java
-│   │               ├── TrailDBItem.java
-│   │               ├── TrailDB.java
-│   │               ├── TrailDBMultiCursor.java
-│   │               └── TrailDBMultiEvent.java
-│   └── target
-│        └── classes
-│        	└── traildb
-│        		├── TrailDB.class
-│   			├── TrailDBConstructor.class
-│   			├── TrailDBConstructor$TDB_OPT_CONS_KEY.class
-│   			├── TrailDBConstructor$TDB_OPT_CONS_VALUE.class
-│   			├── TrailDBCursor.class
-│   			├── TrailDBEvent.class
-│   			├── TrailDBEventFilter.class
-│   			├── TrailDBItem.class
-│   			├── TrailDBMultiCursor.class
-│   			├── TrailDBMultiEvent.class
-│   			├── TrailDB$TDB_OPT_KEY.class
-│   			└── TrailDB$TDB_OPT_VALUE.class
-├── native
-│   ├── linux
-│   │   ├── pom.xml (Linux Build)
-│   │   └── target
-│   │       ├── custom-javah
-│   │       │   └── traildb-java.h
-│   │       ├── lib
-│   │       │   └── traildbJava.jar
-│   │       ├── libTraildbJavaNative.so
-│   │       └── objs
-│   │           ├── TrailDBConstructor.o
-│   │           ├── TrailDBCursor.o
-│   │           ├── TrailDBEventFilter.o
-│   │           ├── TrailDBEvent.o
-│   │           ├── TrailDBItem.o
-│   │           ├── TrailDBMultiCursor.o
-│   │           └── TrailDB.o
-│   ├── pom.xml (Native Build)
-│   └── src
-│       └── main
-│           └── native
+│   │           └── traildb                       ───┐
+│   │               ├── TrailDB.java                 │
+│   │               ├── TrailDBConstructor.java      │
+│   │               ├── TrailDBTrail.java            │
+│   │               ├── TrailDBMultiTrail.java       │ 1
+│   │               └── TrailDBEventFilter.java      │
+│   └── target                                       │
+│       └── classes                                  │
+│        	  └── traildb                           <──┘
+│              	├── TrailDB.class                 ─────┐
+│               ├── TrailDBConstructor.class      ───┐ │
+│               ├── TrailDBTrail.class               │ │
+│               ├── TrailDBMultiTrail.class          │ │
+│               └── TrailDBEventFilter.class         │ │
+├── native                                           │ │
+│   ├── linux                                      3 │ │ 2
+│   │   ├── pom.xml (Linux Build)                    │ │
+│   │   └── target                                   │ │
+│   │       ├── custom-javah                         │ │
+│   │       │   └── traildb-java.h                <──┘ │
+│   │       ├── lib                                    │
+│   │       │   └── traildbJava.jar               <────┘
+│   │       ├── libTraildbJavaNative.so           <──┐
+│   │       └── objs                              ───┘ 5
+│   │           ├── TrailDB.o                     <──┐
+│   │           ├── TrailDBConstructor.o             │
+│   │           ├── TrailDBTrail.o                   │
+│   │           ├── TrailDBMultiTrail.o              │ 4
+│   │           └── TrailDBEventFilter.o             │
+│   ├── pom.xml (Native Build)                       │
+│   └── src                                          │
+│       └── main                                     │
+│           └── native                            ───┘
 │               ├── TrailDB.c
 │               ├── TrailDBConstructor.c
-│               ├── TrailDBCursor.c
-│               ├── TrailDBEvent.c
-│               ├── TrailDBEventFilter.c
-│               ├── TrailDBItem.c
-│               └── TrailDBMultiCursor.c
+│               ├── TrailDBTrail.c
+│               ├── TrailDBMultiTrail.c
+│               └── TrailDBEventFilter.c
 └── pom.xml (TrailDB)
 ```
 
@@ -125,7 +111,6 @@ java -Djava.library.path=`pwd`/native/linux/target/ -cp examples:native/linux/ta
 - [ ] Enable -Wall and -Werr and fix issues
 
 ### Functions
-
 
 #### TrailDBConstructor
 
@@ -178,20 +163,16 @@ java -Djava.library.path=`pwd`/native/linux/target/ -cp examples:native/linux/ta
 
 - [x] getFieldName
 
-- [ ] getItem
-
 - [x] close
 
 - [ ] getUUID
 
-- [ ] getTrailId
+- [x] getTrailId
 
 - [x] cursorNew
 
 
-#### TrailDBCursor
-
-- [x] free
+#### TrailDBTrail
 
 - [x] getTrail
 
@@ -205,8 +186,18 @@ java -Djava.library.path=`pwd`/native/linux/target/ -cp examples:native/linux/ta
 
 - [x] peek
 
+- [x] getItem
 
-#### TrailDBEvent
+
+#### TrailDBMultiTrail
+
+- [ ] setEventFilter
+
+- [ ] unsetEventFilter
+
+- [x] next
+
+- [x] peek
 
 - [x] getItem
 
@@ -232,16 +223,3 @@ java -Djava.library.path=`pwd`/native/linux/target/ -cp examples:native/linux/ta
 - [ ] getStartTime
 
 - [ ] getEndTime
-
-
-#### TrailDBMultiCursor
-
-- [ ] free
-
-- [ ] reset
-
-- [x] next
-
-- [ ] nextBatch
-
-- [ ] peek
