@@ -1,5 +1,7 @@
 package traildb;
 
+import traildb.filters.TrailDBEventFilter;
+
 public class TrailDBTrail
 {
 	private long timestamp;
