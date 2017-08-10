@@ -169,8 +169,6 @@ java -Djava.library.path=`pwd`/native/linux/target/ -cp examples:native/linux/ta
 
 - [x] getTrailId
 
-- [x] cursorNew
-
 
 #### TrailDBTrail
 
@@ -203,8 +201,6 @@ java -Djava.library.path=`pwd`/native/linux/target/ -cp examples:native/linux/ta
 
 
 #### TrailDBEventFilter
-
-- [ ] free
 
 - [ ] addTerm
 
