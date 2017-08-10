@@ -1,11 +1,20 @@
-package traildb;
+package traildb.filters;
+
+import traildb.*;
 
 public class TrailDBEventFilter {
-	public TrailDBEventFilter() {
-		init();
+	TrailDBClause[] clauses;
+	TrailDB db;
+
+	private long f;
+
+	TrailDBEventFilter(TrailDB db, TrailDBClause... clauses) {
+		this.clauses = clauses;
+		this.db = db;
+		init(clauses, db);
 	}
 
-	private native void init();
+	private native void init(TrailDBClause[] clauses, TrailDB db);
 
 	public static native TrailDBEventFilter matchNone();
 
@@ -32,7 +41,10 @@ public class TrailDBEventFilter {
 
 	public native int getEndTime(int clauseIndex, int termIndex);
 
+	private static native void initIDs();
+
 	static {
 		System.loadLibrary("TraildbJavaNative");
+		initIDs();
 	}
 }
