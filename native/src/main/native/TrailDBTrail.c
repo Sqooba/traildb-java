@@ -149,7 +149,7 @@ JNIEXPORT jobject JNICALL Java_traildb_TrailDBTrail_next(JNIEnv *env, jobject ob
 
 	(*env)->SetLongField(env, obj, FID_traildb_TrailDBTrail_items, (long) event->items);
 
-  // Return self for convenience
+    // Return self for convenience
 
 	return obj;
 }
@@ -190,7 +190,7 @@ JNIEXPORT jobject JNICALL Java_traildb_TrailDBTrail_peek(JNIEnv *env, jobject ob
 
 	(*env)->SetLongField(env, obj, FID_traildb_TrailDBTrail_items, (long) event->items);
 
-  // Return self for convenience
+    // Return self for convenience
 
 	return obj;
 }
