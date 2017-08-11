@@ -32,15 +32,7 @@ JNIEXPORT void JNICALL Java_traildb_TrailDBConstructor_init(JNIEnv *env, jobject
 	// Initialize and open tdb
 
 	cons = tdb_cons_init();
-	if ((err = tdb_cons_open(cons, tgt_root, tgt_fields, num_fields))) {
-		exc = (*env)->FindClass(env, "java/io/IOException");
-		if (exc == NULL) {
-			/* Could not find the exception - We are in so much trouble right now */
-			exit(1);
-		}
-		(*env)->ThrowNew(env, exc, tdb_error_str(err));
-		return;
-	}
+	err = tdb_cons_open(cons, tgt_root, tgt_fields, num_fields);
 
 	// Release strings
 
@@ -52,6 +44,16 @@ JNIEXPORT void JNICALL Java_traildb_TrailDBConstructor_init(JNIEnv *env, jobject
 	free(tgt_fields);
 
 	(*env)->ReleaseStringUTFChars(env, root, tgt_root);
+
+	if (err) {
+        exc = (*env)->FindClass(env, "java/io/IOException");
+        if (exc == NULL) {
+            /* Could not find the exception - We are in so much trouble right now */
+            exit(1);
+        }
+        (*env)->ThrowNew(env, exc, tdb_error_str(err));
+        return;
+    }
 
 	// Store cons pointer
 
