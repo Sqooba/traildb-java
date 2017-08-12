@@ -1,3 +1,3 @@
 package traildb.filters;
 
-interface TrailDBTerm {}
+public interface TrailDBTerm {}

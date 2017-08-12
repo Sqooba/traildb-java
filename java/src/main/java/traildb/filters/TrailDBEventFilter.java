@@ -8,7 +8,7 @@ public class TrailDBEventFilter {
 
 	private long f;
 
-	TrailDBEventFilter(TrailDB db, TrailDBClause... clauses) {
+	public TrailDBEventFilter(TrailDB db, TrailDBClause... clauses) {
 		this.clauses = clauses;
 		this.db = db;
 		init(clauses, db);
