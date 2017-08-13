@@ -14,6 +14,8 @@ jfieldID FID_traildb_TrailDBTrail_numItems;
 
 jfieldID FID_traildb_TrailDBTrail_items;
 
+jfieldID FID_traildb_filters_TrailDBEventFilter_f;
+
 
 JNIEXPORT void JNICALL Java_traildb_TrailDBTrail_init(JNIEnv * env, jobject obj, jobject tdb_obj, jlong trail_id) {
 	const tdb *db;
@@ -105,11 +107,37 @@ JNIEXPORT jlong JNICALL Java_traildb_TrailDBTrail_getTrailLength(JNIEnv *env, jo
 	return length;
 }
 
-JNIEXPORT void JNICALL Java_traildb_TrailDBCursor_setEventFilter(JNIEnv *env, jobject obj, jobject filter) {
+JNIEXPORT void JNICALL Java_traildb_TrailDBTrail_setEventFilter(JNIEnv *env, jobject obj, jobject filter) {
+	jclass exc;
 
+	struct tdb_event_filter *tgt_filter;
+	tdb_cursor *cur;
+	tdb_error err;
+
+	// Retrive filter pointer
+
+	tgt_filter = (struct tdb_event_filter *) (*env)->GetLongField(env, filter, FID_traildb_filters_TrailDBEventFilter_f);
+
+	// Retrieve cursor pointer
+
+	cur = (tdb_cursor *) (*env)->GetLongField(env, obj, FID_traildb_TrailDBTrail_cur);
+
+	// Set the event filter on the cursor
+
+	err = tdb_cursor_set_event_filter(cur, tgt_filter);
+
+	if (err) {
+		exc = (*env)->FindClass(env, "java/io/IOException");
+		if (exc == NULL) {
+		/* Could not find the exception - We are in so much trouble right now */
+			exit(1);
+		}
+		(*env)->ThrowNew(env, exc, tdb_error_str(err));
+		return;
+	}
 }
 
-JNIEXPORT void JNICALL Java_traildb_TrailDBCursor_unsetEventFilter(JNIEnv *env, jobject obj) {
+JNIEXPORT void JNICALL Java_traildb_TrailDBTrail_unsetEventFilter(JNIEnv *env, jobject obj) {
 
 }
 
@@ -149,7 +177,7 @@ JNIEXPORT jobject JNICALL Java_traildb_TrailDBTrail_next(JNIEnv *env, jobject ob
 
 	(*env)->SetLongField(env, obj, FID_traildb_TrailDBTrail_items, (long) event->items);
 
-  // Return self for convenience
+    // Return self for convenience
 
 	return obj;
 }
@@ -190,7 +218,7 @@ JNIEXPORT jobject JNICALL Java_traildb_TrailDBTrail_peek(JNIEnv *env, jobject ob
 
 	(*env)->SetLongField(env, obj, FID_traildb_TrailDBTrail_items, (long) event->items);
 
-  // Return self for convenience
+    // Return self for convenience
 
 	return obj;
 }
@@ -198,6 +226,8 @@ JNIEXPORT jobject JNICALL Java_traildb_TrailDBTrail_peek(JNIEnv *env, jobject ob
 JNIEXPORT void JNICALL Java_traildb_TrailDBTrail_initIDs(JNIEnv *env, jclass cls) {
 
 	jclass traildb_TrailDB = (*env)->FindClass(env, "traildb/TrailDB");
+
+	jclass traildb_filters_TrailDBEventFilter = (*env)->FindClass(env, "traildb/filters/TrailDBEventFilter");
 
 	FID_traildb_TrailDB_db = (*env)->GetFieldID(env, traildb_TrailDB, "db", "J");
 
@@ -210,5 +240,7 @@ JNIEXPORT void JNICALL Java_traildb_TrailDBTrail_initIDs(JNIEnv *env, jclass cls
 	FID_traildb_TrailDBTrail_numItems = (*env)->GetFieldID(env, cls, "numItems", "J");
 
 	FID_traildb_TrailDBTrail_items = (*env)->GetFieldID(env, cls, "items", "J");
+
+	FID_traildb_filters_TrailDBEventFilter_f = (*env)->GetFieldID(env, traildb_filters_TrailDBEventFilter, "f", "J");
 
 }

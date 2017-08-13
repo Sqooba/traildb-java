@@ -85,7 +85,7 @@
 					<javahClassName>traildb.TrailDBConstructor</javahClassName>
 					<javahClassName>traildb.TrailDBTrail</javahClassName>
 					<javahClassName>traildb.TrailDBMultiTrail</javahClassName>
-					<javahClassName>traildb.TrailDBEventFilter</javahClassName>
+					<javahClassName>traildb.filters.TrailDBEventFilter</javahClassName>
 					</javahClassNames>
 				</configuration>
 				<goals>

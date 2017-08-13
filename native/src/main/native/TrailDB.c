@@ -22,19 +22,21 @@ JNIEXPORT void JNICALL Java_traildb_TrailDB_init(JNIEnv *env, jobject obj, jstri
 
 	// Open tdb
 
-	if ((err = tdb_open(db, tgt_root))) {
-		exc = (*env)->FindClass(env, "java/io/FileNotFoundException");
-		if (exc == NULL) {
-			/* Could not find the exception - We are in so much trouble right now */
-			exit(1);
-		}
-		(*env)->ThrowNew(env, exc, tdb_error_str(err));
-		return;
-	}
+	err = tdb_open(db, tgt_root);
 
 	// Release strings
 
 	(*env)->ReleaseStringUTFChars(env, root, tgt_root);
+
+	if (err) {
+        exc = (*env)->FindClass(env, "java/io/FileNotFoundException");
+        if (exc == NULL) {
+            /* Could not find the exception - We are in so much trouble right now */
+            exit(1);
+        }
+        (*env)->ThrowNew(env, exc, tdb_error_str(err));
+        return;
+    }
 
 	// Store db pointer
 

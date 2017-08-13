@@ -54,7 +54,7 @@ JNIEXPORT void JNICALL Java_traildb_TrailDBMultiTrail_init(JNIEnv *env, jobject 
  * Signature: (I)Ljava/lang/String;
  */
 JNIEXPORT jstring JNICALL Java_traildb_TrailDBMultiTrail_native_1getItem(JNIEnv *env, jobject obj, jint index) {
-  const tdb *db;
+    const tdb *db;
 	const tdb_item *items;
 	const char *value;
 	char *tgt_value;
