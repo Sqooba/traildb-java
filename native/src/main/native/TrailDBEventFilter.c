@@ -108,9 +108,11 @@ JNIEXPORT void JNICALL Java_traildb_filters_TrailDBEventFilter_init(JNIEnv *env,
             }
         }
 
-        // Start a new clause
+		// Start a new clause if there are more
 
-        tdb_event_filter_new_clause(filter);
+		if (i != num_clauses - 1) {
+			tdb_event_filter_new_clause(filter);
+		}
     }
 
     // Save filter to f for later
