@@ -1,4 +1,5 @@
 #include <traildb.h>
+#include <string.h>
 #include "traildb-java.h"
 
 jfieldID FID_traildb_TrailDBMultiTrail_cur;
