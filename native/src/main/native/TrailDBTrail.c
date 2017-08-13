@@ -14,6 +14,8 @@ jfieldID FID_traildb_TrailDBTrail_numItems;
 
 jfieldID FID_traildb_TrailDBTrail_items;
 
+jfieldID FID_traildb_filters_TrailDBEventFilter_f;
+
 
 JNIEXPORT void JNICALL Java_traildb_TrailDBTrail_init(JNIEnv * env, jobject obj, jobject tdb_obj, jlong trail_id) {
 	const tdb *db;
@@ -199,6 +201,8 @@ JNIEXPORT void JNICALL Java_traildb_TrailDBTrail_initIDs(JNIEnv *env, jclass cls
 
 	jclass traildb_TrailDB = (*env)->FindClass(env, "traildb/TrailDB");
 
+	jclass traildb_filters_TrailDBEventFilter = (*env)->FindClass(env, "traildb/filters/TrailDBEventFilter");
+
 	FID_traildb_TrailDB_db = (*env)->GetFieldID(env, traildb_TrailDB, "db", "J");
 
 	FID_traildb_TrailDBTrail_db = (*env)->GetFieldID(env, cls, "db", "J");
@@ -210,5 +214,7 @@ JNIEXPORT void JNICALL Java_traildb_TrailDBTrail_initIDs(JNIEnv *env, jclass cls
 	FID_traildb_TrailDBTrail_numItems = (*env)->GetFieldID(env, cls, "numItems", "J");
 
 	FID_traildb_TrailDBTrail_items = (*env)->GetFieldID(env, cls, "items", "J");
+
+	FID_traildb_filters_TrailDBEventFilter_f = (*env)->GetFieldID(env, traildb_filters_TrailDBEventFilter, "f", "J");
 
 }
