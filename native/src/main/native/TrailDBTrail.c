@@ -114,7 +114,7 @@ JNIEXPORT void JNICALL Java_traildb_TrailDBTrail_setEventFilter(JNIEnv *env, job
 	tdb_cursor *cur;
 	tdb_error err;
 
-	// Retrive filter pointer
+	// Retrieve filter pointer
 
 	tgt_filter = (struct tdb_event_filter *) (*env)->GetLongField(env, filter, FID_traildb_filters_TrailDBEventFilter_f);
 
@@ -138,6 +138,15 @@ JNIEXPORT void JNICALL Java_traildb_TrailDBTrail_setEventFilter(JNIEnv *env, job
 }
 
 JNIEXPORT void JNICALL Java_traildb_TrailDBTrail_unsetEventFilter(JNIEnv *env, jobject obj) {
+	tdb_cursor *cur;
+
+	// Retrieve cursor pointer
+
+	cur = (tdb_cursor *) (*env)->GetLongField(env, obj, FID_traildb_TrailDBTrail_cur);
+
+	// Unset event filter
+
+	tdb_cursor_unset_event_filter(cur);
 
 }
 
