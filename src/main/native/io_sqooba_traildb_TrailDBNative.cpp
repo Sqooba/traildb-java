@@ -9,6 +9,42 @@ extern "C" {
 	#include <traildb.h>
 }
 
+static jclass traildbEvent;
+static jmethodID JMID_traildbEvent_add;
+static jmethodID JMID_traildbEvent_build;
+
+jint JNI_OnLoad(JavaVM* vm, void* reserved) {
+	JNIEnv* env = NULL;
+    if (vm->GetEnv((void **) &env, JNI_VERSION_1_6) != JNI_OK) {
+        return JNI_ERR;
+    } else {
+        jclass tempLocalClassRef =  env->FindClass("io/sqooba/traildb/TrailDBEvent");
+
+        if (tempLocalClassRef == NULL) {
+            return JNI_ERR;
+        }
+        traildbEvent = (jclass) env->NewGlobalRef(tempLocalClassRef);
+		env->DeleteLocalRef(tempLocalClassRef);
+
+		JMID_traildbEvent_add = env->GetMethodID(traildbEvent, "addItem","(J)V");
+		JMID_traildbEvent_build = env->GetMethodID(traildbEvent, "build","(JJ)V");
+    } 
+
+    return JNI_VERSION_1_6;
+}
+
+void JNI_OnUnload(JavaVM *vm, void *reserved) {
+    JNIEnv* env;
+    if (vm->GetEnv((void **) &env, JNI_VERSION_1_6) != JNI_OK) {
+        // Something is wrong but nothing we can do about this :(
+        return;
+    } else {
+        if (0 != NULL){
+            env->DeleteGlobalRef(traildbEvent);
+        }
+    }
+}
+
 JNIEXPORT jobject JNICALL Java_io_sqooba_traildb_TrailDBNative_tdbConsInit
   (JNIEnv *env, jobject thisObject) 
 {
@@ -463,14 +499,14 @@ JNIEXPORT jint JNICALL Java_io_sqooba_traildb_TrailDBNative_tdbCursorNext
 	}
 	
 	// Construct event.
-	jclass cls = env->FindClass("io/sqooba/traildb/TrailDBEvent");
-	jmethodID midBuild = env->GetMethodID(cls, "build","(JJ)V");
-	jmethodID midAdd = env->GetMethodID(cls, "addItem","(J)V");
-	env->CallObjectMethod(jevent, midBuild, (jlong)timestamp, (jlong)num_items);
+	//jclass cls = env->FindClass("io/sqooba/traildb/TrailDBEvent");
+	//jmethodID midBuild = env->GetMethodID(cls, "build","(JJ)V");
+	//jmethodID midAdd = env->GetMethodID(cls, "addItem","(J)V");
+	env->CallObjectMethod(jevent, JMID_traildbEvent_build, (jlong)timestamp, (jlong)num_items);
 
 	unsigned int j;
 	for(j = 0; j < num_items; j++) {
-		env->CallObjectMethod(jevent, midAdd, (jlong) items[j]);
+		env->CallObjectMethod(jevent, JMID_traildbEvent_add, (jlong) items[j]);
 	}
 
 	return 0;
