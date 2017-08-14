@@ -499,9 +499,6 @@ JNIEXPORT jint JNICALL Java_io_sqooba_traildb_TrailDBNative_tdbCursorNext
 	}
 	
 	// Construct event.
-	//jclass cls = env->FindClass("io/sqooba/traildb/TrailDBEvent");
-	//jmethodID midBuild = env->GetMethodID(cls, "build","(JJ)V");
-	//jmethodID midAdd = env->GetMethodID(cls, "addItem","(J)V");
 	env->CallObjectMethod(jevent, JMID_traildbEvent_build, (jlong)timestamp, (jlong)num_items);
 
 	unsigned int j;
