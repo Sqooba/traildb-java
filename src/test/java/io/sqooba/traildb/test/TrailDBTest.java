@@ -7,7 +7,6 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.io.FileUtils;
@@ -18,9 +17,9 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
 import io.sqooba.traildb.TrailDB;
-import io.sqooba.traildb.TrailDBIterator;
-import io.sqooba.traildb.TrailDBException;
 import io.sqooba.traildb.TrailDBEvent;
+import io.sqooba.traildb.TrailDBException;
+import io.sqooba.traildb.TrailDBIterator;
 import io.sqooba.traildb.TrailDBNative;
 import mockit.Deencapsulation;
 
@@ -77,16 +76,13 @@ public class TrailDBTest {
     public void trailShouldContainCorrectTrailDBEvents() {
         TrailDBIterator trail = this.db.trail(0);
         TrailDBEvent e = trail.iterator().next();
-        List<String> fieldsNames = e.getFieldNames();
-        List<String> fieldsValues = e.getFieldsValues();
+        String[] fieldsNames = e.getFieldNames();
 
         assertEquals(122, e.getTimestamp());
         assertEquals(2, e.getNumItems());
-        assertEquals("time", fieldsNames.get(0));
-        assertEquals("field1", fieldsNames.get(1));
-        assertEquals("field2", fieldsNames.get(2));
-        assertEquals("kaguya", fieldsValues.get(0));
-        assertEquals("hinata", fieldsValues.get(1));
+        assertEquals("time", fieldsNames[0]);
+        assertEquals("field1", fieldsNames[1]);
+        assertEquals("field2", fieldsNames[2]);
         assertEquals("Event(time=122, field1=kaguya, field2=hinata)", e.toString());
     }
 

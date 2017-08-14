@@ -77,5 +77,5 @@ public interface TrailDBInterface {
 
     public long getTrailLength(ByteBuffer cursor);
 
-    public int cursorNext(ByteBuffer cursor, TrailDBEvent event); // Fill the event in jni.
+    public TrailDBEvent cursorNext(ByteBuffer cursor);
 }

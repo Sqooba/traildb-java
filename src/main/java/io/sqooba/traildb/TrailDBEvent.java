@@ -1,8 +1,6 @@
 package io.sqooba.traildb;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.Arrays;
 
 /**
  * An event in the trail database.
@@ -17,38 +15,20 @@ public class TrailDBEvent {
 
     private long timestamp;
     private long numItems;
-    private List<Long> items; // items encoded on uint64_t.
+    private long[] items; // items encoded on uint64_t.
 
     /** This one contains the timestamp name. */
-    private List<String> fieldNames;
+    private String[] fieldNames;
 
-    /** Does NOT contain the timestamp value. */
-    private List<String> fieldValues;
-
-    /** Indicates if a tdb_cursor_next as already been called once or not. */
-    private boolean built = false;
-
-    /**
-     * The constructor just initialise the name of the fields (timestamp, field1, field2,...) and doest NOT fill items.
-     * 
-     * @param fieldsNames Names of the fields.
-     */
-    protected TrailDBEvent(TrailDB trailDB, List<String> fieldsNames) {
-        this.trailDB = trailDB;
-        this.fieldNames = fieldsNames;
+    protected TrailDBEvent(long timestamp, long numItems, long[] items) {
+        this.timestamp = timestamp;
+        this.numItems = numItems;
+        this.items = Arrays.copyOf(items, (int)numItems);
     }
 
-    /**
-     * Copy constructor used by TrailDBIterator.next.
-     * 
-     * @param toClone The TrailDBEvent to clone.
-     */
-    protected TrailDBEvent(TrailDBEvent toClone) {
-        this(toClone.trailDB, toClone.fieldNames);
-        this.build(toClone.timestamp, toClone.numItems);
-        for(long item : toClone.items) {
-            this.addItem(item);
-        }
+    protected void build(TrailDB trailDB, String[] fieldsNames) {
+        this.trailDB = trailDB;
+        this.fieldNames = fieldsNames;
     }
 
     /**
@@ -74,17 +54,8 @@ public class TrailDBEvent {
      * 
      * @return The fields names of this event.
      */
-    public List<String> getFieldNames() {
-        return Collections.unmodifiableList(this.fieldNames);
-    }
-
-    /**
-     * Get the fields values of this event. Does NOT contain the timestamp value.
-     * 
-     * @return The fields values of this event.
-     */
-    public List<String> getFieldsValues() {
-        return Collections.unmodifiableList(this.fieldValues);
+    public String[] getFieldNames() {
+        return Arrays.copyOf(this.fieldNames, this.fieldNames.length);
     }
 
     @Override
@@ -96,41 +67,9 @@ public class TrailDBEvent {
                 sep = "";
             }
             // Skip the "time" in names.
-            sb.append(this.fieldNames.get(i + 1) + "=" + this.fieldValues.get(i) + sep);
+            sb.append(this.fieldNames[i + 1] + "=" + this.trailDB.getItemValue(this.items[i]) + sep);
         }
         return "Event(time=" + this.timestamp + ", " + sb.toString() + ")";
     }
 
-    /**
-     * This method is called by the c++ code to initialise this event.
-     * 
-     * @param timestamp The event timestamp.
-     * @param numItems The number of items in this event.
-     */
-    protected void build(long timestamp, long numItems) {
-        this.timestamp = timestamp;
-        this.numItems = numItems;
-        this.items = new ArrayList<>((int)numItems);
-        this.fieldValues = new ArrayList<>();
-        this.built = true;
-    }
-
-    /**
-     * This method is called by the c++ code to add an item in this event.
-     * 
-     * @param item The item to be added.
-     */
-    protected void addItem(long item) {
-        this.items.add(item);
-        this.fieldValues.add(this.trailDB.getItemValue(item));
-    }
-
-    /**
-     * Indicates if a next() call has be performed at least once on the iterator.
-     * 
-     * @return true if a next() has been called.
-     */
-    protected boolean isBuilt() {
-        return this.built;
-    }
 }

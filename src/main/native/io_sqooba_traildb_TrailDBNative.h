@@ -234,10 +234,10 @@ JNIEXPORT jlong JNICALL Java_io_sqooba_traildb_TrailDBNative_tdbGetTrailLength
 /*
  * Class:     io_sqooba_traildb_TrailDBNative
  * Method:    tdbCursorNext
- * Signature: (Ljava/nio/ByteBuffer;Lio/sqooba/traildb/TrailDBEvent;)I
+ * Signature: (Ljava/nio/ByteBuffer;)Lio/sqooba/traildb/TrailDBEvent2;
  */
-JNIEXPORT jint JNICALL Java_io_sqooba_traildb_TrailDBNative_tdbCursorNext
-  (JNIEnv *, jobject, jobject, jobject);
+JNIEXPORT jobject JNICALL Java_io_sqooba_traildb_TrailDBNative_tdbCursorNext
+  (JNIEnv *, jobject, jobject);
 
 #ifdef __cplusplus
 }
