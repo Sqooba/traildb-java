@@ -12,7 +12,9 @@ before_install:
 
 before_script:
   - cd ..
+  
   - git clone https://github.com/traildb/traildb
+  
   - cd traildb
 
 script:
