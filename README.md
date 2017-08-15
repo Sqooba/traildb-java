@@ -11,14 +11,11 @@ This repository requires having TrailDB installed on the machine. See instructio
  [TrailDB Github readme](https://github.com/traildb/traildb) and in 
  the [getting started guide](http://traildb.io/docs/getting_started/).
 
-If you have the Sqooba Central Repo in your pom.xml, the project is available with:
+For now the only way to use the project is to manually build the jar and add it to your
+ project build path. The jar can be built with Maven command:
 
 ```
-<dependency>
-    <groupId>io.sqooba</groupId>
-    <artifactId>traildb</artifactId>
-    <version>0.1</version>
-</dependency>
+mvn clean compile install assembly:single
 ```
 
 ### How to build it
