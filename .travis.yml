@@ -20,3 +20,7 @@ script:
   - ./configure
   - make
   - make install
+  
+  - cd ..
+  - cd traildb-java
+  - mvn clean compile install assembly:single
