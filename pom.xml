@@ -80,7 +80,7 @@
 				<jnih>${JAVA_HOME}/include/</jnih>
 				<jnimdh>${JAVA_HOME}/include/linux/</jnimdh>
 				<link_start>-shared</link_start>
-				<link_end>-L/usr/local/lib -ltdbindex -ltraildb -o</link_end>
+				<link_end>-L/usr/local/lib -lstdc++ -ltdbindex -ltraildb -o</link_end>
 			</properties>
 		</profile>
 

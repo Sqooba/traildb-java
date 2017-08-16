@@ -2,27 +2,13 @@ language: java
 
 os:
   - linux
+  - osx
 
-compiler:
-  - gcc
+sudo: required
 
 before_install:
-  - sudo apt-get update -qq
-  - sudo apt-get install -qq libarchive-dev libjudy-dev pkg-config build-essential
-
-before_script:
-  - cd ..
-  
-  - git clone https://github.com/traildb/traildb
-  
-  - cd traildb
+  - ./install.sh
 
 script:
-  - ./autogen.sh
-  - ./configure
-  - make
-  - make install
   
-  - cd ..
-  - cd traildb-java
   - mvn clean compile install assembly:single
