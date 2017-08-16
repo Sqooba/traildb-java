@@ -34,10 +34,9 @@ jint JNI_OnLoad(JavaVM* vm, void* reserved) {
 void JNI_OnUnload(JavaVM *vm, void *reserved) {
     JNIEnv* env;
     if (vm->GetEnv((void **) &env, JNI_VERSION_1_6) != JNI_OK) {
-        // Something is wrong but nothing we can do about this :(
         return;
     } else {
-        if (0 != NULL){
+        if (traildbEvent != NULL){
             env->DeleteGlobalRef(traildbEvent);
         }
     }
