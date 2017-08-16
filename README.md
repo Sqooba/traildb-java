@@ -1,6 +1,8 @@
 Java bindings for TrailDB
 ====
 
+[![Build Status](https://travis-ci.org/Sqooba/traildb-java.svg?branch=master)](https://travis-ci.org/Sqooba/traildb-java)
+
 This repository's goal is to provide Java bindings for [TrailDB](http://traildb.io),
  an efficient tool for storing and querying series of events,
  based on the Python bindings available [here](https://github.com/traildb/traildb-python)
