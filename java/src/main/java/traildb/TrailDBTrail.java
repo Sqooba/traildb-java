@@ -40,6 +40,13 @@ public class TrailDBTrail
 
 	private native String native_getItem(int i);
 
+	public String[] getItems() {
+		String[] output = new String[(int) numItems];
+		for (long i = 0; i < numItems; i++) {
+			output[(int) i] = getItem((int) i);
+		}
+		return output;
+	}
 
 	/**
 	 * Set the cursor to a new trailId
