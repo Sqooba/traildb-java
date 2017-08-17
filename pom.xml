@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>io.sqooba</groupId>
 	<artifactId>traildb</artifactId>
-	<version>0.1</version>
+	<version>1.0.0</version>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -11,6 +11,14 @@
 		<maven.compiler.target>1.8</maven.compiler.target>
 		<powermock.version>1.6.2</powermock.version>
 	</properties>
+
+	<distributionManagement>
+		<repository>
+			<id>packagecloud-Nennya</id>
+			<url>packagecloud+https://packagecloud.io/Nennya/traildb-java</url>
+		</repository>
+	</distributionManagement>
+
 
 	<dependencies>
 		<!-- https://mvnrepository.com/artifact/uk.org.lidalia/slf4j-test -->
