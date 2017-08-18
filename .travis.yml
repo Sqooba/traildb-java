@@ -11,7 +11,7 @@ jobs:
       script:
       - mvn clean compile install assembly:single
       - jar -xf target/traildb.jar libtraildbjava.dylib
-      - sshpass -p $SSH_PASS sftp -oStrictHostKeyChecking=no -oPort=2223 foo@185.19.29.18:/upload <<< $'put libtraildbjava.dylib'
+      - sshpass -p $SSH_PASS sftp -oStrictHostKeyChecking=no -oPort=2223 $SSH_USER@185.19.29.18:/upload <<< $'put libtraildbjava.dylib'
     - stage: test
       language: java
       os:
@@ -22,7 +22,7 @@ jobs:
 
       script:
       - mvn clean compile install assembly:single
-      - sshpass -p $SSH_PASS sftp -oStrictHostKeyChecking=no -oPort=2223 foo@185.19.29.18:/upload <<< $'put target/traildb.jar'
+      - sshpass -p $SSH_PASS sftp -oStrictHostKeyChecking=no -oPort=2223 $SSH_USER@185.19.29.18:/upload <<< $'put target/traildb.jar'
     - stage: deploy
       before_install:
       - sudo apt-get install -qq sshpass
