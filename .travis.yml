@@ -7,11 +7,10 @@ jobs:
       sudo: required
       before_install:
       - ./install.sh
-
+      install: true
       script:
       - mvn clean compile install assembly:single
-      - jar -xf target/traildb.jar libtraildbjava.dylib
-      - sshpass -p $SSH_PASS sftp -oStrictHostKeyChecking=no -oPort=2223 $SSH_USER@185.19.29.18:/upload <<< $'put libtraildbjava.dylib'
+      - if [ "$TRAVIS_BRANCH" = "master" ]; then ./upload_mac.sh; fi
     - stage: test
       language: java
       os:
@@ -19,10 +18,10 @@ jobs:
       sudo: required
       before_install:
       - ./install.sh
-
+      install: true
       script:
       - mvn clean compile install assembly:single
-      - sshpass -p $SSH_PASS sftp -oStrictHostKeyChecking=no -oPort=2223 $SSH_USER@185.19.29.18:/upload <<< $'put target/traildb.jar'
+      - if [ "$TRAVIS_BRANCH" = "master" ]; then ./upload_linux.sh; fi
     - stage: deploy
       before_install:
       - sudo apt-get install -qq sshpass
