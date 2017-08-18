@@ -27,6 +27,11 @@ jobs:
       before_install:
       - sudo apt-get install -qq sshpass
       - gem install package_cloud
+
+      install: true
+
+      script: skip
+
       deploy:
         provider: script
         script: ./deploy.sh
