@@ -13,11 +13,32 @@ This repository requires having TrailDB installed on the machine. See instructio
  [TrailDB Github readme](https://github.com/traildb/traildb) and in 
  the [getting started guide](http://traildb.io/docs/getting_started/).
 
-For now the only way to use the project is to manually build the jar and add it to your
- project build path. The jar can be built with Maven command:
+The project is available as a Maven dependency on [packagecloud](https://packagecloud.io/).
+To add it in your pom, you first have to add the following repository:
 
 ```
-mvn clean compile install assembly:single
+<repositories>
+  <repository>
+    <id>Nennya-traildb-java</id>
+    <url>https://packagecloud.io/Nennya/traildb-java/maven2</url>
+    <releases>
+      <enabled>true</enabled>
+    </releases>
+    <snapshots>
+      <enabled>true</enabled>
+    </snapshots>
+  </repository>
+</repositories>
+```
+
+Then you can add the Maven dependency:
+
+```
+<dependency>
+  <groupId>io.sqooba</groupId>
+  <artifactId>traildb</artifactId>
+  <version>1.0.0</version>
+</dependency
 ```
 
 ### How to build it
@@ -27,6 +48,12 @@ If you want to build from the sources, clone the project from the repository and
  
 ```
 mvn clean install
+```
+
+You can also create a fatjar containing all dependencies by running:
+
+```
+mvn clean install assembly:single
 ```
 
 ## Minimal examples
