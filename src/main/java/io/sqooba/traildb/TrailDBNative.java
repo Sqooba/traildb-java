@@ -205,7 +205,7 @@ public enum TrailDBNative implements TrailDBInterface {
     private native long tdbGetTrailLength(ByteBuffer cursor);
 
     /** const tdb_event *tdb_cursor_next(tdb_cursor *cursor) */
-    private native int tdbCursorNext(ByteBuffer cursor, TrailDBEvent event); // Fill the event in jni.
+    private native TrailDBEvent tdbCursorNext(ByteBuffer cursor);
 
     @Override
     public ByteBuffer consInit() {
@@ -349,7 +349,7 @@ public enum TrailDBNative implements TrailDBInterface {
     }
 
     @Override
-    public int cursorNext(ByteBuffer cursor, TrailDBEvent event) {
-        return tdbCursorNext(cursor, event);
+    public TrailDBEvent cursorNext(ByteBuffer cursor) {
+        return tdbCursorNext(cursor);
     }
 }

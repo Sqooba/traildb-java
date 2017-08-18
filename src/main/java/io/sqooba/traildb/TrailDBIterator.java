@@ -14,11 +14,14 @@ import java.util.Iterator;
 public class TrailDBIterator implements Iterable<TrailDBEvent>, AutoCloseable {
 
     private ByteBuffer cursor;
-    private TrailDBEvent event;
+    private boolean built = false;
+    private TrailDB trailDB;
+    private long size;
 
-    protected TrailDBIterator(ByteBuffer cursor, TrailDBEvent event) {
-        this.event = event;
+    protected TrailDBIterator(ByteBuffer cursor, TrailDB trailDB) {
         this.cursor = cursor;
+        this.trailDB = trailDB;
+        this.size = trailDB.getNumEvents();
     }
 
     @Override
@@ -33,17 +36,28 @@ public class TrailDBIterator implements Iterable<TrailDBEvent>, AutoCloseable {
     public Iterator<TrailDBEvent> iterator() {
         return new Iterator<TrailDBEvent>() {
 
+            private TrailDBEvent event;
+
             @Override
             public TrailDBEvent next() {
-                if (!TrailDBIterator.this.event.isBuilt()) {
-                    TrailDBNative.INSTANCE.cursorNext(TrailDBIterator.this.cursor, TrailDBIterator.this.event);
+                if (!TrailDBIterator.this.built) {
+                    this.event = TrailDBNative.INSTANCE.cursorNext(TrailDBIterator.this.cursor);
+                    TrailDBIterator.this.built = true;
                 }
-                return new TrailDBEvent(TrailDBIterator.this.event);
+                this.event.build(TrailDBIterator.this.trailDB, TrailDBIterator.this.trailDB.fields);
+                return this.event;
             }
 
             @Override
             public boolean hasNext() {
-                return TrailDBNative.INSTANCE.cursorNext(TrailDBIterator.this.cursor, TrailDBIterator.this.event) == 0;
+                TrailDBEvent next = TrailDBNative.INSTANCE.cursorNext(TrailDBIterator.this.cursor);
+                if (next == null) {
+                    return false;
+                } else {
+                    this.event = next;
+                    TrailDBIterator.this.built = true;
+                    return true;
+                }
             }
 
             @Override

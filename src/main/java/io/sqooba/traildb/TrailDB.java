@@ -1,10 +1,8 @@
 package io.sqooba.traildb;
 
 import java.nio.ByteBuffer;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -31,7 +29,7 @@ public class TrailDB implements AutoCloseable {
     private long numTrails;
     private long numEvents;
     private long numFields;
-    private List<String> fields;
+    String[] fields;
 
     private TrailDB(TrailDBBuilder builder) {
         this(builder.path);
@@ -60,10 +58,10 @@ public class TrailDB implements AutoCloseable {
         this.numTrails = this.trailDBj.numTrails(this.db);
         this.numEvents = this.trailDBj.numEvents(this.db);
         this.numFields = this.trailDBj.numFields(this.db);
-        this.fields = new ArrayList<>((int)this.numFields);
+        this.fields = new String[(int)this.numFields];
 
         for(int i = 0; i < this.numFields; i++) {
-            this.fields.add(this.trailDBj.getFieldName(this.db, i));
+            this.fields[i] = this.trailDBj.getFieldName(this.db, i);
         }
     }
 
@@ -74,6 +72,10 @@ public class TrailDB implements AutoCloseable {
      */
     public long length() {
         return this.numTrails;
+    }
+
+    public long getNumEvents() {
+        return this.numEvents;
     }
 
     /**
@@ -123,7 +125,7 @@ public class TrailDB implements AutoCloseable {
      * @throws TrailDBException if the specified field is not found.
      */
     public long getField(String fieldName) {
-        long index = this.fields.indexOf(fieldName);
+        long index = Arrays.asList(this.fields).indexOf(fieldName);
         if (index == -1) {
             throw new TrailDBException("Failed to retreive field. Field not found");
         }
@@ -292,8 +294,7 @@ public class TrailDB implements AutoCloseable {
         if (errCode != 0) {
             throw new TrailDBException("Failed to create cursor with code: " + errCode);
         }
-        TrailDBEvent e = new TrailDBEvent(this, this.fields);
-        return new TrailDBIterator(cursor, e);
+        return new TrailDBIterator(cursor, this);
     }
 
     /**

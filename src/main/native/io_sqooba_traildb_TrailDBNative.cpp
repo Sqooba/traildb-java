@@ -9,6 +9,39 @@ extern "C" {
 	#include <traildb.h>
 }
 
+static jclass traildbEvent;
+static jmethodID JMID_traildbEvent_constructor;
+
+jint JNI_OnLoad(JavaVM* vm, void* reserved) {
+	JNIEnv* env = NULL;
+    if (vm->GetEnv((void **) &env, JNI_VERSION_1_6) != JNI_OK) {
+        return JNI_ERR;
+    } else {
+        jclass tempLocalClassRef =  env->FindClass("io/sqooba/traildb/TrailDBEvent");
+
+        if (tempLocalClassRef == NULL) {
+            return JNI_ERR;
+        }
+        traildbEvent = (jclass) env->NewGlobalRef(tempLocalClassRef);
+		env->DeleteLocalRef(tempLocalClassRef);
+
+		JMID_traildbEvent_constructor = env->GetMethodID(traildbEvent, "<init>","(JJ[J)V");
+    } 
+
+    return JNI_VERSION_1_6;
+}
+
+void JNI_OnUnload(JavaVM *vm, void *reserved) {
+    JNIEnv* env;
+    if (vm->GetEnv((void **) &env, JNI_VERSION_1_6) != JNI_OK) {
+        return;
+    } else {
+        if (traildbEvent != NULL){
+            env->DeleteGlobalRef(traildbEvent);
+        }
+    }
+}
+
 JNIEXPORT jobject JNICALL Java_io_sqooba_traildb_TrailDBNative_tdbConsInit
   (JNIEnv *env, jobject thisObject) 
 {
@@ -436,8 +469,8 @@ JNIEXPORT jlong JNICALL Java_io_sqooba_traildb_TrailDBNative_tdbGetTrailLength
 
 }
 
-JNIEXPORT jint JNICALL Java_io_sqooba_traildb_TrailDBNative_tdbCursorNext
-  (JNIEnv *env, jobject thisObject, jobject jcursor, jobject jevent)
+JNIEXPORT jobject JNICALL Java_io_sqooba_traildb_TrailDBNative_tdbCursorNext
+  (JNIEnv *env, jobject thisObject, jobject jcursor)
 {
 
 	// Convert arguments.
@@ -448,33 +481,27 @@ JNIEXPORT jint JNICALL Java_io_sqooba_traildb_TrailDBNative_tdbCursorNext
 
 	// Check if there is no more events.
 	if(!event) {
-		return -1;
+		return NULL;
 	}
 
 	// Get struct elements.
 	uint64_t timestamp = event->timestamp;
 	uint64_t num_items = event->num_items;
 	const tdb_item *items_ptr = event->items;
-	tdb_item items[num_items];
+	jlong items[num_items];
 
 	unsigned int i;
 	for(i = 0; i < num_items; i++) {
-		items[i] = items_ptr[i];
-	}
-	
-	// Construct event.
-	jclass cls = env->FindClass("io/sqooba/traildb/TrailDBEvent");
-	jmethodID midBuild = env->GetMethodID(cls, "build","(JJ)V");
-	jmethodID midAdd = env->GetMethodID(cls, "addItem","(J)V");
-	env->CallObjectMethod(jevent, midBuild, (jlong)timestamp, (jlong)num_items);
-
-	unsigned int j;
-	for(j = 0; j < num_items; j++) {
-		env->CallObjectMethod(jevent, midAdd, (jlong) items[j]);
+		items[i] = (jlong)items_ptr[i];
 	}
 
-	return 0;
-	// TODO release...
+	jlongArray result;
+ 	result = env->NewLongArray(num_items);
+	env->SetLongArrayRegion(result, 0, num_items, items);
+
+	// Construct and return event.
+	jobject ret = env->NewObject(traildbEvent, JMID_traildbEvent_constructor, (jlong)timestamp, (jlong)num_items, result);
+	return ret;
 
 }
 
