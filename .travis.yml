@@ -27,8 +27,8 @@ jobs:
       before_install:
       - sudo apt-get install -qq sshpass
       - gem install package_cloud
-
-      script:
-      - sshpass -p $SSH_PASS sftp -oStrictHostKeyChecking=no -oPort=2223 -r foo@185.19.29.18:/upload down/
-      - jar uf down/traildb.jar down/libtraildbjava.dylib
-      - source versions.properties; package_cloud push Nennya/traildb-java/java down/traildb.jar --coordinates=io.sqooba:traildb:${PROJECT_VERSION}
+      deploy:
+        provider: script
+        script: ./deploy.sh
+        on:
+         branch: master
