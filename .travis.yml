@@ -23,16 +23,7 @@ jobs:
       - mvn clean compile install assembly:single
       - if [ "$TRAVIS_BRANCH" = "master" ]; then ./upload_linux.sh; fi
     - stage: deploy
-      before_install:
-      - sudo apt-get install -qq sshpass
-      - gem install package_cloud
-
+      sudo: required
       install: true
-
-      script: skip
-
-      deploy:
-        provider: script
-        script: ./deploy.sh
-        on:
-         branch: master
+      script:
+      - if [ "$TRAVIS_BRANCH" = "master" ]; then ./deploy.sh; fi
