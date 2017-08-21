@@ -2,6 +2,7 @@ Java bindings for TrailDB
 ====
 
 [![Build Status](https://travis-ci.org/Sqooba/traildb-java.svg?branch=master)](https://travis-ci.org/Sqooba/traildb-java)
+<a href="https://packagecloud.io/Nennya/traildb-java"><img height="20" alt="Private Maven, RPM, DEB, PyPi and RubyGem Repository | packagecloud" src="https://packagecloud.io/images/packagecloud-badge.png" /></a>
 
 This repository's goal is to provide Java bindings for [TrailDB](http://traildb.io),
  an efficient tool for storing and querying series of events,
@@ -13,7 +14,7 @@ This repository requires having TrailDB installed on the machine. See instructio
  [TrailDB Github readme](https://github.com/traildb/traildb) and in 
  the [getting started guide](http://traildb.io/docs/getting_started/).
 
-The project is available as a Maven dependency on [packagecloud](https://packagecloud.io/).
+The project is available as a Maven dependency on [packagecloud](https://packagecloud.io/Nennya/traildb-java).
 To add it in your pom, you first have to add the following repository:
 
 ```
