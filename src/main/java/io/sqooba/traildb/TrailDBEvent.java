@@ -10,7 +10,9 @@ import java.util.Arrays;
  */
 public class TrailDBEvent {
 
-    /** Reference to the TrailDB instance that initially created a cursor containing this event. */
+    /**
+     * Reference to the TrailDB instance that initially created a cursor containing this event.
+     */
     private TrailDB trailDB;
 
     private long timestamp;
@@ -19,6 +21,8 @@ public class TrailDBEvent {
 
     /** This one contains the timestamp name. */
     private String[] fieldNames;
+    private String[] fieldValues;
+    private boolean cache[];
 
     protected TrailDBEvent(long timestamp, long numItems, long[] items) {
         this.timestamp = timestamp;
@@ -29,6 +33,8 @@ public class TrailDBEvent {
     protected void build(TrailDB trailDB, String[] fieldsNames) {
         this.trailDB = trailDB;
         this.fieldNames = fieldsNames;
+        this.fieldValues = new String[fieldNames.length - 1];
+        this.cache = new boolean[fieldNames.length - 1];
     }
 
     /**
@@ -58,6 +64,20 @@ public class TrailDBEvent {
         return Arrays.copyOf(this.fieldNames, this.fieldNames.length);
     }
 
+    /**
+     * Get the decoded value of an item.
+     * 
+     * @param index The item index.
+     * @return The decoded item as a String.
+     */
+    public String getFieldValue(int index) {
+        if (!cache[index]) {
+            fieldValues[index] = this.trailDB.getItemValue(items[index]);
+            cache[index] = true;
+        }
+        return fieldValues[index];
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -67,7 +87,7 @@ public class TrailDBEvent {
                 sep = "";
             }
             // Skip the "time" in names.
-            sb.append(this.fieldNames[i + 1] + "=" + this.trailDB.getItemValue(this.items[i]) + sep);
+            sb.append(this.fieldNames[i + 1] + "=" + this.getFieldValue(i) + sep);
         }
         return "Event(time=" + this.timestamp + ", " + sb.toString() + ")";
     }
