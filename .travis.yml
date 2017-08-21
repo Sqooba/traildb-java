@@ -1,14 +1,38 @@
-language: java
+jobs:
+  include:
+    - stage: test
+      language: java
+      os:
+      - osx
+      sudo: required
+      before_install:
+      - ./install.sh
+      install: true
+      script:
+      - mvn clean compile install assembly:single
+      - if [ "$TRAVIS_BRANCH" = "master" ]; then ./upload_mac.sh; fi
+    - stage: test
+      language: java
+      os:
+      - linux
+      sudo: required
+      before_install:
+      - ./install.sh
+      install: true
+      script:
+      - mvn clean compile install assembly:single
+      - if [ "$TRAVIS_BRANCH" = "master" ]; then ./upload_linux.sh; fi
+    - stage: deploy
+      before_install:
+      - sudo apt-get install -qq sshpass
+      - gem install package_cloud
 
-os:
-  - linux
-  - osx
+      install: true
 
-sudo: required
+      script: skip
 
-before_install:
-  - ./install.sh
-
-script:
-  
-  - mvn clean compile install assembly:single
+      deploy:
+        provider: script
+        script: ./deploy.sh
+        on:
+         branch: master

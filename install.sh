@@ -3,10 +3,11 @@
 if [[ $TRAVIS_OS_NAME == 'osx' ]]; then
 
 	brew install traildb;
+	brew install https://raw.githubusercontent.com/kadwanev/bigboybrew/master/Library/Formula/sshpass.rb
 
 else
 	sudo apt-get update -qq
-	sudo apt-get install -qq libarchive-dev libjudy-dev pkg-config build-essential
+	sudo apt-get install -qq libarchive-dev libjudy-dev sshpass pkg-config build-essential
 
 	wget https://mirrors.kernel.org/ubuntu/pool/universe/j/judy/libjudy-dev_1.0.5-5_amd64.deb
 	wget https://mirrors.kernel.org/ubuntu/pool/universe/j/judy/libjudydebian1_1.0.5-5_amd64.deb
