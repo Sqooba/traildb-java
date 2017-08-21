@@ -6,41 +6,43 @@ import java.util.List;
 
 public class TrailDBClause {
 
-    private List<String[]> terms;
-    private List<Long[]> timeRanges;
+    private TrailDBTerm terms[];
+    private TrailDBTimeRange timeRanges[];
 
-    public TrailDBClause(List<String[]> terms, List<Long[]> timeRanges) {
-        if (terms == null) {
-            this.terms = new ArrayList<>();
-        } else {
-            this.terms = terms;
-        }
-        if (timeRanges == null) {
-            this.timeRanges = new ArrayList<>();
-        } else {
-            this.timeRanges = timeRanges;
-        }
+    private TrailDBClause(List<TrailDBTerm> terms, List<TrailDBTimeRange> timeRanges) {
+        this.terms = terms.toArray(new TrailDBTerm[0]);
+        this.timeRanges = timeRanges.toArray(new TrailDBTimeRange[0]);
     }
 
-    public TrailDBClause() {
-        this.terms = new ArrayList<>();
-        this.timeRanges = new ArrayList<>();
+    public TrailDBTerm[] getTerms() {
+        return this.terms;
     }
 
-    public void addTerm(String[] term) {
-        this.terms.add(term);
-    }
-
-    public void addTimeRange(Long[] timeRange) {
-        this.timeRanges.add(timeRange);
-    }
-
-    public List<String[]> getTerms() {
-        return Collections.unmodifiableList(this.terms);
-    }
-
-    public List<Long[]> getTimeRanges() {
+    public TrailDBTimeRange[] getTimeRanges() {
         return this.timeRanges;
+    }
+
+    public static class TrailDBClauseBuilder {
+
+        private List<TrailDBTerm> terms = new ArrayList<>();
+        private List<TrailDBTimeRange> timeRanges = new ArrayList<>();
+
+        public TrailDBClauseBuilder addTerm(TrailDBTerm term) {
+            this.terms.add(term);
+
+            return this;
+        }
+
+        public TrailDBClauseBuilder addTimeRange(TrailDBTimeRange timeRange) {
+            this.timeRanges.add(timeRange);
+
+            return this;
+        }
+
+        public TrailDBClause build() {
+            return new TrailDBClause(this.terms, this.timeRanges);
+        }
+
     }
 
 }
