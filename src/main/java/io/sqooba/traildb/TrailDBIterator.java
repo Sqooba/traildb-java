@@ -52,6 +52,9 @@ public class TrailDBIterator implements Iterable<TrailDBEvent>, AutoCloseable {
             public boolean hasNext() {
                 TrailDBEvent next = TrailDBNative.INSTANCE.cursorNext(TrailDBIterator.this.cursor);
                 if (next == null) {
+                    // Auto-close when at the end because it is not intuitive to have to close an
+                    // iterator when at its end in Java.
+                    TrailDBIterator.this.close();
                     return false;
                 } else {
                     this.event = next;
