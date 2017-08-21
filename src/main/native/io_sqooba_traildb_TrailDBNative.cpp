@@ -469,6 +469,19 @@ JNIEXPORT jlong JNICALL Java_io_sqooba_traildb_TrailDBNative_tdbGetTrailLength
 
 }
 
+JNIEXPORT jint JNICALL Java_io_sqooba_traildb_TrailDBNative_tdbCursorSetEventFilter
+  (JNIEnv *env, jobject thisObject, jobject jcursor, jobject jfilter) 
+{
+
+	// Convert arguments.
+	tdb_cursor *cursor = (tdb_cursor*) env->GetDirectBufferAddress(jcursor);
+	const struct tdb_event_filter *filter = (tdb_event_filter*) env->GetDirectBufferAddress(jfilter);
+
+	// Call lib.
+	return tdb_cursor_set_event_filter(cursor, filter);
+
+}
+
 JNIEXPORT jobject JNICALL Java_io_sqooba_traildb_TrailDBNative_tdbCursorNext
   (JNIEnv *env, jobject thisObject, jobject jcursor)
 {
@@ -502,6 +515,51 @@ JNIEXPORT jobject JNICALL Java_io_sqooba_traildb_TrailDBNative_tdbCursorNext
 	// Construct and return event.
 	jobject ret = env->NewObject(traildbEvent, JMID_traildbEvent_constructor, (jlong)timestamp, (jlong)num_items, result);
 	return ret;
+
+}
+
+JNIEXPORT jobject JNICALL Java_io_sqooba_traildb_TrailDBNative_tdbEventFilterNew
+  (JNIEnv *env, jobject thisObject) {
+
+	// Call lib.
+	void *filter = tdb_event_filter_new();
+	jobject filterByteBuffer = env->NewDirectByteBuffer((void*) filter, sizeof(void *));
+    
+	return filterByteBuffer;
+
+}
+
+JNIEXPORT void JNICALL Java_io_sqooba_traildb_TrailDBNative_tdbEventFilterFree
+  (JNIEnv *env, jobject thisObject, jobject jfilter) {
+
+	// Convert arguments.
+	struct tdb_event_filter *filter = (tdb_event_filter*) env->GetDirectBufferAddress(jfilter);
+
+	// Call lib.
+	tdb_event_filter_free(filter);
+
+}
+
+JNIEXPORT jint JNICALL Java_io_sqooba_traildb_TrailDBNative_tdbEventFilterAddTerm
+  (JNIEnv *env, jobject thisObject, jobject jfilter, jlong jterm, jint jisNegative) {
+
+	// Convert arguments.
+	struct tdb_event_filter *filter = (tdb_event_filter*) env->GetDirectBufferAddress(jfilter);
+	uint64_t term = (uint64_t)jterm;
+
+	// Call lib.
+	return tdb_event_filter_add_term(filter, term, (int)jisNegative);
+
+}
+
+JNIEXPORT jint JNICALL Java_io_sqooba_traildb_TrailDBNative_tdbEventFilterNewClause
+  (JNIEnv *env, jobject thisObject, jobject jfilter) {
+
+	// Convert arguments.
+	struct tdb_event_filter *filter = (tdb_event_filter*) env->GetDirectBufferAddress(jfilter);
+
+	// Call lib.
+	return tdb_event_filter_new_clause(filter);
 
 }
 

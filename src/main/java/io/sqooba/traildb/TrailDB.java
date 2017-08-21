@@ -297,6 +297,14 @@ public class TrailDB implements AutoCloseable {
         return new TrailDBIterator(cursor, this);
     }
 
+    public TrailDBIterator trail(long trailID, TrailDBEventFilter filter) {
+
+        TrailDBIterator iterator = this.trail(trailID);
+        iterator.setFilter(filter);
+
+        return iterator;
+    }
+
     /**
      * Get a map containing a trail UUID as key and a trail cursor as value, allowing to iterate over all trails in the
      * database.

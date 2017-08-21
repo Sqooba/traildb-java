@@ -233,10 +233,50 @@ JNIEXPORT jlong JNICALL Java_io_sqooba_traildb_TrailDBNative_tdbGetTrailLength
 
 /*
  * Class:     io_sqooba_traildb_TrailDBNative
+ * Method:    tdbCursorSetEventFilter
+ * Signature: (Ljava/nio/ByteBuffer;Ljava/nio/ByteBuffer;)I
+ */
+JNIEXPORT jint JNICALL Java_io_sqooba_traildb_TrailDBNative_tdbCursorSetEventFilter
+  (JNIEnv *, jobject, jobject, jobject);
+
+/*
+ * Class:     io_sqooba_traildb_TrailDBNative
  * Method:    tdbCursorNext
  * Signature: (Ljava/nio/ByteBuffer;)Lio/sqooba/traildb/TrailDBEvent;
  */
 JNIEXPORT jobject JNICALL Java_io_sqooba_traildb_TrailDBNative_tdbCursorNext
+  (JNIEnv *, jobject, jobject);
+
+/*
+ * Class:     io_sqooba_traildb_TrailDBNative
+ * Method:    tdbEventFilterNew
+ * Signature: ()Ljava/nio/ByteBuffer;
+ */
+JNIEXPORT jobject JNICALL Java_io_sqooba_traildb_TrailDBNative_tdbEventFilterNew
+  (JNIEnv *, jobject);
+
+/*
+ * Class:     io_sqooba_traildb_TrailDBNative
+ * Method:    tdbEventFilterFree
+ * Signature: (Ljava/nio/ByteBuffer;)V
+ */
+JNIEXPORT void JNICALL Java_io_sqooba_traildb_TrailDBNative_tdbEventFilterFree
+  (JNIEnv *, jobject, jobject);
+
+/*
+ * Class:     io_sqooba_traildb_TrailDBNative
+ * Method:    tdbEventFilterAddTerm
+ * Signature: (Ljava/nio/ByteBuffer;JI)I
+ */
+JNIEXPORT jint JNICALL Java_io_sqooba_traildb_TrailDBNative_tdbEventFilterAddTerm
+  (JNIEnv *, jobject, jobject, jlong, jint);
+
+/*
+ * Class:     io_sqooba_traildb_TrailDBNative
+ * Method:    tdbEventFilterNewClause
+ * Signature: (Ljava/nio/ByteBuffer;)I
+ */
+JNIEXPORT jint JNICALL Java_io_sqooba_traildb_TrailDBNative_tdbEventFilterNewClause
   (JNIEnv *, jobject, jobject);
 
 #ifdef __cplusplus

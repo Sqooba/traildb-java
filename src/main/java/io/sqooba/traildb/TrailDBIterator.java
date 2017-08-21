@@ -17,6 +17,8 @@ public class TrailDBIterator implements Iterable<TrailDBEvent>, AutoCloseable {
     private boolean built = false;
     private TrailDB trailDB;
     private long size;
+    
+    private TrailDBEventFilter filter;
 
     protected TrailDBIterator(ByteBuffer cursor, TrailDB trailDB) {
         this.cursor = cursor;
@@ -65,5 +67,14 @@ public class TrailDBIterator implements Iterable<TrailDBEvent>, AutoCloseable {
                 throw new UnsupportedOperationException();
             }
         };
+    }
+
+    public void setFilter(TrailDBEventFilter filter) {
+        int errCode = TrailDBNative.INSTANCE.cursorSetEventFilter(this.cursor, filter.filter);
+        if (errCode != 0) {
+            throw new TrailDBException("Failed to set filter to cursor.");
+        }
+        this.filter = filter;
+
     }
 }

@@ -78,4 +78,18 @@ public interface TrailDBInterface {
     public long getTrailLength(ByteBuffer cursor);
 
     public TrailDBEvent cursorNext(ByteBuffer cursor);
+
+    public int cursorSetEventFilter(ByteBuffer cursor, ByteBuffer filter);
+
+    // ========================================================================
+    // Filter events.
+    // ========================================================================
+
+    public ByteBuffer eventFilterNew();
+
+    public void eventFilterFree(ByteBuffer filter);
+
+    public int eventFilterAddTerm(ByteBuffer filter, long term, int isNegative);
+
+    public int eventFilterNewClause(ByteBuffer filter);
 }

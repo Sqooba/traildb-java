@@ -204,8 +204,27 @@ public enum TrailDBNative implements TrailDBInterface {
     /** uint64_t tdb_get_trail_length(tdb_cursor *cursor) */
     private native long tdbGetTrailLength(ByteBuffer cursor);
 
+    /** tdb_error tdb_cursor_set_event_filter(tdb_cursor *cursor, const struct tdb_event_filter *filter) */
+    private native int tdbCursorSetEventFilter(ByteBuffer cursor, ByteBuffer filter);
+
     /** const tdb_event *tdb_cursor_next(tdb_cursor *cursor) */
     private native TrailDBEvent tdbCursorNext(ByteBuffer cursor);
+
+    // ========================================================================
+    // Filter events.
+    // ========================================================================
+
+    /** struct tdb_event_filter *tdb_event_filter_new(void) */
+    private native ByteBuffer tdbEventFilterNew();
+
+    /** void tdb_event_filter_free(struct tdb_event_filter *filter) */
+    private native void tdbEventFilterFree(ByteBuffer filter);
+
+    /** tdb_error tdb_event_filter_add_term(struct tdb_event_filter *filter, tdb_item term, int is_negative) */
+    private native int tdbEventFilterAddTerm(ByteBuffer filter, long term, int isNegative);
+
+    /** tdb_error tdb_event_filter_new_clause(struct tdb_event_filter *filter) */
+    private native int tdbEventFilterNewClause(ByteBuffer filter);
 
     @Override
     public ByteBuffer consInit() {
@@ -352,4 +371,29 @@ public enum TrailDBNative implements TrailDBInterface {
     public TrailDBEvent cursorNext(ByteBuffer cursor) {
         return tdbCursorNext(cursor);
     }
+    
+    public int cursorSetEventFilter(ByteBuffer cursor, ByteBuffer filter) {
+        return tdbCursorSetEventFilter(cursor, filter);
+    }
+
+    @Override
+    public ByteBuffer eventFilterNew() {
+        return tdbEventFilterNew();
+    }
+
+    @Override
+    public void eventFilterFree(ByteBuffer filter) {
+        tdbEventFilterFree(filter);
+    }
+
+    @Override
+    public int eventFilterAddTerm(ByteBuffer filter, long term, int isNegative) {
+        return tdbEventFilterAddTerm(filter, term, isNegative);
+    }
+
+    @Override
+    public int eventFilterNewClause(ByteBuffer filter) {
+        return tdbEventFilterNewClause(filter);
+    }
+
 }
