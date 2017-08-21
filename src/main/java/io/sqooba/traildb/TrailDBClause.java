@@ -4,12 +4,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class TrailDBFilterClause {
+public class TrailDBClause {
 
     private List<String[]> terms;
     private List<Long[]> timeRanges;
 
-    public TrailDBFilterClause(List<String[]> terms, List<Long[]> timeRanges) {
+    public TrailDBClause(List<String[]> terms, List<Long[]> timeRanges) {
         if (terms == null) {
             this.terms = new ArrayList<>();
         } else {
@@ -22,7 +22,7 @@ public class TrailDBFilterClause {
         }
     }
 
-    public TrailDBFilterClause() {
+    public TrailDBClause() {
         this.terms = new ArrayList<>();
         this.timeRanges = new ArrayList<>();
     }

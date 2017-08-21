@@ -8,7 +8,7 @@ public class TrailDBEventFilter {
 
     private TrailDBNative trailDB = TrailDBNative.INSTANCE;
 
-    private final List<TrailDBFilterClause> clauses;
+    private final List<TrailDBClause> clauses;
     private final TrailDB db;
     ByteBuffer filter;
 
@@ -32,7 +32,7 @@ public class TrailDBEventFilter {
                 }
             }
 
-            TrailDBFilterClause currentClause = this.clauses.get(i);
+            TrailDBClause currentClause = this.clauses.get(i);
 
             // Add terms filtering.
             int termLen = 0;
@@ -76,14 +76,14 @@ public class TrailDBEventFilter {
 
         private TrailDB db;
 
-        private List<TrailDBFilterClause> clauses;
+        private List<TrailDBClause> clauses;
 
         public TrailDBEventFilterBuilder(TrailDB db) {
             this.db = db;
             this.clauses = new ArrayList<>();
         }
 
-        public TrailDBEventFilterBuilder addClause(TrailDBFilterClause clause) {
+        public TrailDBEventFilterBuilder addClause(TrailDBClause clause) {
             this.clauses.add(clause);
             return this;
         }
