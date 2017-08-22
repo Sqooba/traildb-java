@@ -4,9 +4,12 @@ import java.nio.ByteBuffer;
 import java.util.Iterator;
 
 /**
- * Class representing a cursor over a particular trail of the database. The cursor is initially constructed from the
+ * <p> Class representing a cursor over a particular trail of the database. The cursor is initially constructed from the
  * TrailDB.trail() method. The cursor points to the current event and this event is updated each time a .next() is
  * called.
+ * 
+ * <p> The TrailDBIterator should be used in a try-with-resource block so it gets closed and can free the memory after
+ * being done iterating over a trail.
  * 
  * @author B. Sottas
  *
