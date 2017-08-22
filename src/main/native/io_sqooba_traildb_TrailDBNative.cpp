@@ -10,7 +10,9 @@ extern "C" {
 }
 
 static jclass traildbEvent;
-static jmethodID JMID_traildbEvent_constructor;
+static jfieldID JFID_traildbEvent_timestamp;
+static jfieldID JFID_traildbEvent_numItems;
+static jfieldID JFID_traildbEvent_items;
 
 jint JNI_OnLoad(JavaVM* vm, void* reserved) {
 	JNIEnv* env = NULL;
@@ -25,7 +27,10 @@ jint JNI_OnLoad(JavaVM* vm, void* reserved) {
         traildbEvent = (jclass) env->NewGlobalRef(tempLocalClassRef);
 		env->DeleteLocalRef(tempLocalClassRef);
 
-		JMID_traildbEvent_constructor = env->GetMethodID(traildbEvent, "<init>","(JJ[J)V");
+		//JMID_traildbEvent_constructor = env->GetMethodID(traildbEvent, "<init>","(JJ[J)V");
+		JFID_traildbEvent_timestamp = env->GetFieldID(traildbEvent, "timestamp", "J");
+		JFID_traildbEvent_numItems = env->GetFieldID(traildbEvent, "numItems", "J");
+		JFID_traildbEvent_items = env->GetFieldID(traildbEvent, "items", "[J");
     } 
 
     return JNI_VERSION_1_6;
@@ -469,8 +474,8 @@ JNIEXPORT jlong JNICALL Java_io_sqooba_traildb_TrailDBNative_tdbGetTrailLength
 
 }
 
-JNIEXPORT jobject JNICALL Java_io_sqooba_traildb_TrailDBNative_tdbCursorNext
-  (JNIEnv *env, jobject thisObject, jobject jcursor)
+JNIEXPORT jint JNICALL Java_io_sqooba_traildb_TrailDBNative_tdbCursorNext
+  (JNIEnv *env, jobject thisObject, jobject jcursor, jobject jevent)
 {
 
 	// Convert arguments.
@@ -481,27 +486,31 @@ JNIEXPORT jobject JNICALL Java_io_sqooba_traildb_TrailDBNative_tdbCursorNext
 
 	// Check if there is no more events.
 	if(!event) {
-		return NULL;
+		return -1;
 	}
 
 	// Get struct elements.
 	uint64_t timestamp = event->timestamp;
 	uint64_t num_items = event->num_items;
 	const tdb_item *items_ptr = event->items;
-	jlong items[num_items];
+
+
+  	jlongArray newArray = env->NewLongArray(num_items);
+    jlong *narr = env->GetLongArrayElements(newArray, NULL);
 
 	unsigned int i;
-	for(i = 0; i < num_items; i++) {
-		items[i] = (jlong)items_ptr[i];
-	}
+    for (i = 0; i < num_items; i++) {
+        narr[i] = items_ptr[i];
+    }
 
-	jlongArray result;
- 	result = env->NewLongArray(num_items);
-	env->SetLongArrayRegion(result, 0, num_items, items);
 
-	// Construct and return event.
-	jobject ret = env->NewObject(traildbEvent, JMID_traildbEvent_constructor, (jlong)timestamp, (jlong)num_items, result);
-	return ret;
+	env->SetLongField(jevent, JFID_traildbEvent_timestamp, timestamp);
+	env->SetLongField(jevent, JFID_traildbEvent_numItems, num_items);
+	env->SetObjectField(jevent, JFID_traildbEvent_items, newArray);
+
+    env->ReleaseLongArrayElements(newArray, narr, 0);
+
+	return 0;
 
 }
 
