@@ -22,7 +22,6 @@ public class TrailDBEvent {
     /** This one contains the timestamp name. */
     private String[] fieldNames;
     private String[] fieldValues;
-    private boolean cache[];
 
     protected TrailDBEvent(long timestamp, long numItems, long[] items) {
         this.timestamp = timestamp;
@@ -34,7 +33,6 @@ public class TrailDBEvent {
         this.trailDB = trailDB;
         this.fieldNames = fieldsNames;
         this.fieldValues = new String[fieldNames.length - 1];
-        this.cache = new boolean[fieldNames.length - 1];
     }
 
     /**
@@ -71,11 +69,8 @@ public class TrailDBEvent {
      * @return The decoded item as a String.
      */
     public String getFieldValue(int index) {
-        if (!cache[index]) {
-            fieldValues[index] = this.trailDB.getItemValue(items[index]);
-            cache[index] = true;
-        }
-        return fieldValues[index];
+        // Caching possibility here to avoid going back to JNI to decode items.
+        return this.trailDB.getItemValue(items[index]);
     }
 
     @Override
