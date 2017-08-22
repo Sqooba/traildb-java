@@ -290,11 +290,14 @@ public class TrailDB implements AutoCloseable {
         if (cursor == null) {
             throw new TrailDBException("Memory allocation failed for cursor.");
         }
+        // FIXME
         int errCode = this.trailDBj.getTrail(cursor, trailID);
+        int size = (int)trailDBj.getTrailLength(cursor);
+        errCode = this.trailDBj.getTrail(cursor, trailID);
         if (errCode != 0) {
             throw new TrailDBException("Failed to create cursor with code: " + errCode);
         }
-        return new TrailDBIterator(cursor, this);
+        return new TrailDBIterator(cursor, this, size);
     }
 
     /**

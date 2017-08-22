@@ -2,6 +2,7 @@ package io.sqooba.traildb;
 
 import java.nio.ByteBuffer;
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 /**
  * <p> Class representing a cursor over a particular trail of the database. The cursor is initially constructed from the
@@ -17,14 +18,14 @@ import java.util.Iterator;
 public class TrailDBIterator implements Iterable<TrailDBEvent>, AutoCloseable {
 
     private ByteBuffer cursor;
-    private boolean built = false;
+    private boolean built = true;
     private TrailDB trailDB;
     private long size;
 
-    protected TrailDBIterator(ByteBuffer cursor, TrailDB trailDB) {
+    protected TrailDBIterator(ByteBuffer cursor, TrailDB trailDB, int size) {
         this.cursor = cursor;
         this.trailDB = trailDB;
-        this.size = trailDB.getNumEvents();
+        this.size = size;
     }
 
     @Override
@@ -39,28 +40,25 @@ public class TrailDBIterator implements Iterable<TrailDBEvent>, AutoCloseable {
     public Iterator<TrailDBEvent> iterator() {
         return new Iterator<TrailDBEvent>() {
 
-            private TrailDBEvent event;
+            private TrailDBEvent event = new TrailDBEvent(TrailDBIterator.this.trailDB,
+                    TrailDBIterator.this.trailDB.fields);
+            int currIndex = 0;
 
             @Override
             public TrailDBEvent next() {
-                if (!TrailDBIterator.this.built) {
-                    this.event = TrailDBNative.INSTANCE.cursorNext(TrailDBIterator.this.cursor);
-                    TrailDBIterator.this.built = true;
+                event = new TrailDBEvent(TrailDBIterator.this.trailDB, TrailDBIterator.this.trailDB.fields);
+
+                if (TrailDBNative.INSTANCE.cursorNext(TrailDBIterator.this.cursor, this.event) == -1) {
+                    throw new NoSuchElementException();
                 }
-                this.event.build(TrailDBIterator.this.trailDB, TrailDBIterator.this.trailDB.fields);
+
+                currIndex++;
                 return this.event;
             }
 
             @Override
             public boolean hasNext() {
-                TrailDBEvent next = TrailDBNative.INSTANCE.cursorNext(TrailDBIterator.this.cursor);
-                if (next == null) {
-                    return false;
-                } else {
-                    this.event = next;
-                    TrailDBIterator.this.built = true;
-                    return true;
-                }
+                return this.currIndex < size;
             }
 
             @Override
