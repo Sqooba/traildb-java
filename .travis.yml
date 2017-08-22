@@ -9,8 +9,8 @@ jobs:
       - ./install.sh
       install: true
       script:
-      - mvn clean compile install assembly:single
-      - if [ "$TRAVIS_BRANCH" = "master" ] && [ "$TRAVIS_PULL_REQUEST" = "false" ]; then ./upload_mac.sh; fi
+      - mvn clean install
+      - if [ "$TRAVIS_BRANCH" = "deployment-fix" ] && [ "$TRAVIS_PULL_REQUEST" = "false" ]; then ./upload_mac.sh; fi
     - stage: test
       language: java
       os:
@@ -20,10 +20,10 @@ jobs:
       - ./install.sh
       install: true
       script:
-      - mvn clean compile install assembly:single
-      - if [ "$TRAVIS_BRANCH" = "master" ] && [ "$TRAVIS_PULL_REQUEST" = "false" ]; then ./upload_linux.sh; fi
+      - mvn clean install
+      - if [ "$TRAVIS_BRANCH" = "deployment-fix" ] && [ "$TRAVIS_PULL_REQUEST" = "false" ]; then ./upload_linux.sh; fi
     - stage: deploy
       sudo: required
       install: true
       script:
-      - if [ "$TRAVIS_BRANCH" = "master" ] && [ "$TRAVIS_PULL_REQUEST" = "false" ]; then ./deploy.sh; fi
+      - if [ "$TRAVIS_BRANCH" = "deployment-fix" ] && [ "$TRAVIS_PULL_REQUEST" = "false" ]; then ./deploy.sh; fi
