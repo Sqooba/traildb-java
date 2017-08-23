@@ -1,5 +1,17 @@
 jobs:
   include:
+    # Run tests on linux
+    - stage: test
+      language: java
+      os:
+      - linux
+      sudo: required
+      before_install:
+      - ./install.sh
+      install: true
+      script:
+      - mvn install
+    # Run tests on mac and deploy binaries if deployment is enabled.
     - stage: test
       language: java
       os:
@@ -16,22 +28,8 @@ jobs:
         script: ./upload_mac.sh;
         on:
           branch: cc-travis
-    - stage: test
-      language: java
-      os:
-      - linux
-      sudo: required
-      before_install:
-      - ./install.sh
-      install: true
-      script:
-      - mvn install
-      deploy:
-        provider: script
-        skip_cleanup: true
-        script: ./upload_linux.sh;
-        on:
-          branch: cc-travis
+          tags: true
+    # Deploy jar with both mac and linux binaries.
     - stage: deploy
       language: java
       os:
@@ -48,5 +46,5 @@ jobs:
           - mvn versions:set -DgenerateBackupPoms=false -DnewVersion=TRAVIS_TAG
           - mvn deploy -DSkipTests
         on:
+          branch: cc-travis
           tags: true
-          branch: master
