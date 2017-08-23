@@ -45,8 +45,12 @@ jobs:
         skip_cleanup: true
         provider: script
         script:
+          - cp .travis.settings.xml $HOME/.m2/settings.xml
           - mvn versions:set -DgenerateBackupPoms=false -DnewVersion=$TRAVIS_TAG
-          - mvn deploy -DSkipTests
+          - mvn clean deploy -DSkipTests
+          - git add pom.xml
+          - git commit -m "🤖Travis Release"
+          - git push
         on:
           branch: cc-travis
           tags: true
