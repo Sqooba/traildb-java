@@ -40,17 +40,11 @@ jobs:
       install:
       - ./download_mac.sh
       script:
-      - mvn clean install
+      - mvn clean install -DskipTests
       deploy:
         skip_cleanup: true
         provider: script
-        script:
-          - cp .travis.settings.xml $HOME/.m2/settings.xml
-          - mvn versions:set -DgenerateBackupPoms=false -DnewVersion=$TRAVIS_TAG
-          - mvn clean deploy -DSkipTests
-          - git add pom.xml
-          - git commit -m "🤖Travis Release"
-          - git push
+        script: ./deploy.sh
         on:
           branch: cc-travis
           tags: true
