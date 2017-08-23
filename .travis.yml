@@ -27,7 +27,7 @@ jobs:
       - mvn install
       deploy:
         provider: script
-        script: ./upload_mac.sh;
+        script: ./upload_linux.sh;
         on:
           branch: cc-travis
     - stage: deploy
