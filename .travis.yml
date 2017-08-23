@@ -27,7 +27,7 @@ jobs:
         skip_cleanup: true
         script: ./upload_mac.sh;
         on:
-          branch: cc-travis
+          branch: master
           tags: true
     # Deploy jar with both mac and linux binaries.
     - stage: deploy
@@ -46,5 +46,5 @@ jobs:
         provider: script
         script: ./deploy.sh
         on:
-          branch: cc-travis
+          branch: master
           tags: true
