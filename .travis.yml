@@ -1,34 +1,34 @@
 jobs:
   include:
     # Run tests on linux
-#    - stage: test
-#      language: java
-#      os:
-#      - linux
-#      sudo: required
-#      before_install:
-#      - ./install.sh
-#      install: true
-#      script:
-#      - mvn install
-#    # Run tests on mac and deploy binaries if deployment is enabled.
-#    - stage: test
-#      language: java
-#      os:
-#      - osx
-#      sudo: required
-#      before_install:
-#      - ./install.sh
-#      install: true
-#      script:
-#      - mvn install
-#      deploy:
-#        provider: script
-#        skip_cleanup: true
-#        script: ./upload_mac.sh;
-#        on:
-#          branch: cc-travis
-#          tags: true
+    - stage: test
+      language: java
+      os:
+      - linux
+      sudo: required
+      before_install:
+      - ./install.sh
+      install: true
+      script:
+      - mvn install
+    # Run tests on mac and deploy binaries if deployment is enabled.
+    - stage: test
+      language: java
+      os:
+      - osx
+      sudo: required
+      before_install:
+      - ./install.sh
+      install: true
+      script:
+      - mvn install
+      deploy:
+        provider: script
+        skip_cleanup: true
+        script: ./upload_mac.sh;
+        on:
+          branch: cc-travis
+          tags: true
     # Deploy jar with both mac and linux binaries.
     - stage: deploy
       language: java
