@@ -9,7 +9,7 @@ jobs:
       - ./install.sh
       install: true
       script:
-      - mvn clean compile install assembly:single
+      - mvn install
       deploy:
         provider: script
         script: ./upload_mac.sh;
@@ -25,13 +25,7 @@ jobs:
       - ./install.sh
       install: true
       script:
-      - mvn clean compile install assembly:single
-      deploy:
-        provider: script
-        script: ./upload_linux.sh;
-        on:
-          tags: true
-          branch: master
+      - mvn install
     - stage: deploy
       language: java
       os:
@@ -45,7 +39,7 @@ jobs:
         script:
           - ./download_mac.sh
           - mvn versions:set -DgenerateBackupPoms=false -DnewVersion=TRAVIS_TAG
-          - mvn clean compile install assembly:single deploy -P Deploy
+          - mvn deploy -DSkipTests
         on:
           tags: true
           branch: master
