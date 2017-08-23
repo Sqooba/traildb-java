@@ -43,7 +43,7 @@ jobs:
         provider: script
         script:
           - ./download_mac.sh
-          - mvn versions:set -DgenerateBackupPoms=false -DnewVersion=TRAVIS_TAG
+          - mvn versions:set -DgenerateBackupPoms=false -DnewVersion=$TRAVIS_TAG
           - mvn deploy -DSkipTests
         on:
           branch: cc-travis
