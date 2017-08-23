@@ -39,7 +39,8 @@ jobs:
       - ./install.sh
       install:
       - ./download_mac.sh
-      script: skip
+      script:
+      - mvn clean install
       deploy:
         skip_cleanup: true
         provider: script
