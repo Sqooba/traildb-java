@@ -12,6 +12,7 @@ jobs:
       - mvn install
       deploy:
         provider: script
+        skip_cleanup: true
         script: ./upload_mac.sh;
         on:
           branch: cc-travis
@@ -27,6 +28,7 @@ jobs:
       - mvn install
       deploy:
         provider: script
+        skip_cleanup: true
         script: ./upload_linux.sh;
         on:
           branch: cc-travis
@@ -39,6 +41,7 @@ jobs:
       - ./install.sh
       install: true
       deploy:
+        skip_cleanup: true
         provider: script
         script:
           - ./download_mac.sh
