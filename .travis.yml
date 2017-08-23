@@ -1,16 +1,6 @@
 jobs:
   include:
-    - stage: test
-      language: java
-      os:
-      - osx
-      sudo: required
-      before_install:
-      - ./install.sh
-      install: true
-      script:
-      - mvn clean install
-      - if [ "$TRAVIS_BRANCH" = "master" ] && [ "$TRAVIS_PULL_REQUEST" = "false" ]; then ./upload_mac.sh; fi
+    # Run tests on linux
     - stage: test
       language: java
       os:
@@ -20,10 +10,41 @@ jobs:
       - ./install.sh
       install: true
       script:
-      - mvn clean install
-      - if [ "$TRAVIS_BRANCH" = "master" ] && [ "$TRAVIS_PULL_REQUEST" = "false" ]; then ./upload_linux.sh; fi
-    - stage: deploy
+      - mvn install
+    # Run tests on mac and deploy binaries if deployment is enabled.
+    - stage: test
+      language: java
+      os:
+      - osx
       sudo: required
+      before_install:
+      - ./install.sh
       install: true
       script:
-      - if [ "$TRAVIS_BRANCH" = "master" ] && [ "$TRAVIS_PULL_REQUEST" = "false" ]; then ./deploy.sh; fi
+      - mvn install
+      deploy:
+        provider: script
+        skip_cleanup: true
+        script: ./upload_mac.sh;
+        on:
+          branch: master
+          tags: true
+    # Deploy jar with both mac and linux binaries.
+    - stage: deploy
+      language: java
+      os:
+      - linux
+      sudo: required
+      before_install:
+      - ./install.sh
+      install:
+      - ./download_mac.sh
+      script:
+      - mvn clean install -DskipTests
+      deploy:
+        skip_cleanup: true
+        provider: script
+        script: ./deploy.sh
+        on:
+          branch: master
+          tags: true

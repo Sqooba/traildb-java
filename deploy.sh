@@ -1,7 +1,5 @@
 #!/bin/bash
 
-sudo apt-get install -qq sshpass
-gem install package_cloud
-sshpass -p $SSH_PASS sftp -oStrictHostKeyChecking=no -oPort=2223 -r $SSH_USER@185.19.29.18:/upload down/
-jar uf down/traildb.jar down/libtraildbjava.dylib
-source versions.properties; package_cloud push Nennya/traildb-java/java down/traildb.jar --coordinates=io.sqooba:traildb:${PROJECT_VERSION}
+cp .travis.settings.xml $HOME/.m2/settings.xml
+mvn versions:set -DgenerateBackupPoms=false -DnewVersion=$TRAVIS_TAG
+mvn clean deploy -DSkipTests
