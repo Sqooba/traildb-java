@@ -14,8 +14,7 @@ jobs:
         provider: script
         script: ./upload_mac.sh;
         on:
-          tags: true
-          branch: master
+          branch: cc-travis
     - stage: test
       language: java
       os:
@@ -26,6 +25,11 @@ jobs:
       install: true
       script:
       - mvn install
+      deploy:
+        provider: script
+        script: ./upload_mac.sh;
+        on:
+          branch: cc-travis
     - stage: deploy
       language: java
       os:
