@@ -9,7 +9,7 @@ jobs:
       - ./install.sh
       install: true
       script:
-      - mvn clean compile install assembly:single
+      - mvn clean install
       - if [ "$TRAVIS_BRANCH" = "master" ] && [ "$TRAVIS_PULL_REQUEST" = "false" ]; then ./upload_mac.sh; fi
     - stage: test
       language: java
@@ -20,7 +20,7 @@ jobs:
       - ./install.sh
       install: true
       script:
-      - mvn clean compile install assembly:single
+      - mvn clean install
       - if [ "$TRAVIS_BRANCH" = "master" ] && [ "$TRAVIS_PULL_REQUEST" = "false" ]; then ./upload_linux.sh; fi
     - stage: deploy
       sudo: required
