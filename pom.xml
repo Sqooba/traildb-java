@@ -265,7 +265,7 @@
         </extensions>
         <resources>
             <resource>
-                <directory>down</directory>
+                <directory>.</directory>
                 <filtering>true</filtering>
                 <includes>
                     <include>*.dylib</include>
