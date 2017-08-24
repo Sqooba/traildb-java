@@ -266,7 +266,7 @@
         <resources>
             <resource>
                 <directory>.</directory>
-                <filtering>true</filtering>
+                <filtering>false</filtering>
                 <includes>
                     <include>*.dylib</include>
                 </includes>
