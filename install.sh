@@ -19,7 +19,6 @@ else
 	./waf configure
 	./waf build
 	sudo ./waf install
-	./waf test
   
 	cd ..
 	cd traildb-java
