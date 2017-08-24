@@ -14,8 +14,8 @@ jobs:
     # Run tests on mac and deploy binaries if deployment is enabled.
     - stage: test
       language: java
-      os:
-      - osx
+      os: osx
+      osx_image: xcode8.1
       sudo: required
       before_install:
       - ./install.sh
