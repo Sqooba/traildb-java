@@ -37,10 +37,8 @@ jobs:
       sudo: required
       before_install:
       - ./install.sh
-      install:
-      - ./download_mac.sh
-      script:
-      - mvn clean install -DskipTests
+      install: true
+      script: skip
       deploy:
         skip_cleanup: true
         provider: script
