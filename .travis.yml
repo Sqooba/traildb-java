@@ -3,6 +3,9 @@ jobs:
     # Run tests on linux
     - stage: test
       language: java
+      cache:
+        directories:
+        - $HOME/.m2
       os:
       - linux
       sudo: required
@@ -10,18 +13,21 @@ jobs:
       - ./install.sh
       install: true
       script:
-      - mvn install
+      - mvn clean install
     # Run tests on mac and deploy binaries if deployment is enabled.
     - stage: test
       language: java
       os: osx
       osx_image: xcode8.1
+      cache:
+        directories:
+        - $HOME/.m2
       sudo: required
       before_install:
       - ./install.sh
       install: true
       script:
-      - mvn install
+      - mvn clena install
       deploy:
         provider: script
         skip_cleanup: true
@@ -32,6 +38,9 @@ jobs:
     # Deploy jar with both mac and linux binaries.
     - stage: deploy
       language: java
+      cache:
+        directories:
+        - $HOME/.m2
       os:
       - linux
       sudo: required
