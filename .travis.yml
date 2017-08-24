@@ -35,14 +35,10 @@ jobs:
       os:
       - linux
       sudo: required
+      on:
+        branch: master
+        tags: true
       before_install:
       - ./install.sh
       install: true
-      script: skip
-      deploy:
-        skip_cleanup: true
-        provider: script
-        script: ./deploy.sh
-        on:
-          branch: master
-          tags: true
+      script: ./deploy.sh
