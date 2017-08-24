@@ -27,7 +27,7 @@ jobs:
       - ./install.sh
       install: true
       script:
-      - mvn clena install
+      - mvn clean install
       deploy:
         provider: script
         skip_cleanup: true
