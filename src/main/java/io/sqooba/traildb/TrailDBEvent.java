@@ -5,7 +5,7 @@ import java.util.Arrays;
 
 /**
  * An event in the trail database.
- * 
+ *
  * @author B. Sottas
  *
  */
@@ -19,8 +19,8 @@ public class TrailDBEvent {
     private long timestamp;
     private long numItems;
     private long[] items;
-    
-    public ByteBuffer eventStruct;
+
+    private long eventStruct;
 
     /** This one contains the timestamp name. */
     private String[] fieldNames;
@@ -30,30 +30,29 @@ public class TrailDBEvent {
         this.fieldNames = fieldsNames;
     }
 
-    protected TrailDBEvent() {
-    }
+    protected TrailDBEvent() {}
 
     /**
      * Get the timestamp of this event.
-     * 
+     *
      * @return The timestamp of this event.
      */
     public long getTimestamp() {
-        return this.eventStruct.getInt(0);
+        return this.timestamp;
     }
 
     /**
      * Get the number of items in this event.
-     * 
+     *
      * @return The number of items in this event.
      */
     public long getNumItems() {
-        return this.eventStruct.getLong(8);
+        return this.numItems;
     }
 
     /**
      * Get the fields names of this event. Contains the timestamp name.
-     * 
+     *
      * @return The fields names of this event.
      */
     public String[] getFieldNames() {
@@ -62,18 +61,18 @@ public class TrailDBEvent {
 
     /**
      * Get the decoded value of an item.
-     * 
+     *
      * @param index The item index.
      * @return The decoded item as a String.
      */
     public String getFieldValue(int index) {
         // Caching possibility here to avoid going back to JNI to decode items.
-        ByteBuffer bb = ByteBuffer.allocate(8);
-        String value = TrailDBNative.INSTANCE.eventGetItemValue(trailDB.db, index, bb);
+        final ByteBuffer bb = ByteBuffer.allocate(8);
+        final String value = TrailDBNative.INSTANCE.eventGetItemValue(this.trailDB.db, index, bb);
         if (value == null) {
             throw new TrailDBException("Value not found.");
         }
-        long value_length = bb.getLong(0);
+        final long value_length = bb.getLong(0);
         if (value_length > Integer.MAX_VALUE) {
             throw new TrailDBException(
                     "Overflow, received a String value that is larger than the java String capacity.");
@@ -83,7 +82,7 @@ public class TrailDBEvent {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
+        final StringBuilder sb = new StringBuilder();
         String sep = ", ";
         for(int i = 0; i < this.numItems; i++) {
             if (i == this.numItems - 1) {

@@ -51,7 +51,6 @@ public class TrailDBIterator implements Iterable<TrailDBEvent>, AutoCloseable {
                 }
 
                 this.currIndex++;
-                System.out.println(this.event.eventStruct.isDirect());
                 return this.event;
             }
 

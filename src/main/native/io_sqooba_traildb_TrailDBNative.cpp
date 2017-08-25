@@ -31,7 +31,7 @@ jint JNI_OnLoad(JavaVM* vm, void* reserved) {
 		JFID_traildbEvent_timestamp = env->GetFieldID(traildbEvent, "timestamp", "J");
 		JFID_traildbEvent_numItems = env->GetFieldID(traildbEvent, "numItems", "J");
 		JFID_traildbEvent_items = env->GetFieldID(traildbEvent, "items", "[J");
-		JFID_traildbEvent_eventStruct = env->GetFieldID(traildbEvent, "eventStruct", "Ljava/nio/ByteBuffer;");
+		JFID_traildbEvent_eventStruct = env->GetFieldID(traildbEvent, "eventStruct", "J");
     } 
 
     return JNI_VERSION_1_6;
@@ -491,9 +491,9 @@ JNIEXPORT jint JNICALL Java_io_sqooba_traildb_TrailDBNative_tdbCursorNext
 	}
 
 	// Get struct elements.
-	//uint64_t timestamp = event->timestamp;
-	//uint64_t num_items = event->num_items;
-	//const tdb_item *items_ptr = event->items;
+	uint64_t timestamp = event->timestamp;
+	uint64_t num_items = event->num_items;
+	const tdb_item *items_ptr = event->items;
 
 
   	//jlongArray newArray = env->NewLongArray(num_items);
@@ -504,23 +504,11 @@ JNIEXPORT jint JNICALL Java_io_sqooba_traildb_TrailDBNative_tdbCursorNext
     //    narr[i] = items_ptr[i];
     //}
 
-	//env->SetLongField(jevent, JFID_traildbEvent_timestamp, timestamp);
-	//env->SetLongField(jevent, JFID_traildbEvent_numItems, num_items);
-	typedef struct{
-		int timestamp;
-		int num_items;
-	} myStruct;
-	myStruct* dynamicStruct;
-	dynamicStruct = (myStruct*)malloc(sizeof(myStruct));
+	env->SetLongField(jevent, JFID_traildbEvent_timestamp, timestamp);
+	env->SetLongField(jevent, JFID_traildbEvent_numItems, num_items);
+	env->SetLongField(jevent, JFID_traildbEvent_eventStruct, (jlong)items_ptr);
 
-	dynamicStruct->timestamp = 1;
-	dynamicStruct->num_items = 0;
-	
-	jobject bb = env->NewDirectByteBuffer((void*) dynamicStruct, sizeof(myStruct));
-
-	env->SetObjectField(jevent, JFID_traildbEvent_eventStruct, bb);
-
-    // env->ReleaseLongArrayElements(newArray, narr, 0);
+    //env->ReleaseLongArrayElements(newArray, narr, 0);
 
 	return 0;
 
@@ -533,21 +521,20 @@ JNIEXPORT jstring JNICALL Java_io_sqooba_traildb_TrailDBNative_eventGetItemValue
 	// Convert arguments.
 	const tdb *db = (tdb*) env->GetDirectBufferAddress(jdb);
 	// uint64_t item = (uint64_t)jitem;
-	uint64_t *value_length = (uint64_t*)malloc(sizeof(uint64_t));
+	uint64_t value_length;
 
 	jclass jc = env->GetObjectClass(jvalueLength);
 	jmethodID mid = env->GetMethodID(jc, "putLong","(J)Ljava/nio/ByteBuffer;");
 
 	// thisObject is the calling event.
-	const tdb_event *event = (tdb_event*) env->GetDirectBufferAddress(env->GetObjectField(thisObject, JFID_traildbEvent_eventStruct));
+	const tdb_item *items;
+	items = (tdb_item *) env->GetLongField(thisObject, JFID_traildbEvent_eventStruct);
 	
 	// Call lib.
-	const char* v = tdb_get_item_value(db, event->items[jindex], value_length);
+	const char* v = tdb_get_item_value(db, items[jindex], &value_length);
 
 	// Store to the buffer the what has been put in the pointer.
-	env->CallObjectMethod(jvalueLength, mid, *value_length);
-
-	free(value_length);
+	env->CallObjectMethod(jvalueLength, mid, value_length);
 
 	return env->NewStringUTF(v);
 
