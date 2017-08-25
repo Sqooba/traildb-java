@@ -18,7 +18,6 @@ import java.util.NoSuchElementException;
 public class TrailDBIterator implements Iterable<TrailDBEvent>, AutoCloseable {
 
     private ByteBuffer cursor;
-    private boolean built = true;
     private TrailDB trailDB;
     private long size;
 
@@ -40,8 +39,7 @@ public class TrailDBIterator implements Iterable<TrailDBEvent>, AutoCloseable {
     public Iterator<TrailDBEvent> iterator() {
         return new Iterator<TrailDBEvent>() {
 
-            private TrailDBEvent event = new TrailDBEvent(TrailDBIterator.this.trailDB,
-                    TrailDBIterator.this.trailDB.fields);
+            private TrailDBEvent event = new TrailDBEvent();
             int currIndex = 0;
 
             @Override
