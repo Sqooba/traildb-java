@@ -503,7 +503,6 @@ JNIEXPORT jint JNICALL Java_io_sqooba_traildb_TrailDBNative_tdbCursorNext
         narr[i] = items_ptr[i];
     }
 
-
 	env->SetLongField(jevent, JFID_traildbEvent_timestamp, timestamp);
 	env->SetLongField(jevent, JFID_traildbEvent_numItems, num_items);
 	env->SetObjectField(jevent, JFID_traildbEvent_items, newArray);
