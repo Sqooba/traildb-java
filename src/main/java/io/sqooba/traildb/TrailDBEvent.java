@@ -1,5 +1,6 @@
 package io.sqooba.traildb;
 
+import java.nio.ByteBuffer;
 import java.util.Arrays;
 
 /**
@@ -18,6 +19,8 @@ public class TrailDBEvent {
     private long timestamp;
     private long numItems;
     private long[] items;
+    
+    public ByteBuffer eventStruct;
 
     /** This one contains the timestamp name. */
     private String[] fieldNames;
@@ -36,7 +39,7 @@ public class TrailDBEvent {
      * @return The timestamp of this event.
      */
     public long getTimestamp() {
-        return this.timestamp;
+        return this.eventStruct.getInt(0);
     }
 
     /**
@@ -45,7 +48,7 @@ public class TrailDBEvent {
      * @return The number of items in this event.
      */
     public long getNumItems() {
-        return this.numItems;
+        return this.eventStruct.getLong(8);
     }
 
     /**
@@ -65,7 +68,17 @@ public class TrailDBEvent {
      */
     public String getFieldValue(int index) {
         // Caching possibility here to avoid going back to JNI to decode items.
-        return this.trailDB.getItemValue(items[index]);
+        ByteBuffer bb = ByteBuffer.allocate(8);
+        String value = TrailDBNative.INSTANCE.eventGetItemValue(trailDB.db, index, bb);
+        if (value == null) {
+            throw new TrailDBException("Value not found.");
+        }
+        long value_length = bb.getLong(0);
+        if (value_length > Integer.MAX_VALUE) {
+            throw new TrailDBException(
+                    "Overflow, received a String value that is larger than the java String capacity.");
+        }
+        return value.substring(0, (int)value_length);
     }
 
     @Override

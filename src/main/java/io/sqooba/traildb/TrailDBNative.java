@@ -207,7 +207,13 @@ public enum TrailDBNative implements TrailDBInterface {
     /** const tdb_event *tdb_cursor_next(tdb_cursor *cursor) 
      * @param event */
     private native int tdbCursorNext(ByteBuffer cursor, TrailDBEvent event);
-
+    
+    // ========================================================================
+    // Custom.
+    // ========================================================================
+    
+    public native String eventGetItemValue(ByteBuffer db, int index, ByteBuffer value_length);
+    
     @Override
     public ByteBuffer consInit() {
         return tdbConsInit();
