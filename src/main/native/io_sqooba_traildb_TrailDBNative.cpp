@@ -13,6 +13,7 @@ static jclass traildbEvent;
 static jfieldID JFID_traildbEvent_timestamp;
 static jfieldID JFID_traildbEvent_numItems;
 static jfieldID JFID_traildbEvent_items;
+static jfieldID JFID_traildbEvent_eventStruct;
 
 jint JNI_OnLoad(JavaVM* vm, void* reserved) {
 	JNIEnv* env = NULL;
@@ -27,10 +28,10 @@ jint JNI_OnLoad(JavaVM* vm, void* reserved) {
         traildbEvent = (jclass) env->NewGlobalRef(tempLocalClassRef);
 		env->DeleteLocalRef(tempLocalClassRef);
 
-		//JMID_traildbEvent_constructor = env->GetMethodID(traildbEvent, "<init>","(JJ[J)V");
 		JFID_traildbEvent_timestamp = env->GetFieldID(traildbEvent, "timestamp", "J");
 		JFID_traildbEvent_numItems = env->GetFieldID(traildbEvent, "numItems", "J");
 		JFID_traildbEvent_items = env->GetFieldID(traildbEvent, "items", "[J");
+		JFID_traildbEvent_eventStruct = env->GetFieldID(traildbEvent, "eventStruct", "J");
     } 
 
     return JNI_VERSION_1_6;
@@ -482,7 +483,9 @@ JNIEXPORT jint JNICALL Java_io_sqooba_traildb_TrailDBNative_tdbCursorNext
 	tdb_cursor *cursor = (tdb_cursor*) env->GetDirectBufferAddress(jcursor);
 
 	// Call lib.
-	const tdb_event *event = tdb_cursor_next(cursor);
+	const tdb_event *event;
+
+	event = tdb_cursor_next(cursor);
 
 	// Check if there is no more events.
 	if(!event) {
@@ -492,25 +495,58 @@ JNIEXPORT jint JNICALL Java_io_sqooba_traildb_TrailDBNative_tdbCursorNext
 	// Get struct elements.
 	uint64_t timestamp = event->timestamp;
 	uint64_t num_items = event->num_items;
-	const tdb_item *items_ptr = event->items;
+	//const tdb_item *items_ptr = event->items;
 
 
-  	jlongArray newArray = env->NewLongArray(num_items);
-    jlong *narr = env->GetLongArrayElements(newArray, NULL);
+  	//jlongArray newArray = env->NewLongArray(num_items);
+    //jlong *narr = env->GetLongArrayElements(newArray, NULL);
 
-	unsigned int i;
-    for (i = 0; i < num_items; i++) {
-        narr[i] = items_ptr[i];
-    }
-
+	//unsigned int i;
+    //for (i = 0; i < num_items; i++) {
+    //    narr[i] = items_ptr[i];
+    //}
 
 	env->SetLongField(jevent, JFID_traildbEvent_timestamp, timestamp);
 	env->SetLongField(jevent, JFID_traildbEvent_numItems, num_items);
-	env->SetObjectField(jevent, JFID_traildbEvent_items, newArray);
+	env->SetLongField(jevent, JFID_traildbEvent_eventStruct, (long) event->items);
 
-    env->ReleaseLongArrayElements(newArray, narr, 0);
+    //env->ReleaseLongArrayElements(newArray, narr, 0);
 
 	return 0;
+
+}
+
+JNIEXPORT jstring JNICALL Java_io_sqooba_traildb_TrailDBNative_eventGetItemValue
+  (JNIEnv *env, jobject thisObject, jobject jdb, jint jindex, jobject jvalueLength) 
+{
+	
+	// Convert arguments.
+	const tdb *db = (tdb*) env->GetDirectBufferAddress(jdb);
+	// uint64_t item = (uint64_t)jitem;
+	uint64_t value_length;
+
+	jclass jc = env->GetObjectClass(jvalueLength);
+	jmethodID mid = env->GetMethodID(jc, "putLong","(J)Ljava/nio/ByteBuffer;");
+
+	// thisObject is the calling event.
+	const tdb_item *items;
+	items = (tdb_item *) env->GetLongField(thisObject, JFID_traildbEvent_eventStruct);
+	if(items[0] == NULL) {
+		items[0];
+		printf("KURWA");
+		fflush(stdout);
+	}
+	
+	
+	// Call lib.
+	const char* v = tdb_get_item_value(db, 1234, &value_length);
+
+	// Store to the buffer the what has been put in the pointer.
+	env->CallObjectMethod(jvalueLength, mid, value_length);
+
+	return env->NewStringUTF(v);
+
+
 
 }
 
