@@ -211,7 +211,8 @@
 					<compilerExecutable>gcc</compilerExecutable>
 
 					<compilerStartOptions>
-						<compilerStartOption>-Wall</compilerStartOption>
+            <compilerStartOption>-Wall</compilerStartOption>
+            <compilerStartOption>-Werror</compilerStartOption>
 						<compilerStartOption>-fpic</compilerStartOption>
 						<compilerStartOption>-O0</compilerStartOption>
 						<compilerStartOption>-g</compilerStartOption>
