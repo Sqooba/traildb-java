@@ -245,7 +245,7 @@ JNIEXPORT jint JNICALL Java_io_sqooba_traildb_TrailDBNative_tdbCursorNext
  * Signature: (Ljava/nio/ByteBuffer;ILjava/nio/ByteBuffer;)Ljava/lang/String;
  */
 JNIEXPORT jstring JNICALL Java_io_sqooba_traildb_TrailDBNative_eventGetItemValue
-  (JNIEnv *, jobject, jobject, jint, jobject);
+  (JNIEnv *, jobject, jobject, jint, jobject, jobject);
 
 #ifdef __cplusplus
 }
