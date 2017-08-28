@@ -44,9 +44,14 @@ public class TrailDBIterator implements Iterable<TrailDBEvent>, AutoCloseable {
 
             @Override
             public TrailDBEvent next() {
+                // Create a new event which acts as an empty shell (just to have a new reference).
                 this.event = new TrailDBEvent(TrailDBIterator.this.trailDB, TrailDBIterator.this.trailDB.fields);
 
-                if (TrailDBNative.INSTANCE.cursorNext(TrailDBIterator.this.cursor, this.event) == -1) {
+                // Try to fill the event.
+                final int errCode = TrailDBNative.INSTANCE.cursorNext(TrailDBIterator.this.cursor, this.event);
+
+                // Check if there are no more events.
+                if (errCode != 0) {
                     throw new NoSuchElementException();
                 }
 

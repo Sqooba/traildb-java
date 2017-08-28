@@ -23,12 +23,12 @@ import uk.org.lidalia.slf4jtest.TestLoggerFactory;
 
 public class TrailDBFailureTest {
 
-    private TrailDBNative traildb = TrailDBNative.INSTANCE;
+    private final TrailDBNative traildb = TrailDBNative.INSTANCE;
 
     private TrailDB db;
-    private String path = "testdb";
-    private String cookie = "12345678123456781234567812345678";
-    private String otherCookie = "12121212121212121212121212121212";
+    private final String path = "testdb";
+    private final String cookie = "12345678123456781234567812345678";
+    private final String otherCookie = "12121212121212121212121212121212";
 
     private final TestLogger logger = TestLoggerFactory.getTestLogger(TrailDB.class);
 
@@ -39,7 +39,7 @@ public class TrailDBFailureTest {
     public void setUp() throws IOException {
 
         // Initialise a TrailDB with some TrailDBEvents.
-        TrailDBBuilder builder = new TrailDBBuilder(this.path, new String[] { "field1", "field2" });
+        final TrailDBBuilder builder = new TrailDBBuilder(this.path, new String[] { "field1", "field2" });
         builder.add(this.cookie, 120, new String[] { "a", "hinata" });
         builder.add(this.cookie, 121, new String[] { "vilya", "" });
         builder.add(this.otherCookie, 122, new String[] { "kaguya", "hinata" });
@@ -51,7 +51,7 @@ public class TrailDBFailureTest {
     public void tearDown() throws IOException {
 
         // Clear the TrailDB files/directories created for the tests.
-        File f = new File(this.path + ".tdb");
+        final File f = new File(this.path + ".tdb");
         if (f.exists() && !f.isDirectory()) {
             f.delete();
         }
@@ -122,7 +122,7 @@ public class TrailDBFailureTest {
         };
         this.db.getMaxTimestamp();
         assertTrue(this.logger.getLoggingEvents().stream()
-                .anyMatch(e -> "long overflow, received a negtive value for max timestamp.".equals(e.getMessage())));
+                .anyMatch(e -> "long overflow, received a negative value for max timestamp.".equals(e.getMessage())));
     }
 
     @Test

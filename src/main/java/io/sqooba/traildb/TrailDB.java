@@ -99,7 +99,7 @@ public class TrailDB implements AutoCloseable {
     public long getMaxTimestamp() {
         final long max = this.trailDBj.maxTimestamp(this.db);
         if (max < 0) {
-            LOGGER.warn("long overflow, received a negtive value for max timestamp.");
+            LOGGER.warn("long overflow, received a negative value for max timestamp.");
         }
         return max;
     }
