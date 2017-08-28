@@ -18,9 +18,8 @@ public class TrailDBEvent {
 
     private long timestamp;
     private long numItems;
-    private long[] items;
 
-    private long eventStruct;
+    public long eventStruct;
 
     /** This one contains the timestamp name. */
     private String[] fieldNames;
@@ -68,7 +67,7 @@ public class TrailDBEvent {
     public String getFieldValue(int index) {
         // Caching possibility here to avoid going back to JNI to decode items.
         final ByteBuffer bb = ByteBuffer.allocate(8);
-        final String value = TrailDBNative.INSTANCE.eventGetItemValue(this.trailDB.db, index, bb);
+        final String value = TrailDBNative.INSTANCE.eventGetItemValue(this.trailDB.db, index, bb, this);
         if (value == null) {
             throw new TrailDBException("Value not found.");
         }
