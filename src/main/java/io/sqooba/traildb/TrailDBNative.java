@@ -14,7 +14,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * This class is used to perform native call to the TrailDB C library. Base on the available Python bindings.
- * 
+ *
  * @author B. Sottas
  *
  */
@@ -24,7 +24,7 @@ public enum TrailDBNative implements TrailDBInterface {
 
     /**
      * Convert a raw 16-byte UUID into its hexadecimal string representation.
-     * 
+     *
      * @param rawUUID 16-byte UUID.
      * @return A 32-byte hexadecimal string representation.
      */
@@ -34,7 +34,7 @@ public enum TrailDBNative implements TrailDBInterface {
 
     /**
      * Convert a 32-byte hexadecimal string representation of an UUID into a raw 16-byte UUID.
-     * 
+     *
      * @param hexUUID The UUID to be converted.
      * @return The raw 16-byte UUID.
      */
@@ -42,7 +42,7 @@ public enum TrailDBNative implements TrailDBInterface {
         byte[] b = null;
         try {
             b = Hex.decodeHex(hexUUID.toCharArray());
-        } catch(DecoderException e) {
+        } catch(final DecoderException e) {
             LOGGER.error("Failed to convert hexstring to string.", e);
         }
         return b;
@@ -64,7 +64,7 @@ public enum TrailDBNative implements TrailDBInterface {
         name = System.mapLibraryName(name);
         File fileOut = null;
         try {
-            InputStream in = TrailDBNative.class.getResourceAsStream("/" + name);
+            final InputStream in = TrailDBNative.class.getResourceAsStream("/" + name);
 
             if (in == null) {
                 throw new NullPointerException();
@@ -72,7 +72,7 @@ public enum TrailDBNative implements TrailDBInterface {
 
             fileOut = File.createTempFile("traildbjava", name.substring(name.indexOf(".")));
 
-            OutputStream out = FileUtils.openOutputStream(fileOut);
+            final OutputStream out = FileUtils.openOutputStream(fileOut);
             IOUtils.copy(in, out);
             LOGGER.info("Lib copied to: " + fileOut.getAbsolutePath());
             in.close();
@@ -81,7 +81,7 @@ public enum TrailDBNative implements TrailDBInterface {
             fileOut.deleteOnExit();
 
             System.load(fileOut.getAbsolutePath());
-        } catch(Exception e) {
+        } catch(final Exception e) {
             LOGGER.error("Failed to load library.", e);
             System.exit(-1);
         } finally {
@@ -204,9 +204,18 @@ public enum TrailDBNative implements TrailDBInterface {
     /** uint64_t tdb_get_trail_length(tdb_cursor *cursor) */
     private native long tdbGetTrailLength(ByteBuffer cursor);
 
-    /** const tdb_event *tdb_cursor_next(tdb_cursor *cursor) 
-     * @param event */
+    /**
+     * const tdb_event *tdb_cursor_next(tdb_cursor *cursor)
+     *
+     * @param event
+     */
     private native int tdbCursorNext(ByteBuffer cursor, TrailDBEvent event);
+
+    // ========================================================================
+    // Custom.
+    // ========================================================================
+
+    public native String eventGetItemValue(ByteBuffer db, int index, ByteBuffer value_length, TrailDBEvent event);
 
     @Override
     public ByteBuffer consInit() {
