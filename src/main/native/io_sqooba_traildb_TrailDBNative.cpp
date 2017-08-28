@@ -490,7 +490,7 @@ JNIEXPORT jint JNICALL Java_io_sqooba_traildb_TrailDBNative_tdbCursorNext
 	// Store field in TrailDBEvent.
 	env->SetLongField(jevent, JFID_traildbEvent_timestamp, event->timestamp);
 	env->SetLongField(jevent, JFID_traildbEvent_numItems, event->num_items);
-	env->SetLongField(jevent, JFID_traildbEvent_eventStruct, event->items);
+	env->SetLongField(jevent, JFID_traildbEvent_items, (long)event->items);
 
 	return 0;
 }
@@ -508,7 +508,7 @@ JNIEXPORT jstring JNICALL Java_io_sqooba_traildb_TrailDBNative_eventGetItemValue
 
 	// Get the items pointer.
 	const tdb_item *items;
-	items = (tdb_item *) env->GetLongField(jevent, JFID_traildbEvent_eventStruct);
+	items = (tdb_item *) env->GetLongField(jevent, JFID_traildbEvent_items);
 	
 	// Call lib.
 	const char* v = tdb_get_item_value(db, items[jindex], &value_length);
