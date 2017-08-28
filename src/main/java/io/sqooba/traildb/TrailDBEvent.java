@@ -17,22 +17,17 @@ public class TrailDBEvent {
 
     private long timestamp;
     private long numItems;
-    private long[] items; // items encoded on uint64_t.
+    private long[] items;
 
     /** This one contains the timestamp name. */
     private String[] fieldNames;
-    private String[] fieldValues;
 
-    protected TrailDBEvent(long timestamp, long numItems, long[] items) {
-        this.timestamp = timestamp;
-        this.numItems = numItems;
-        this.items = Arrays.copyOf(items, (int)numItems);
-    }
-
-    protected void build(TrailDB trailDB, String[] fieldsNames) {
+    protected TrailDBEvent(TrailDB trailDB, String[] fieldsNames) {
         this.trailDB = trailDB;
         this.fieldNames = fieldsNames;
-        this.fieldValues = new String[fieldNames.length - 1];
+    }
+
+    protected TrailDBEvent() {
     }
 
     /**

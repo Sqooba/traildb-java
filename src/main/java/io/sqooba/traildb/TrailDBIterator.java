@@ -2,29 +2,29 @@ package io.sqooba.traildb;
 
 import java.nio.ByteBuffer;
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 /**
  * <p> Class representing a cursor over a particular trail of the database. The cursor is initially constructed from the
  * TrailDB.trail() method. The cursor points to the current event and this event is updated each time a .next() is
  * called.
- * 
+ *
  * <p> The TrailDBIterator should be used in a try-with-resource block so it gets closed and can free the memory after
  * being done iterating over a trail.
- * 
+ *
  * @author B. Sottas
  *
  */
 public class TrailDBIterator implements Iterable<TrailDBEvent>, AutoCloseable {
 
     private ByteBuffer cursor;
-    private boolean built = false;
-    private TrailDB trailDB;
-    private long size;
+    private final TrailDB trailDB;
+    private final long size;
 
-    protected TrailDBIterator(ByteBuffer cursor, TrailDB trailDB) {
+    protected TrailDBIterator(ByteBuffer cursor, TrailDB trailDB, int size) {
         this.cursor = cursor;
         this.trailDB = trailDB;
-        this.size = trailDB.getNumEvents();
+        this.size = size;
     }
 
     @Override
@@ -39,28 +39,29 @@ public class TrailDBIterator implements Iterable<TrailDBEvent>, AutoCloseable {
     public Iterator<TrailDBEvent> iterator() {
         return new Iterator<TrailDBEvent>() {
 
-            private TrailDBEvent event;
+            private TrailDBEvent event = new TrailDBEvent();
+            int currIndex = 0;
 
             @Override
             public TrailDBEvent next() {
-                if (!TrailDBIterator.this.built) {
-                    this.event = TrailDBNative.INSTANCE.cursorNext(TrailDBIterator.this.cursor);
-                    TrailDBIterator.this.built = true;
+                // Create a new event which acts as an empty shell (just to have a new reference).
+                this.event = new TrailDBEvent(TrailDBIterator.this.trailDB, TrailDBIterator.this.trailDB.fields);
+
+                // Try to fill the event.
+                final int errCode = TrailDBNative.INSTANCE.cursorNext(TrailDBIterator.this.cursor, this.event);
+
+                // Check if there are no more events.
+                if (errCode != 0) {
+                    throw new NoSuchElementException();
                 }
-                this.event.build(TrailDBIterator.this.trailDB, TrailDBIterator.this.trailDB.fields);
+
+                this.currIndex++;
                 return this.event;
             }
 
             @Override
             public boolean hasNext() {
-                TrailDBEvent next = TrailDBNative.INSTANCE.cursorNext(TrailDBIterator.this.cursor);
-                if (next == null) {
-                    return false;
-                } else {
-                    this.event = next;
-                    TrailDBIterator.this.built = true;
-                    return true;
-                }
+                return this.currIndex < TrailDBIterator.this.size;
             }
 
             @Override
