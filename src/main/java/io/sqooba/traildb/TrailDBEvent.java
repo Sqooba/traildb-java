@@ -18,8 +18,7 @@ public class TrailDBEvent {
 
     private long timestamp;
     private long numItems;
-
-    public long eventStruct;
+    private long items;
 
     /** This one contains the timestamp name. */
     private String[] fieldNames;
