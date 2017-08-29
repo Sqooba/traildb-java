@@ -2,7 +2,6 @@ package io.sqooba.traildb.test;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.ByteBuffer;
 
 import org.apache.commons.io.FileUtils;
 import org.junit.After;
@@ -17,8 +16,8 @@ import mockit.Expectations;
 
 public class TrailDBBuilderFailureTest {
 
-    private String path = "testdb";
-    private String cookie = "12345678123456781234567812345678";
+    private final String path = "testdb";
+    private final String cookie = "12345678123456781234567812345678";
 
     @Rule
     public ExpectedException expectedEx = ExpectedException.none();
@@ -27,7 +26,7 @@ public class TrailDBBuilderFailureTest {
     public void tearDown() throws IOException {
 
         // Clear the TrailDB files/directories created for the tests.
-        File f = new File(this.path + ".tdb");
+        final File f = new File(this.path + ".tdb");
         if (f.exists() && !f.isDirectory()) {
             f.delete();
         }
@@ -45,7 +44,7 @@ public class TrailDBBuilderFailureTest {
 
             {
                 traildbj.consInit();
-                this.result = null;
+                this.result = -1;
             }
         };
         new TrailDB.TrailDBBuilder(this.path, new String[] { "field1", "field2" });
@@ -61,7 +60,7 @@ public class TrailDBBuilderFailureTest {
         new Expectations(traildbj) {
 
             {
-                traildbj.consOpen((ByteBuffer)this.any, this.anyString, (String[])this.any, this.anyLong);
+                traildbj.consOpen(this.anyLong, this.anyString, (String[])this.any, this.anyLong);
                 this.result = -1;
             }
         };
@@ -78,7 +77,7 @@ public class TrailDBBuilderFailureTest {
         new Expectations(traildbj) {
 
             {
-                traildbj.consAdd((ByteBuffer)this.any, (byte[])this.any, this.anyLong, (String[])this.any,
+                traildbj.consAdd(this.anyLong, (byte[])this.any, this.anyLong, (String[])this.any,
                         (long[])this.any);
                 this.result = -1;
             }
@@ -97,11 +96,11 @@ public class TrailDBBuilderFailureTest {
         new Expectations(traildbj) {
 
             {
-                traildbj.consAppend((ByteBuffer)this.any, (ByteBuffer)this.any);
+                traildbj.consAppend(this.anyLong, this.anyLong);
                 this.result = -1;
             }
         };
-        TrailDB db = new TrailDB.TrailDBBuilder(this.path, new String[] { "field1", "field2" }).build();
+        final TrailDB db = new TrailDB.TrailDBBuilder(this.path, new String[] { "field1", "field2" }).build();
         new TrailDB.TrailDBBuilder(this.path, new String[] { "field1", "field2" }).append(db);
     }
 
@@ -115,7 +114,7 @@ public class TrailDBBuilderFailureTest {
         new Expectations(traildbj) {
 
             {
-                traildbj.consFinalize((ByteBuffer)this.any);
+                traildbj.consFinalize(this.anyLong);
                 this.result = -1;
             }
         };

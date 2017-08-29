@@ -1,7 +1,6 @@
 package io.sqooba.traildb.test;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
 
 import java.io.File;
 import java.io.IOException;
@@ -26,9 +25,9 @@ import mockit.Deencapsulation;
 public class TrailDBTest {
 
     private TrailDB db;
-    private String path = "testdb";
-    private String cookie = "12345678123456781234567812345678";
-    private String otherCookie = "12121212121212121212121212121212";
+    private final String path = "testdb";
+    private final String cookie = "12345678123456781234567812345678";
+    private final String otherCookie = "12121212121212121212121212121212";
 
     @Rule
     public ExpectedException expectedEx = ExpectedException.none();
@@ -47,10 +46,10 @@ public class TrailDBTest {
 
     @Test
     public void trailsShouldContainCorrectTrailUUIDs() {
-        Map<String, TrailDBIterator> map = this.db.trails();
+        final Map<String, TrailDBIterator> map = this.db.trails();
         assertEquals(2, map.size());
 
-        Iterator<Map.Entry<String, TrailDBIterator>> it = map.entrySet().iterator();
+        final Iterator<Map.Entry<String, TrailDBIterator>> it = map.entrySet().iterator();
         assertEquals(this.otherCookie, it.next().getKey());
         assertEquals(this.cookie, it.next().getKey());
     }
@@ -59,14 +58,14 @@ public class TrailDBTest {
     public void trailShouldContainCorrectNumberOfTrailDBEvents() {
         TrailDBIterator trail = this.db.trail(0);
         int count = 0;
-        for(TrailDBEvent TrailDBEvent : trail) {
+        for(final TrailDBEvent TrailDBEvent : trail) {
             count++;
         }
         assertEquals(2, count);
 
         trail = this.db.trail(1);
         count = 0;
-        for(TrailDBEvent TrailDBEvent : trail) {
+        for(final TrailDBEvent TrailDBEvent : trail) {
             count++;
         }
         assertEquals(2, count);
@@ -74,9 +73,9 @@ public class TrailDBTest {
 
     @Test
     public void trailShouldContainCorrectTrailDBEvents() {
-        TrailDBIterator trail = this.db.trail(0);
-        TrailDBEvent e = trail.iterator().next();
-        String[] fieldsNames = e.getFieldNames();
+        final TrailDBIterator trail = this.db.trail(0);
+        final TrailDBEvent e = trail.iterator().next();
+        final String[] fieldsNames = e.getFieldNames();
 
         assertEquals(122, e.getTimestamp());
         assertEquals(2, e.getNumItems());
@@ -88,7 +87,7 @@ public class TrailDBTest {
 
     @Test(expected = UnsupportedOperationException.class)
     public void trailRemoveShouldThrow() {
-        TrailDBIterator trail = this.db.trail(0);
+        final TrailDBIterator trail = this.db.trail(0);
         trail.iterator().remove();
     }
 
@@ -196,8 +195,8 @@ public class TrailDBTest {
 
     @Test
     public void getFieldShouldReturnCorrectID() {
-        ByteBuffer handle = Deencapsulation.getField(this.db, "db");
-        ByteBuffer res = ByteBuffer.allocate(4);
+        final long handle = Deencapsulation.getField(this.db, "db");
+        final ByteBuffer res = ByteBuffer.allocate(4);
         TrailDBNative.INSTANCE.getField(handle, "field1", res);
         assertEquals(1, res.getInt(0));
     }
@@ -205,13 +204,13 @@ public class TrailDBTest {
     @Test
     public void closeShouldFreeDB() {
         this.db.close();
-        assertNull(Deencapsulation.getField(this.db, "db"));
+        assertEquals(-1, (long)Deencapsulation.getField(this.db, "db"));
     }
 
     @Test
-    public void closeNullDBField() {
+    public void closeInvalidHandle() {
 
-        Deencapsulation.setField(this.db, "db", null);
+        Deencapsulation.setField(this.db, "db", -1);
         this.db.close();
     }
 
@@ -219,7 +218,7 @@ public class TrailDBTest {
     public void tearDown() throws IOException {
 
         // Clear the TrailDB files/directories created for the tests.
-        File f = new File(this.path + ".tdb");
+        final File f = new File(this.path + ".tdb");
         if (f.exists() && !f.isDirectory()) {
             f.delete();
         }

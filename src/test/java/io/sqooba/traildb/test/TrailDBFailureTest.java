@@ -4,7 +4,6 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.ByteBuffer;
 
 import org.apache.commons.io.FileUtils;
 import org.junit.After;
@@ -69,7 +68,7 @@ public class TrailDBFailureTest {
 
             {
                 traildbj.init();
-                this.result = null;
+                this.result = -1;
             }
         };
         try (TrailDB db = new TrailDB(this.path)) {
@@ -86,7 +85,7 @@ public class TrailDBFailureTest {
         new Expectations(traildbj) {
 
             {
-                traildbj.open((ByteBuffer)this.any, this.anyString);
+                traildbj.open(this.anyLong, this.anyString);
                 this.result = -1;
             }
         };
@@ -101,7 +100,7 @@ public class TrailDBFailureTest {
         new Expectations(traildbj) {
 
             {
-                traildbj.minTimestamp((ByteBuffer)this.any);
+                traildbj.minTimestamp(this.anyLong);
                 this.result = -1;
             }
         };
@@ -116,7 +115,7 @@ public class TrailDBFailureTest {
         new Expectations(traildbj) {
 
             {
-                traildbj.maxTimestamp((ByteBuffer)this.any);
+                traildbj.maxTimestamp(this.anyLong);
                 this.result = -1;
             }
         };
@@ -131,7 +130,7 @@ public class TrailDBFailureTest {
         new Expectations(traildbj) {
 
             {
-                traildbj.version((ByteBuffer)this.any);
+                traildbj.version(this.anyLong);
                 this.result = -1;
             }
         };
@@ -147,7 +146,7 @@ public class TrailDBFailureTest {
         new Expectations(traildbj) {
 
             {
-                traildbj.getItem((ByteBuffer)this.any, this.anyLong, this.anyString);
+                traildbj.getItem(this.anyLong, this.anyLong, this.anyString);
                 this.result = -1;
             }
         };
@@ -166,7 +165,7 @@ public class TrailDBFailureTest {
         new Expectations(traildbj) {
 
             {
-                traildbj.getUUID((ByteBuffer)this.any, this.anyLong);
+                traildbj.getUUID(this.anyLong, this.anyLong);
                 this.result = null;
             }
         };
@@ -182,8 +181,8 @@ public class TrailDBFailureTest {
         new Expectations(traildbj) {
 
             {
-                traildbj.cursorNew((ByteBuffer)this.any);
-                this.result = null;
+                traildbj.cursorNew(this.anyLong);
+                this.result = -1;
             }
         };
         this.db.trail(0);
@@ -198,7 +197,7 @@ public class TrailDBFailureTest {
         new Expectations(traildbj) {
 
             {
-                traildbj.getTrail((ByteBuffer)this.any, this.anyLong);
+                traildbj.getTrail(this.anyLong, this.anyLong);
                 this.result = -1;
             }
         };

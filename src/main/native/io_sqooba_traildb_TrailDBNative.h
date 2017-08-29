@@ -10,122 +10,122 @@ extern "C" {
 /*
  * Class:     io_sqooba_traildb_TrailDBNative
  * Method:    tdbConsInit
- * Signature: ()Ljava/nio/ByteBuffer;
+ * Signature: ()J
  */
-JNIEXPORT jobject JNICALL Java_io_sqooba_traildb_TrailDBNative_tdbConsInit
+JNIEXPORT jlong JNICALL Java_io_sqooba_traildb_TrailDBNative_tdbConsInit
   (JNIEnv *, jobject);
 
 /*
  * Class:     io_sqooba_traildb_TrailDBNative
  * Method:    tdbConsOpen
- * Signature: (Ljava/nio/ByteBuffer;Ljava/lang/String;[Ljava/lang/String;J)I
+ * Signature: (JLjava/lang/String;[Ljava/lang/String;J)I
  */
 JNIEXPORT jint JNICALL Java_io_sqooba_traildb_TrailDBNative_tdbConsOpen
-  (JNIEnv *, jobject, jobject, jstring, jobjectArray, jlong);
+  (JNIEnv *, jobject, jlong, jstring, jobjectArray, jlong);
 
 /*
  * Class:     io_sqooba_traildb_TrailDBNative
  * Method:    tdbConsClose
- * Signature: (Ljava/nio/ByteBuffer;)V
+ * Signature: (J)V
  */
 JNIEXPORT void JNICALL Java_io_sqooba_traildb_TrailDBNative_tdbConsClose
-  (JNIEnv *, jobject, jobject);
+  (JNIEnv *, jobject, jlong);
 
 /*
  * Class:     io_sqooba_traildb_TrailDBNative
  * Method:    tdbConsAdd
- * Signature: (Ljava/nio/ByteBuffer;[BJ[Ljava/lang/String;[J)I
+ * Signature: (J[BJ[Ljava/lang/String;[J)I
  */
 JNIEXPORT jint JNICALL Java_io_sqooba_traildb_TrailDBNative_tdbConsAdd
-  (JNIEnv *, jobject, jobject, jbyteArray, jlong, jobjectArray, jlongArray);
+  (JNIEnv *, jobject, jlong, jbyteArray, jlong, jobjectArray, jlongArray);
 
 /*
  * Class:     io_sqooba_traildb_TrailDBNative
  * Method:    tdbConsAppend
- * Signature: (Ljava/nio/ByteBuffer;Ljava/nio/ByteBuffer;)I
+ * Signature: (JJ)I
  */
 JNIEXPORT jint JNICALL Java_io_sqooba_traildb_TrailDBNative_tdbConsAppend
-  (JNIEnv *, jobject, jobject, jobject);
+  (JNIEnv *, jobject, jlong, jlong);
 
 /*
  * Class:     io_sqooba_traildb_TrailDBNative
  * Method:    tdbConsFinalize
- * Signature: (Ljava/nio/ByteBuffer;)I
+ * Signature: (J)I
  */
 JNIEXPORT jint JNICALL Java_io_sqooba_traildb_TrailDBNative_tdbConsFinalize
-  (JNIEnv *, jobject, jobject);
+  (JNIEnv *, jobject, jlong);
 
 /*
  * Class:     io_sqooba_traildb_TrailDBNative
  * Method:    tdbInit
- * Signature: ()Ljava/nio/ByteBuffer;
+ * Signature: ()J
  */
-JNIEXPORT jobject JNICALL Java_io_sqooba_traildb_TrailDBNative_tdbInit
+JNIEXPORT jlong JNICALL Java_io_sqooba_traildb_TrailDBNative_tdbInit
   (JNIEnv *, jobject);
 
 /*
  * Class:     io_sqooba_traildb_TrailDBNative
  * Method:    tdbOpen
- * Signature: (Ljava/nio/ByteBuffer;Ljava/lang/String;)I
+ * Signature: (JLjava/lang/String;)I
  */
 JNIEXPORT jint JNICALL Java_io_sqooba_traildb_TrailDBNative_tdbOpen
-  (JNIEnv *, jobject, jobject, jstring);
+  (JNIEnv *, jobject, jlong, jstring);
 
 /*
  * Class:     io_sqooba_traildb_TrailDBNative
  * Method:    tdbClose
- * Signature: (Ljava/nio/ByteBuffer;)V
+ * Signature: (J)V
  */
 JNIEXPORT void JNICALL Java_io_sqooba_traildb_TrailDBNative_tdbClose
-  (JNIEnv *, jobject, jobject);
+  (JNIEnv *, jobject, jlong);
 
 /*
  * Class:     io_sqooba_traildb_TrailDBNative
  * Method:    tdbNumTrails
- * Signature: (Ljava/nio/ByteBuffer;)J
+ * Signature: (J)J
  */
 JNIEXPORT jlong JNICALL Java_io_sqooba_traildb_TrailDBNative_tdbNumTrails
-  (JNIEnv *, jobject, jobject);
+  (JNIEnv *, jobject, jlong);
 
 /*
  * Class:     io_sqooba_traildb_TrailDBNative
  * Method:    tdbNumEvents
- * Signature: (Ljava/nio/ByteBuffer;)J
+ * Signature: (J)J
  */
 JNIEXPORT jlong JNICALL Java_io_sqooba_traildb_TrailDBNative_tdbNumEvents
-  (JNIEnv *, jobject, jobject);
+  (JNIEnv *, jobject, jlong);
 
 /*
  * Class:     io_sqooba_traildb_TrailDBNative
  * Method:    tdbNumFields
- * Signature: (Ljava/nio/ByteBuffer;)J
+ * Signature: (J)J
  */
 JNIEXPORT jlong JNICALL Java_io_sqooba_traildb_TrailDBNative_tdbNumFields
-  (JNIEnv *, jobject, jobject);
+  (JNIEnv *, jobject, jlong);
 
 /*
  * Class:     io_sqooba_traildb_TrailDBNative
  * Method:    tdbMinTimestamp
- * Signature: (Ljava/nio/ByteBuffer;)J
+ * Signature: (J)J
  */
 JNIEXPORT jlong JNICALL Java_io_sqooba_traildb_TrailDBNative_tdbMinTimestamp
-  (JNIEnv *, jobject, jobject);
+  (JNIEnv *, jobject, jlong);
 
 /*
  * Class:     io_sqooba_traildb_TrailDBNative
  * Method:    tdbMaxTimestamp
- * Signature: (Ljava/nio/ByteBuffer;)J
+ * Signature: (J)J
  */
 JNIEXPORT jlong JNICALL Java_io_sqooba_traildb_TrailDBNative_tdbMaxTimestamp
-  (JNIEnv *, jobject, jobject);
+  (JNIEnv *, jobject, jlong);
 
 /*
  * Class:     io_sqooba_traildb_TrailDBNative
  * Method:    tdbVersion
- * Signature: (Ljava/nio/ByteBuffer;)J
+ * Signature: (J)J
  */
 JNIEXPORT jlong JNICALL Java_io_sqooba_traildb_TrailDBNative_tdbVersion
-  (JNIEnv *, jobject, jobject);
+  (JNIEnv *, jobject, jlong);
 
 /*
  * Class:     io_sqooba_traildb_TrailDBNative
@@ -138,114 +138,114 @@ JNIEXPORT jstring JNICALL Java_io_sqooba_traildb_TrailDBNative_tdbErrorStr
 /*
  * Class:     io_sqooba_traildb_TrailDBNative
  * Method:    tdbLexiconSize
- * Signature: (Ljava/nio/ByteBuffer;J)J
+ * Signature: (JJ)J
  */
 JNIEXPORT jlong JNICALL Java_io_sqooba_traildb_TrailDBNative_tdbLexiconSize
-  (JNIEnv *, jobject, jobject, jlong);
+  (JNIEnv *, jobject, jlong, jlong);
 
 /*
  * Class:     io_sqooba_traildb_TrailDBNative
  * Method:    tdbGetField
- * Signature: (Ljava/nio/ByteBuffer;Ljava/lang/String;Ljava/nio/ByteBuffer;)I
+ * Signature: (JLjava/lang/String;Ljava/nio/ByteBuffer;)I
  */
 JNIEXPORT jint JNICALL Java_io_sqooba_traildb_TrailDBNative_tdbGetField
-  (JNIEnv *, jobject, jobject, jstring, jobject);
+  (JNIEnv *, jobject, jlong, jstring, jobject);
 
 /*
  * Class:     io_sqooba_traildb_TrailDBNative
  * Method:    tdbGetFieldName
- * Signature: (Ljava/nio/ByteBuffer;J)Ljava/lang/String;
+ * Signature: (JJ)Ljava/lang/String;
  */
 JNIEXPORT jstring JNICALL Java_io_sqooba_traildb_TrailDBNative_tdbGetFieldName
-  (JNIEnv *, jobject, jobject, jlong);
+  (JNIEnv *, jobject, jlong, jlong);
 
 /*
  * Class:     io_sqooba_traildb_TrailDBNative
  * Method:    tdbGetItem
- * Signature: (Ljava/nio/ByteBuffer;JLjava/lang/String;)J
+ * Signature: (JJLjava/lang/String;)J
  */
 JNIEXPORT jlong JNICALL Java_io_sqooba_traildb_TrailDBNative_tdbGetItem
-  (JNIEnv *, jobject, jobject, jlong, jstring);
+  (JNIEnv *, jobject, jlong, jlong, jstring);
 
 /*
  * Class:     io_sqooba_traildb_TrailDBNative
  * Method:    tdbGetValue
- * Signature: (Ljava/nio/ByteBuffer;JJLjava/nio/ByteBuffer;)Ljava/lang/String;
+ * Signature: (JJJLjava/nio/ByteBuffer;)Ljava/lang/String;
  */
 JNIEXPORT jstring JNICALL Java_io_sqooba_traildb_TrailDBNative_tdbGetValue
-  (JNIEnv *, jobject, jobject, jlong, jlong, jobject);
+  (JNIEnv *, jobject, jlong, jlong, jlong, jobject);
 
 /*
  * Class:     io_sqooba_traildb_TrailDBNative
  * Method:    tdbGetItemValue
- * Signature: (Ljava/nio/ByteBuffer;JLjava/nio/ByteBuffer;)Ljava/lang/String;
+ * Signature: (JJLjava/nio/ByteBuffer;)Ljava/lang/String;
  */
 JNIEXPORT jstring JNICALL Java_io_sqooba_traildb_TrailDBNative_tdbGetItemValue
-  (JNIEnv *, jobject, jobject, jlong, jobject);
+  (JNIEnv *, jobject, jlong, jlong, jobject);
 
 /*
  * Class:     io_sqooba_traildb_TrailDBNative
  * Method:    tdbGetUUID
- * Signature: (Ljava/nio/ByteBuffer;J)Ljava/nio/ByteBuffer;
+ * Signature: (JJ)Ljava/nio/ByteBuffer;
  */
 JNIEXPORT jobject JNICALL Java_io_sqooba_traildb_TrailDBNative_tdbGetUUID
-  (JNIEnv *, jobject, jobject, jlong);
+  (JNIEnv *, jobject, jlong, jlong);
 
 /*
  * Class:     io_sqooba_traildb_TrailDBNative
  * Method:    tdbGetTrailId
- * Signature: (Ljava/nio/ByteBuffer;[BLjava/nio/ByteBuffer;)I
+ * Signature: (J[BLjava/nio/ByteBuffer;)I
  */
 JNIEXPORT jint JNICALL Java_io_sqooba_traildb_TrailDBNative_tdbGetTrailId
-  (JNIEnv *, jobject, jobject, jbyteArray, jobject);
+  (JNIEnv *, jobject, jlong, jbyteArray, jobject);
 
 /*
  * Class:     io_sqooba_traildb_TrailDBNative
  * Method:    tdbCursorNew
- * Signature: (Ljava/nio/ByteBuffer;)Ljava/nio/ByteBuffer;
+ * Signature: (J)J
  */
-JNIEXPORT jobject JNICALL Java_io_sqooba_traildb_TrailDBNative_tdbCursorNew
-  (JNIEnv *, jobject, jobject);
+JNIEXPORT jlong JNICALL Java_io_sqooba_traildb_TrailDBNative_tdbCursorNew
+  (JNIEnv *, jobject, jlong);
 
 /*
  * Class:     io_sqooba_traildb_TrailDBNative
  * Method:    tdbCursorFree
- * Signature: (Ljava/nio/ByteBuffer;)V
+ * Signature: (J)V
  */
 JNIEXPORT void JNICALL Java_io_sqooba_traildb_TrailDBNative_tdbCursorFree
-  (JNIEnv *, jobject, jobject);
+  (JNIEnv *, jobject, jlong);
 
 /*
  * Class:     io_sqooba_traildb_TrailDBNative
  * Method:    tdbGetTrail
- * Signature: (Ljava/nio/ByteBuffer;J)I
+ * Signature: (JJ)I
  */
 JNIEXPORT jint JNICALL Java_io_sqooba_traildb_TrailDBNative_tdbGetTrail
-  (JNIEnv *, jobject, jobject, jlong);
+  (JNIEnv *, jobject, jlong, jlong);
 
 /*
  * Class:     io_sqooba_traildb_TrailDBNative
  * Method:    tdbGetTrailLength
- * Signature: (Ljava/nio/ByteBuffer;)J
+ * Signature: (J)J
  */
 JNIEXPORT jlong JNICALL Java_io_sqooba_traildb_TrailDBNative_tdbGetTrailLength
-  (JNIEnv *, jobject, jobject);
+  (JNIEnv *, jobject, jlong);
 
 /*
  * Class:     io_sqooba_traildb_TrailDBNative
  * Method:    tdbCursorNext
- * Signature: (Ljava/nio/ByteBuffer;Lio/sqooba/traildb/TrailDBEvent;)I
+ * Signature: (JLio/sqooba/traildb/TrailDBEvent;)I
  */
 JNIEXPORT jint JNICALL Java_io_sqooba_traildb_TrailDBNative_tdbCursorNext
-  (JNIEnv *, jobject, jobject, jobject);
+  (JNIEnv *, jobject, jlong, jobject);
 
 /*
  * Class:     io_sqooba_traildb_TrailDBNative
  * Method:    eventGetItemValue
- * Signature: (Ljava/nio/ByteBuffer;ILjava/nio/ByteBuffer;)Ljava/lang/String;
+ * Signature: (JILio/sqooba/traildb/TrailDBEvent;)Ljava/lang/String;
  */
 JNIEXPORT jstring JNICALL Java_io_sqooba_traildb_TrailDBNative_eventGetItemValue
-  (JNIEnv *, jobject, jobject, jint, jobject, jobject);
+  (JNIEnv *, jobject, jlong, jint, jobject);
 
 #ifdef __cplusplus
 }

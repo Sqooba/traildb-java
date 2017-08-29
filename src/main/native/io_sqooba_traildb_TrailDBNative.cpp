@@ -46,20 +46,23 @@ void JNI_OnUnload(JavaVM *vm, void *reserved) {
     }
 }
 
-JNIEXPORT jobject JNICALL Java_io_sqooba_traildb_TrailDBNative_tdbConsInit
+JNIEXPORT jlong JNICALL Java_io_sqooba_traildb_TrailDBNative_tdbConsInit
   (JNIEnv *env, jobject thisObject) 
 {
 
 	void *cons = tdb_cons_init();
-	jobject bb = env->NewDirectByteBuffer((void*) cons, sizeof(void *));
-    return bb;
+	if(!cons) {
+		return -1;
+	}
+
+    return (long)cons;
 }
 
 JNIEXPORT jint JNICALL Java_io_sqooba_traildb_TrailDBNative_tdbConsOpen
-  (JNIEnv *env, jobject thisObject, jobject consj, jstring rootj, jobjectArray fieldNamesj, jlong numOfieldsj)
+  (JNIEnv *env, jobject thisObject, jlong consj, jstring rootj, jobjectArray fieldNamesj, jlong numOfieldsj)
 {
 	// Convert arguments.
-    tdb_cons *cons = (tdb_cons*) env->GetDirectBufferAddress(consj);
+    tdb_cons *cons = (tdb_cons*) consj;
     const char *root = env->GetStringUTFChars(rootj, 0);
 
 	jsize length = env->GetArrayLength(fieldNamesj); // Should be equal to numOfields
@@ -78,22 +81,22 @@ JNIEXPORT jint JNICALL Java_io_sqooba_traildb_TrailDBNative_tdbConsOpen
 }
 
 JNIEXPORT void JNICALL Java_io_sqooba_traildb_TrailDBNative_tdbConsClose
-  (JNIEnv *env, jobject thisObject, jobject consj) 
+  (JNIEnv *env, jobject thisObject, jlong consj) 
 {
 
 	// Convert arguments.
-	tdb_cons *cons = (tdb_cons*) env->GetDirectBufferAddress(consj);
+	tdb_cons *cons = (tdb_cons*) consj;
 
 	// Call lib.
 	tdb_cons_close(cons);
 }
 
 JNIEXPORT jint JNICALL Java_io_sqooba_traildb_TrailDBNative_tdbConsAdd
-	(JNIEnv *env, jobject thisObject, jobject consj, jbyteArray uuidj, jlong timestampj, jobjectArray valuesj, jlongArray valuesLengths) 
+	(JNIEnv *env, jobject thisObject, jlong consj, jbyteArray uuidj, jlong timestampj, jobjectArray valuesj, jlongArray valuesLengths) 
 {
 
 	// Convert arguments.
-	tdb_cons *cons = (tdb_cons*) env->GetDirectBufferAddress(consj);
+	tdb_cons *cons = (tdb_cons*) consj;
 
 	jbyte* dataPtr = env->GetByteArrayElements(uuidj, NULL);
 	const uint8_t *uuid = (const uint8_t*)dataPtr;
@@ -115,12 +118,12 @@ JNIEXPORT jint JNICALL Java_io_sqooba_traildb_TrailDBNative_tdbConsAdd
 }
 
 JNIEXPORT jint JNICALL Java_io_sqooba_traildb_TrailDBNative_tdbConsAppend
-  (JNIEnv *env, jobject thisObject, jobject consj, jobject tdbj) 
+  (JNIEnv *env, jobject thisObject, jlong consj, jlong tdbj) 
 {
 
 	// Convert arguments.
-	tdb_cons *cons = (tdb_cons*) env->GetDirectBufferAddress(consj);
-	tdb *db = (tdb*) env->GetDirectBufferAddress(tdbj);
+	tdb_cons *cons = (tdb_cons*) consj;
+	tdb *db = (tdb*) tdbj;
 
 	// Call lib.
 	return tdb_cons_append(cons, db);
@@ -128,33 +131,37 @@ JNIEXPORT jint JNICALL Java_io_sqooba_traildb_TrailDBNative_tdbConsAppend
 }
 
 JNIEXPORT jint JNICALL Java_io_sqooba_traildb_TrailDBNative_tdbConsFinalize
-  (JNIEnv *env, jobject thisObject, jobject consj) 
+  (JNIEnv *env, jobject thisObject, jlong consj) 
 {
 
 	// Convert arguments.
-	tdb_cons *cons = (tdb_cons*) env->GetDirectBufferAddress(consj);
+	tdb_cons *cons = (tdb_cons*) consj;
 
 	// Call lib.
 	return tdb_cons_finalize(cons);
 
 }
 
-JNIEXPORT jobject JNICALL Java_io_sqooba_traildb_TrailDBNative_tdbInit
+JNIEXPORT jlong JNICALL Java_io_sqooba_traildb_TrailDBNative_tdbInit
   (JNIEnv *env, jobject thisObject) 
 {
 
 	void *tdb = tdb_init();
-	jobject byteBuffer = env->NewDirectByteBuffer((void*) tdb, sizeof(&tdb));
-    return byteBuffer; 
+
+	if(!tdb) {
+		return -1;
+	}
+
+    return (long)tdb; 
 
 }
 
 JNIEXPORT jint JNICALL Java_io_sqooba_traildb_TrailDBNative_tdbOpen
-  (JNIEnv *env, jobject thisObject, jobject jtdb, jstring jroot) 
+  (JNIEnv *env, jobject thisObject, jlong jtdb, jstring jroot) 
 {
 
 	// Convert arguments.
-    tdb *db = (tdb*) env->GetDirectBufferAddress(jtdb);
+    tdb *db = (tdb*) jtdb;
     const char *root = env->GetStringUTFChars(jroot, 0);
 
 	// Call lib.
@@ -163,23 +170,22 @@ JNIEXPORT jint JNICALL Java_io_sqooba_traildb_TrailDBNative_tdbOpen
 }
 
 JNIEXPORT void JNICALL Java_io_sqooba_traildb_TrailDBNative_tdbClose
-  (JNIEnv *env, jobject thisObject, jobject jdb) 
+  (JNIEnv *env, jobject thisObject, jlong jdb) 
 {
 
 	// Convert arguments.
-	tdb *db = (tdb*) env->GetDirectBufferAddress(jdb);
+	tdb *db = (tdb*)jdb;
 
 	// Call lib.
 	tdb_close(db);
-
 }
 
 JNIEXPORT jlong JNICALL Java_io_sqooba_traildb_TrailDBNative_tdbNumTrails
-  (JNIEnv *env, jobject thisObject, jobject jdb) 
+  (JNIEnv *env, jobject thisObject, jlong jdb) 
 {
 
 	// Convert arguments.
-	const tdb *db = (tdb*) env->GetDirectBufferAddress(jdb);
+	const tdb *db = (tdb*)jdb;
 	
 	// Call lib.
 	return (jlong)tdb_num_trails(db);
@@ -187,11 +193,11 @@ JNIEXPORT jlong JNICALL Java_io_sqooba_traildb_TrailDBNative_tdbNumTrails
 }
 
 JNIEXPORT jlong JNICALL Java_io_sqooba_traildb_TrailDBNative_tdbNumEvents
-  (JNIEnv *env, jobject thisObject, jobject jdb) 
+  (JNIEnv *env, jobject thisObject, jlong jdb) 
 {
 
 	// Convert arguments.
-	const tdb *db = (tdb*) env->GetDirectBufferAddress(jdb);
+	const tdb *db = (tdb*)jdb;
 	
 	// Call lib.
 	return (jlong)tdb_num_events(db);
@@ -200,11 +206,11 @@ JNIEXPORT jlong JNICALL Java_io_sqooba_traildb_TrailDBNative_tdbNumEvents
 
 
 JNIEXPORT jlong JNICALL Java_io_sqooba_traildb_TrailDBNative_tdbNumFields
-  (JNIEnv *env, jobject thisObject, jobject jdb) 
+  (JNIEnv *env, jobject thisObject, jlong jdb) 
 {
 
 	// Convert arguments.
-	const tdb *db = (tdb*) env->GetDirectBufferAddress(jdb);
+	const tdb *db = (tdb*)jdb;
 	
 	// Call lib.
 	return (jlong)tdb_num_fields(db);
@@ -213,11 +219,11 @@ JNIEXPORT jlong JNICALL Java_io_sqooba_traildb_TrailDBNative_tdbNumFields
 
 
 JNIEXPORT jlong JNICALL Java_io_sqooba_traildb_TrailDBNative_tdbMinTimestamp
-  (JNIEnv *env, jobject thisObject, jobject jdb) 
+  (JNIEnv *env, jobject thisObject, jlong jdb) 
 {
 
 	// Convert arguments.
-	const tdb *db = (tdb*) env->GetDirectBufferAddress(jdb);
+	const tdb *db = (tdb*)jdb;
 	
 	// Call lib.
 	return (jlong)tdb_min_timestamp(db);
@@ -226,11 +232,11 @@ JNIEXPORT jlong JNICALL Java_io_sqooba_traildb_TrailDBNative_tdbMinTimestamp
 
 
 JNIEXPORT jlong JNICALL Java_io_sqooba_traildb_TrailDBNative_tdbMaxTimestamp
-  (JNIEnv *env, jobject thisObject, jobject jdb) 
+  (JNIEnv *env, jobject thisObject, jlong jdb) 
 {
 
 	// Convert arguments.
-	const tdb *db = (tdb*) env->GetDirectBufferAddress(jdb);
+	const tdb *db = (tdb*)jdb;
 	
 	// Call lib.
 	return (jlong)tdb_max_timestamp(db);
@@ -239,11 +245,11 @@ JNIEXPORT jlong JNICALL Java_io_sqooba_traildb_TrailDBNative_tdbMaxTimestamp
 
 
 JNIEXPORT jlong JNICALL Java_io_sqooba_traildb_TrailDBNative_tdbVersion
-  (JNIEnv *env, jobject thisObject, jobject jdb) 
+  (JNIEnv *env, jobject thisObject, jlong jdb) 
 {
 
 	// Convert arguments.
-	const tdb *db = (tdb*) env->GetDirectBufferAddress(jdb);
+	const tdb *db = (tdb*)jdb;
 	
 	// Call lib.
 	return (jlong)tdb_version(db);
@@ -266,11 +272,11 @@ JNIEXPORT jstring JNICALL Java_io_sqooba_traildb_TrailDBNative_tdbErrorStr
 }
 
 JNIEXPORT jlong JNICALL Java_io_sqooba_traildb_TrailDBNative_tdbLexiconSize
-  (JNIEnv *env, jobject thisObject, jobject jdb, jlong jfield) 
+  (JNIEnv *env, jobject thisObject, jlong jdb, jlong jfield) 
 {
 
 	// Convert arguments.
-	const tdb *db = (tdb*) env->GetDirectBufferAddress(jdb);
+	const tdb *db = (tdb*)jdb;
 	int nativeInt = (int)jfield;
 
 	// Call lib.
@@ -279,11 +285,11 @@ JNIEXPORT jlong JNICALL Java_io_sqooba_traildb_TrailDBNative_tdbLexiconSize
 }
 
 JNIEXPORT jint JNICALL Java_io_sqooba_traildb_TrailDBNative_tdbGetField
-  (JNIEnv *env, jobject thisObject, jobject jdb, jstring jfieldName, jobject jfield) 
+  (JNIEnv *env, jobject thisObject, jlong jdb, jstring jfieldName, jobject jfield) 
 {
 
 	// Convert arguments.
-	const tdb *db = (tdb*) env->GetDirectBufferAddress(jdb);
+	const tdb *db = (tdb*)jdb;
 	const char *field_name = env->GetStringUTFChars(jfieldName, 0);
 	//tdb_field *field= (tdb_field*) env->GetDirectBufferAddress(jfield);
 	tdb_field *field = (tdb_field*)malloc(sizeof(tdb_field));
@@ -304,11 +310,11 @@ JNIEXPORT jint JNICALL Java_io_sqooba_traildb_TrailDBNative_tdbGetField
 }
 
 JNIEXPORT jstring JNICALL Java_io_sqooba_traildb_TrailDBNative_tdbGetFieldName
-  (JNIEnv *env, jobject thisObject, jobject jdb, jlong jfield) 
+  (JNIEnv *env, jobject thisObject, jlong jdb, jlong jfield) 
 {
 
 	// Convert arguments.
-	const tdb *db = (tdb*) env->GetDirectBufferAddress(jdb);
+	const tdb *db = (tdb*)jdb;
 	int nativeField = (int)jfield;
 
 	// Call lib.
@@ -319,11 +325,11 @@ JNIEXPORT jstring JNICALL Java_io_sqooba_traildb_TrailDBNative_tdbGetFieldName
 }
 
 JNIEXPORT jlong JNICALL Java_io_sqooba_traildb_TrailDBNative_tdbGetItem
-  (JNIEnv *env, jobject thisObject, jobject jdb, jlong jfield, jstring jvalue) 
+  (JNIEnv *env, jobject thisObject, jlong jdb, jlong jfield, jstring jvalue) 
 {
 
 	// Convert arguments.
-	const tdb *db = (tdb*) env->GetDirectBufferAddress(jdb);
+	const tdb *db = (tdb*)jdb;
 	int field = (int)jfield;
 	const char *value = env->GetStringUTFChars(jvalue, 0);
 
@@ -333,11 +339,11 @@ JNIEXPORT jlong JNICALL Java_io_sqooba_traildb_TrailDBNative_tdbGetItem
 }
 
 JNIEXPORT jstring JNICALL Java_io_sqooba_traildb_TrailDBNative_tdbGetValue
-  (JNIEnv *env, jobject thisObject, jobject jdb, jlong jfield, jlong jval, jobject jvalueLength)
+  (JNIEnv *env, jobject thisObject, jlong jdb, jlong jfield, jlong jval, jobject jvalueLength)
 {
 
 	// Convert arguments.
-	const tdb *db = (tdb*) env->GetDirectBufferAddress(jdb);
+	const tdb *db = (tdb*)jdb;
 	uint32_t field = (uint32_t)jfield;
 	uint64_t val = (uint64_t)jval;
 	uint64_t *value_length = (uint64_t*)malloc(sizeof(uint64_t));
@@ -358,11 +364,11 @@ JNIEXPORT jstring JNICALL Java_io_sqooba_traildb_TrailDBNative_tdbGetValue
 }
 
 JNIEXPORT jstring JNICALL Java_io_sqooba_traildb_TrailDBNative_tdbGetItemValue
-  (JNIEnv *env, jobject thisObject, jobject jdb, jlong jitem, jobject jvalueLength)
+  (JNIEnv *env, jobject thisObject, jlong jdb, jlong jitem, jobject jvalueLength)
 {
 
 	// Convert arguments.
-	const tdb *db = (tdb*) env->GetDirectBufferAddress(jdb);
+	const tdb *db = (tdb*)jdb;
 	uint64_t item = (uint64_t)jitem;
 	uint64_t *value_length = (uint64_t*)malloc(sizeof(uint64_t));
 
@@ -383,11 +389,11 @@ JNIEXPORT jstring JNICALL Java_io_sqooba_traildb_TrailDBNative_tdbGetItemValue
 }
 
 JNIEXPORT jobject JNICALL Java_io_sqooba_traildb_TrailDBNative_tdbGetUUID
-  (JNIEnv *env, jobject thisObject, jobject jdb, jlong jtrailID) 
+  (JNIEnv *env, jobject thisObject, jlong jdb, jlong jtrailID) 
 {
 
 	// Convert arguments.
-	const tdb *db = (tdb*) env->GetDirectBufferAddress(jdb);
+	const tdb *db = (tdb*)jdb;
 	uint64_t trail_id = (uint64_t) jtrailID;
 
 	// Call lib.
@@ -398,11 +404,11 @@ JNIEXPORT jobject JNICALL Java_io_sqooba_traildb_TrailDBNative_tdbGetUUID
 }
 
 JNIEXPORT jint JNICALL Java_io_sqooba_traildb_TrailDBNative_tdbGetTrailId
-  (JNIEnv *env, jobject thisObject, jobject jdb, jbyteArray juuid, jobject jtraildID) 
+  (JNIEnv *env, jobject thisObject, jlong jdb, jbyteArray juuid, jobject jtraildID) 
 {
 
 	// Convert arguments.
-	const tdb *db = (tdb*) env->GetDirectBufferAddress(jdb);
+	const tdb *db = (tdb*)jdb;
 
 	jbyte* dataPtr = env->GetByteArrayElements(juuid, NULL);
 	const uint8_t *uuid = (const uint8_t*)dataPtr;
@@ -422,26 +428,29 @@ JNIEXPORT jint JNICALL Java_io_sqooba_traildb_TrailDBNative_tdbGetTrailId
 	return err;
 }
 
-JNIEXPORT jobject JNICALL Java_io_sqooba_traildb_TrailDBNative_tdbCursorNew
-  (JNIEnv *env, jobject thisObject, jobject jdb) 
+JNIEXPORT jlong JNICALL Java_io_sqooba_traildb_TrailDBNative_tdbCursorNew
+  (JNIEnv *env, jobject thisObject, jlong jdb) 
 {
 
 	// Convert arguments.
-	const tdb *db = (tdb*) env->GetDirectBufferAddress(jdb);
+	const tdb *db = (tdb*)jdb;
 
 	// Call lib.
 	void *cursor = tdb_cursor_new(db);
-	jobject cursorByteBuffer = env->NewDirectByteBuffer((void*) cursor, sizeof(void *));
+	
+	if(!cursor) {
+		return -1;
+	}
     
-	return cursorByteBuffer;
+	return (long)cursor;
 }
 
 JNIEXPORT void JNICALL Java_io_sqooba_traildb_TrailDBNative_tdbCursorFree
-  (JNIEnv *env, jobject thisObject, jobject jcursor) 
+  (JNIEnv *env, jobject thisObject, jlong jcursor) 
 {
 
 	// Convert arguments.
-	tdb_cursor *cursor = (tdb_cursor*) env->GetDirectBufferAddress(jcursor);
+	tdb_cursor *cursor = (tdb_cursor*)jcursor;
 
 	// Call lib.
 	tdb_cursor_free(cursor);
@@ -449,11 +458,11 @@ JNIEXPORT void JNICALL Java_io_sqooba_traildb_TrailDBNative_tdbCursorFree
 }
 
 JNIEXPORT jint JNICALL Java_io_sqooba_traildb_TrailDBNative_tdbGetTrail
-  (JNIEnv *env, jobject thisObject, jobject jcursor, jlong jtrailID) 
+  (JNIEnv *env, jobject thisObject, jlong jcursor, jlong jtrailID) 
 {
 
 	// Convert arguments.
-	tdb_cursor *cursor = (tdb_cursor*) env->GetDirectBufferAddress(jcursor);
+	tdb_cursor *cursor = (tdb_cursor*)jcursor;
 	uint64_t trail_id = (uint64_t) jtrailID;	
 
 	// Call lib.
@@ -461,22 +470,22 @@ JNIEXPORT jint JNICALL Java_io_sqooba_traildb_TrailDBNative_tdbGetTrail
 }
 
 JNIEXPORT jlong JNICALL Java_io_sqooba_traildb_TrailDBNative_tdbGetTrailLength
-  (JNIEnv *env, jobject thisObject, jobject jcursor) 
+  (JNIEnv *env, jobject thisObject, jlong jcursor) 
 {
 
 	// Convert arguments.
-	tdb_cursor *cursor = (tdb_cursor*) env->GetDirectBufferAddress(jcursor);
+	tdb_cursor *cursor = (tdb_cursor*)jcursor;
 
 	// Call lib.
 	return (jlong) tdb_get_trail_length(cursor);
 }
 
 JNIEXPORT jint JNICALL Java_io_sqooba_traildb_TrailDBNative_tdbCursorNext
-  (JNIEnv *env, jobject thisObject, jobject jcursor, jobject jevent)
+  (JNIEnv *env, jobject thisObject, jlong jcursor, jobject jevent)
 {
 
 	// Convert arguments.
-	tdb_cursor *cursor = (tdb_cursor*) env->GetDirectBufferAddress(jcursor);
+	tdb_cursor *cursor = (tdb_cursor*)jcursor;
 
 	// Call lib.
 	const tdb_event *event;
@@ -496,15 +505,13 @@ JNIEXPORT jint JNICALL Java_io_sqooba_traildb_TrailDBNative_tdbCursorNext
 }
 
 JNIEXPORT jstring JNICALL Java_io_sqooba_traildb_TrailDBNative_eventGetItemValue
-  (JNIEnv *env, jobject thisObject, jobject jdb, jint jindex, jobject jvalueLength, jobject jevent) 
+  (JNIEnv *env, jobject thisObject, jlong jdb, jint jindex, jobject jevent) 
 {
 	
 	// Convert arguments.
-	const tdb *db = (tdb*) env->GetDirectBufferAddress(jdb);
+	const tdb *db = (tdb*)jdb;
 	uint64_t value_length;
 
-	jclass jc = env->GetObjectClass(jvalueLength);
-	jmethodID mid = env->GetMethodID(jc, "putLong","(J)Ljava/nio/ByteBuffer;");
 
 	// Get the items pointer.
 	const tdb_item *items;
@@ -513,10 +520,12 @@ JNIEXPORT jstring JNICALL Java_io_sqooba_traildb_TrailDBNative_eventGetItemValue
 	// Call lib.
 	const char* v = tdb_get_item_value(db, items[jindex], &value_length);
 
-	// Store to the buffer the what has been put in the pointer.
-	env->CallObjectMethod(jvalueLength, mid, value_length);
+	// Create the null-terminated String.
+	char buffer[value_length];
+	memcpy(buffer, &v[0], value_length);
+	buffer[value_length] = '\0';
 
-	return env->NewStringUTF(v);
+	return env->NewStringUTF(buffer);
 }
 
 
