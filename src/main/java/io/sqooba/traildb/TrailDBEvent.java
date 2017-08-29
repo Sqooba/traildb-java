@@ -1,10 +1,11 @@
 package io.sqooba.traildb;
 
+import java.nio.ByteBuffer;
 import java.util.Arrays;
 
 /**
  * An event in the trail database.
- * 
+ *
  * @author B. Sottas
  *
  */
@@ -17,7 +18,7 @@ public class TrailDBEvent {
 
     private long timestamp;
     private long numItems;
-    private long[] items;
+    private long items;
 
     /** This one contains the timestamp name. */
     private String[] fieldNames;
@@ -27,12 +28,11 @@ public class TrailDBEvent {
         this.fieldNames = fieldsNames;
     }
 
-    protected TrailDBEvent() {
-    }
+    protected TrailDBEvent() {}
 
     /**
      * Get the timestamp of this event.
-     * 
+     *
      * @return The timestamp of this event.
      */
     public long getTimestamp() {
@@ -41,7 +41,7 @@ public class TrailDBEvent {
 
     /**
      * Get the number of items in this event.
-     * 
+     *
      * @return The number of items in this event.
      */
     public long getNumItems() {
@@ -50,7 +50,7 @@ public class TrailDBEvent {
 
     /**
      * Get the fields names of this event. Contains the timestamp name.
-     * 
+     *
      * @return The fields names of this event.
      */
     public String[] getFieldNames() {
@@ -59,18 +59,28 @@ public class TrailDBEvent {
 
     /**
      * Get the decoded value of an item.
-     * 
+     *
      * @param index The item index.
      * @return The decoded item as a String.
      */
     public String getFieldValue(int index) {
         // Caching possibility here to avoid going back to JNI to decode items.
-        return this.trailDB.getItemValue(items[index]);
+        final ByteBuffer bb = ByteBuffer.allocate(8);
+        final String value = TrailDBNative.INSTANCE.eventGetItemValue(this.trailDB.db, index, bb, this);
+        if (value == null) {
+            throw new TrailDBException("Value not found.");
+        }
+        final long value_length = bb.getLong(0);
+        if (value_length > Integer.MAX_VALUE) {
+            throw new TrailDBException(
+                    "Overflow, received a String value that is larger than the java String capacity.");
+        }
+        return value.substring(0, (int)value_length);
     }
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
+        final StringBuilder sb = new StringBuilder();
         String sep = ", ";
         for(int i = 0; i < this.numItems; i++) {
             if (i == this.numItems - 1) {
