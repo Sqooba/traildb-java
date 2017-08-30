@@ -214,8 +214,7 @@
 						<compilerStartOption>-Wall</compilerStartOption>
 						<compilerStartOption>-Werror</compilerStartOption>
 						<compilerStartOption>-fpic</compilerStartOption>
-						<compilerStartOption>-O0</compilerStartOption>
-						<compilerStartOption>-g</compilerStartOption>
+						<compilerStartOption>-Ofast</compilerStartOption>
 					</compilerStartOptions>
 
 					<linkerOutputDirectory>target</linkerOutputDirectory>
