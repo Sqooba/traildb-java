@@ -1,7 +1,6 @@
 package io.sqooba.traildb.test;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
 
 import java.io.File;
 import java.io.IOException;
@@ -19,8 +18,8 @@ import mockit.Deencapsulation;
 public class TrailDBIteratorTest {
 
     private TrailDB db;
-    private String path = "testdb";
-    private String cookie = "12345678123456781234567812345678";
+    private final String path = "testdb";
+    private final String cookie = "12345678123456781234567812345678";
 
     @Before
     public void setUp() {
@@ -33,7 +32,7 @@ public class TrailDBIteratorTest {
     public void tearDown() throws IOException {
 
         // Clear the TrailDB files/directories created for the tests.
-        File f = new File(this.path + ".tdb");
+        final File f = new File(this.path + ".tdb");
         if (f.exists() && !f.isDirectory()) {
             f.delete();
         }
@@ -43,34 +42,34 @@ public class TrailDBIteratorTest {
     @Test
     public void closeWithNullCursorField() {
 
-        TrailDBIterator cursor = this.db.trail(0);
+        final TrailDBIterator cursor = this.db.trail(0);
 
-        Deencapsulation.setField(cursor, "cursor", null);
+        Deencapsulation.setField(cursor, "cursor", -1);
         cursor.close();
     }
 
     @Test
     public void getTrailLengthShouldReturnCorrectRemainingEvents() {
-        TrailDBIterator cursor = this.db.trail(0);
+        final TrailDBIterator cursor = this.db.trail(0);
         assertEquals(1, TrailDBNative.INSTANCE.getTrailLength(Deencapsulation.getField(cursor, "cursor")));
         cursor.close();
     }
 
     @Test
     public void closeShouldFreeCursor() {
-        TrailDBIterator cursor = this.db.trail(0);
+        final TrailDBIterator cursor = this.db.trail(0);
         cursor.close();
-        assertNull(Deencapsulation.getField(cursor, "cursor"));
+        assertEquals(-1, (long)Deencapsulation.getField(cursor, "cursor"));
     }
 
     @Test
     public void iteratorsShoudNotInterfere() {
-        TrailDB db = new TrailDB.TrailDBBuilder(this.path, new String[] { "field1", "field2" })
+        final TrailDB db = new TrailDB.TrailDBBuilder(this.path, new String[] { "field1", "field2" })
                 .add(this.cookie, 120, new String[] { "a", "hinata" })
                 .build();
 
-        TrailDBIterator trail1 = db.trail(0);
-        TrailDBIterator trail2 = db.trail(0);
+        final TrailDBIterator trail1 = db.trail(0);
+        final TrailDBIterator trail2 = db.trail(0);
 
         assertEquals(trail1.iterator().next().toString(), trail2.iterator().next().toString());
     }

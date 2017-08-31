@@ -23,8 +23,8 @@ public class TrailDB implements AutoCloseable {
 
     private final TrailDBNative trailDBj = TrailDBNative.INSTANCE;
 
-    /** ByteBuffer holding a pointer to the traildb. */
-    ByteBuffer db;
+    /** long holding a pointer to the traildb. */
+    long db;
 
     private final long numTrails;
     private final long numEvents;
@@ -47,7 +47,7 @@ public class TrailDB implements AutoCloseable {
         }
 
         this.db = this.trailDBj.init();
-        if (this.db == null) {
+        if (this.db == -1) {
             throw new TrailDBException("Failed to allocate memory to init a new TrailDB.");
         }
 
@@ -286,8 +286,8 @@ public class TrailDB implements AutoCloseable {
      * @throws TrailDBException If cursor creation failed in some way.
      */
     public TrailDBIterator trail(long trailID) { // Python has more params.
-        final ByteBuffer cursor = this.trailDBj.cursorNew(this.db);
-        if (cursor == null) {
+        final long cursor = this.trailDBj.cursorNew(this.db);
+        if (cursor == -1) {
             throw new TrailDBException("Memory allocation failed for cursor.");
         }
 
@@ -326,9 +326,9 @@ public class TrailDB implements AutoCloseable {
 
     @Override
     public void close() {
-        if (this.db != null) {
+        if (this.db != -1) {
             this.trailDBj.close(this.db);
-            this.db = null;
+            this.db = -1;
         }
     }
 
@@ -350,7 +350,7 @@ public class TrailDB implements AutoCloseable {
         private final String[] ofields;
 
         /** Handle to the TrailDB, returned by init method. */
-        private ByteBuffer cons;
+        private long cons;
 
         /** Tells if this Builder build method has already been called. */
         private boolean closed = false;
@@ -373,7 +373,7 @@ public class TrailDB implements AutoCloseable {
 
             // Initialisation.
             this.cons = this.trailDBj.consInit();
-            if (this.cons == null) {
+            if (this.cons == -1) {
                 throw new TrailDBException("Failed to allocate memory for constructor.");
             }
             if (this.trailDBj.consOpen(this.cons, path, ofields, ofields.length) != 0) {
@@ -450,7 +450,8 @@ public class TrailDB implements AutoCloseable {
 
             this.trailDBj.consClose(this.cons);
             LOGGER.info("TrailDBBuilder closed.");
-            this.cons = null;
+            // Explicitly say the constructor pointer is no longer valid. TODO Needed?
+            this.cons = -1;
 
             return new TrailDB(this);
         }

@@ -1,6 +1,5 @@
 package io.sqooba.traildb;
 
-import java.nio.ByteBuffer;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
@@ -17,11 +16,11 @@ import java.util.NoSuchElementException;
  */
 public class TrailDBIterator implements Iterable<TrailDBEvent>, AutoCloseable {
 
-    private ByteBuffer cursor;
+    private long cursor;
     private final TrailDB trailDB;
     private final long size;
 
-    protected TrailDBIterator(ByteBuffer cursor, TrailDB trailDB, int size) {
+    protected TrailDBIterator(long cursor, TrailDB trailDB, int size) {
         this.cursor = cursor;
         this.trailDB = trailDB;
         this.size = size;
@@ -29,9 +28,9 @@ public class TrailDBIterator implements Iterable<TrailDBEvent>, AutoCloseable {
 
     @Override
     public void close() {
-        if (this.cursor != null) {
+        if (this.cursor != -1) {
             TrailDBNative.INSTANCE.cursorFree(this.cursor);
-            this.cursor = null;
+            this.cursor = -1;
         }
     }
 
