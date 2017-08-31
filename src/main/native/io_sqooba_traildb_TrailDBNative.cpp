@@ -436,7 +436,7 @@ JNIEXPORT jlong JNICALL Java_io_sqooba_traildb_TrailDBNative_tdbCursorNew
 	const tdb *db = (tdb*)jdb;
 
 	// Call lib.
-	void *cursor = tdb_cursor_new(db);
+	tdb_cursor *cursor = tdb_cursor_new(db);
 	
 	if(!cursor) {
 		return -1;
