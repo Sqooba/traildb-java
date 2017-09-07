@@ -156,10 +156,6 @@ JNIEXPORT jstring JNICALL Java_traildb_TrailDB_getFieldName(JNIEnv *env, jobject
 	return (*env)->NewStringUTF(env, name);
 }
 
-JNIEXPORT jobject JNICALL Java_traildb_TrailDB_getItem(JNIEnv *env, jobject obj, jint field, jstring value) {
-
-}
-
 JNIEXPORT void JNICALL Java_traildb_TrailDB_close(JNIEnv *env, jobject obj) {
 	tdb *db;
 
