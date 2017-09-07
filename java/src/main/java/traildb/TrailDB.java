@@ -76,7 +76,20 @@ public class TrailDB {
 
 	// UUID's
 
-	public native UUID getUUID(int trailId);
+	public UUID getUUID(long trailId) {
+		byte uuidBytes[] = new byte[16];
+		uuidBytes = native_getUUID(trailId);
+		return bytesToUUID(uuidBytes);
+	}
+
+	private native byte[] native_getUUID(long trailID);
+
+	private static UUID bytesToUUID(byte[] uuidBytes) {
+		ByteBuffer bb = ByteBuffer.wrap(uuidBytes);
+		long high = bb.getLong();
+		long low = bb.getLong();
+		return new UUID(high, low);
+	}
 
 	public long getTrailId(UUID uuid) {
 		byte uuidBytes[] = new byte[16];
