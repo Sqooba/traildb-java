@@ -165,7 +165,7 @@ java -Djava.library.path=`pwd`/native/linux/target/ -cp examples:native/linux/ta
 
 - [x] close
 
-- [ ] getUUID
+- [x] getUUID
 
 - [x] getTrailId
 
@@ -176,7 +176,7 @@ java -Djava.library.path=`pwd`/native/linux/target/ -cp examples:native/linux/ta
 
 - [x] getTrailLength
 
-- [ ] setEventFilter
+- [x] setEventFilter
 
 - [ ] unsetEventFilter
 
@@ -202,20 +202,14 @@ java -Djava.library.path=`pwd`/native/linux/target/ -cp examples:native/linux/ta
 
 #### TrailDBEventFilter
 
-- [ ] addTerm
+- [x] addTerm
 
-- [ ] addTimeRange
+- [x] addTimeRange
 
-- [ ] newClause
+- [x] newClause
 
 - [ ] numClauses
 
 - [ ] numTerms
 
 - [ ] isNegative
-
-- [ ] getItem
-
-- [ ] getStartTime
-
-- [ ] getEndTime
