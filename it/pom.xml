@@ -1,0 +1,52 @@
+<project>
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>adroll.traildb</groupId>
+		<artifactId>parentProject</artifactId>
+		<version>0.1</version>
+	</parent>
+
+	<groupId>adroll.traildb</groupId>
+	<artifactId>it</artifactId>
+	<name>TrailDB Java Integration Tests</name>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
+
+	<build>
+		<plugins>
+		<plugin>
+			<artifactId>maven-compiler-plugin</artifactId>
+			<version>3.6.1</version>
+			<configuration>
+				<source>1.6</source>
+				<target>1.6</target>
+			</configuration>
+		</plugin>
+		<plugin>
+			<artifactId>maven-surefire-plugin</artifactId>
+			<version>2.19.1</version>
+			<configuration>
+				<argLine>-Djava.library.path=${project.parent.basedir}/native/${platform}/target</argLine>
+			</configuration>
+		</plugin>
+		</plugins>
+	</build>
+
+	<dependencies>
+	<dependency>
+		<groupId>junit</groupId>
+		<artifactId>junit</artifactId>
+		<version>4.11</version>
+		<scope>test</scope>
+	</dependency>
+	<dependency>
+		<groupId>adroll.traildb</groupId>
+		<artifactId>traildbJava</artifactId>
+		<version>0.1</version>
+		<scope>test</scope>
+	</dependency>
+	</dependencies>
+</project>
