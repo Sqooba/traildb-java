@@ -1,0 +1,65 @@
+<project>
+
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>adroll.traildb</groupId>
+	<artifactId>parentProject</artifactId>
+	<version>0.1</version>
+	<name>TrailDB</name>
+
+	<packaging>pom</packaging>
+	<modules>
+		<module>java</module>
+		<module>native</module>
+		<module>it</module>
+	</modules>
+
+	<build>
+		<pluginManagement>
+			<plugins>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>native-maven-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-failsafe-plugin</artifactId>
+				<version>2.20</version>
+				<executions>
+				<execution>
+					<goals>
+					<goal>integration-test</goal>
+					<goal>verify</goal>
+					</goals>
+				</execution>
+				</executions>
+			</plugin>
+			</plugins>
+		</pluginManagement>
+	</build>
+	<profiles>
+		<profile>
+			<id>Linux</id>
+			<activation>
+				<property>
+					<name>platform</name>
+					<value>linux</value>
+				</property>
+			</activation>
+			<properties>
+				<platform>linux</platform>
+			</properties>
+		</profile>
+		<profile>
+			<id>Mac</id>
+			<activation>
+				<property>
+					<name>platform</name>
+					<value>mac</value>
+				</property>
+			</activation>
+			<properties>
+				<platform>mac</platform>
+			</properties>
+		</profile>
+	</profiles>
+</project>
